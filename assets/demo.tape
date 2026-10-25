@@ -20,7 +20,7 @@ Set Shell "zsh"
 Set FontSize 14
 Set Width 1280
 Set Height 760
-Set Theme { "name": "prevAIl", "background": "#0E0E0E", "foreground": "#E6D9B8", "cursor": "#C4A35A", "selection": "#3a2f1a", "black": "#0E0E0E", "red": "#E67E5F", "green": "#7FCB8C", "yellow": "#C4A35A", "blue": "#3CD8FF", "magenta": "#D49FFF", "cyan": "#3CD8FF", "white": "#E6D9B8", "brightBlack": "#5C5346", "brightRed": "#F5A98D", "brightGreen": "#A8E5B0", "brightYellow": "#F5E0A8", "brightBlue": "#9FECFF", "brightMagenta": "#E5C3FF", "brightCyan": "#9FECFF", "brightWhite": "#FFFFFF" }
+Set Theme { "name": "Glyph", "background": "#0E0E0E", "foreground": "#E6D9B8", "cursor": "#3FA34D", "selection": "#3a2f1a", "black": "#0E0E0E", "red": "#E67E5F", "green": "#7FCB8C", "yellow": "#C4A35A", "blue": "#3CD8FF", "magenta": "#D49FFF", "cyan": "#3CD8FF", "white": "#E6D9B8", "brightBlack": "#5C5346", "brightRed": "#F5A98D", "brightGreen": "#A8E5B0", "brightYellow": "#F5E0A8", "brightBlue": "#9FECFF", "brightMagenta": "#E5C3FF", "brightCyan": "#9FECFF", "brightWhite": "#FFFFFF" }
 Set Padding 24
 Set TypingSpeed 55ms
 Set PlaybackSpeed 1.0
