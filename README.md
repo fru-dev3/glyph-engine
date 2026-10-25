@@ -1,5 +1,7 @@
+<h1 align="center">Glyph Engine</h1>
+
 <p align="center">
-  <img src="./assets/logo.svg" alt="prevAIl" width="560"/>
+  <i>Formerly the Prevail CLI.</i> The command is still <code>prevail</code>.
 </p>
 
 <p align="center">
@@ -8,36 +10,38 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/fru-dev3/prevail-cli/releases"><img src="https://img.shields.io/github/v/release/fru-dev3/prevail-cli?color=C4A35A&label=release" alt="release"/></a>
-  <a href="https://github.com/fru-dev3/prevail-cli/releases"><img src="https://img.shields.io/github/downloads/fru-dev3/prevail-cli/total?color=C4A35A&label=downloads" alt="downloads"/></a>
-  <a href="https://github.com/fru-dev3/prevail-cli/stargazers"><img src="https://img.shields.io/github/stars/fru-dev3/prevail-cli?color=C4A35A&label=stars" alt="stars"/></a>
+  <a href="https://github.com/fru-dev3/glyph-engine/releases"><img src="https://img.shields.io/github/v/release/fru-dev3/glyph-engine?color=008000&label=release" alt="release"/></a>
+  <a href="https://github.com/fru-dev3/glyph-engine/releases"><img src="https://img.shields.io/github/downloads/fru-dev3/glyph-engine/total?color=008000&label=downloads" alt="downloads"/></a>
+  <a href="https://github.com/fru-dev3/glyph-engine/stargazers"><img src="https://img.shields.io/github/stars/fru-dev3/glyph-engine?color=008000&label=stars" alt="stars"/></a>
   <a href="#install"><img src="https://img.shields.io/badge/install-curl%20%7C%20bash-3CD8FF" alt="install"/></a>
-  <a href="https://bun.sh"><img src="https://img.shields.io/badge/runtime-bun%20single%20binary-C4A35A" alt="bun"/></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-C4A35A" alt="GPL-3.0"/></a>
+  <a href="https://bun.sh"><img src="https://img.shields.io/badge/runtime-bun%20single%20binary-008000" alt="bun"/></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-008000" alt="GPL-3.0"/></a>
 </p>
 
 <p align="center">
-  <b>Like it? <a href="https://github.com/fru-dev3/prevail-cli">Star the repo</a>.</b> It is the best way to help other people find it.
+  <b>Like it? <a href="https://github.com/fru-dev3/glyph-engine">Star the repo</a>.</b> It is the best way to help other people find it.
 </p>
 
+Glyph Engine is the engine of the Glyph family. It runs inside [Glyph Studio](https://glyph.fru.dev/studio), the desktop app, and on its own in your terminal. The rest of the family: Glyph Dictate, Glyph Mobile, Glyph Record and Glyph Code. More at [glyph.fru.dev/studio](https://glyph.fru.dev/studio).
+
 <p align="center">
-  <img src="./assets/demo.gif" alt="prevAIl cockpit: 20+ life domains, council × framework × lens × web × save × serendipity × auto" width="900"/>
+  <img src="./assets/demo.gif" alt="Glyph Engine cockpit: 20+ life domains, council × framework × lens × web × save × serendipity × auto" width="900"/>
   <br/>
   <sub><b>The cockpit at a glance.</b> 20+ life domains in the sidebar. The active workspace on the right (here: chief). A single ConfigBar at the bottom carries every per-turn dial: <b>Council</b> · <b>Framework</b> · <b>Lens</b> · <b>Web</b> · <b>Save</b> · <b>Serendipity</b> · <b>Auto</b>, each clickable.</sub>
 </p>
 
 ---
 
-**One question. Four engines. One verdict.** Every part of your life (wealth, health, tax, career) is a folder of markdown. Open one, ask, and prevAIl fans the question out to every CLI you already have logged in. A chair model reads all four replies and writes one decisive answer, with a dedicated panel surfacing the *disagreement*, which is the point. Works from your terminal or your phone (Telegram bridge). Single 95 MB binary. No Docker, no mandatory API keys; the optional Telegram bridge runs a lightweight daemon only if you turn it on.
+**One question. Four engines. One verdict.** Every part of your life (wealth, health, tax, career) is a folder of markdown. Open one, ask, and Glyph Engine fans the question out to every CLI you already have logged in. A chair model reads all four replies and writes one decisive answer, with a dedicated panel surfacing the *disagreement*, which is the point. Works from your terminal or your phone (Telegram bridge). Single 95 MB binary. No Docker, no mandatory API keys; the optional Telegram bridge runs a lightweight daemon only if you turn it on.
 
 <p align="center">
-  <img src="./assets/deliberation.gif" alt="prevAIl: navigate to a domain, switch tabs, see the deliberation chips" width="900"/>
+  <img src="./assets/deliberation.gif" alt="Glyph Engine: navigate to a domain, switch tabs, see the deliberation chips" width="900"/>
   <br/>
   <sub><b>Per-domain workspaces.</b> Each domain has its own <code>chat / state / quick start / prompts / skills</code> tabs. Frameworks (BLUF, SCQA, …) and lenses (FIRST PRINCIPLES, CONTRARIAN, MOM, DAD, …) override per-domain: what you set on <code>wealth</code> stays on <code>wealth</code>.</sub>
 </p>
 
 ```
-┌─ wealth ─────────────────────────────────────────────────────── prevAIl ─┐
+┌─ wealth ────────────────────────────────────────────────── Glyph Engine ─┐
 │ [chat] · state · quick start · prompts · skills      ● Council ON  ◇ cfg │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ › /council should I prepay the mortgage or invest the cash?              │
@@ -68,13 +72,13 @@
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/fru-dev3/prevail-cli/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/fru-dev3/glyph-engine/main/scripts/install.sh | bash
 prevail
 ```
 
 First launch runs a 30-second wizard. Pick the bundled demo vault (synthetic, safe to explore) or point at your own folder. macOS + Linux. Windows via WSL.
 
-## Why prevAIl
+## Why Glyph Engine
 
 | | |
 |---|---|
@@ -90,7 +94,7 @@ First launch runs a 30-second wizard. Pick the bundled demo vault (synthetic, sa
 ## The cockpit at a glance
 
 ```
-┌─ prevAIl ─────────────────────────────────────────────────────────────────┐
+┌─ Glyph Engine ────────────────────────────────────────────────────────────┐
 │  domains            │  [chat] · state · quick start · prompts · skills    │
 │  ───────────────    │  ───────────────────────────────────────────────    │
 │  ▸ wealth      ●    │                                                     │
@@ -166,7 +170,7 @@ prevail agent-run --cli <h> ...  hand a task to an agent harness (Hermes/Pi/Open
 
 ### Agent harnesses (new)
 
-Beyond chat CLIs, prevAIl can now drive **agent harnesses** (`hermes`, `pi`, `opencode`, `openclaw`) as autonomous task runners. Each is invoked with its *real* headless flags (verified per-harness, not a guessed `-p`: Hermes uses `-z`, OpenCode uses `run`, …), the run is gated by the autonomy broker (safe/propose by default, `--autonomy auto` for full agency), and output streams as the same `ChatEvent` NDJSON as `chat`:
+Beyond chat CLIs, Glyph Engine can now drive **agent harnesses** (`hermes`, `pi`, `opencode`, `openclaw`) as autonomous task runners. Each is invoked with its *real* headless flags (verified per-harness, not a guessed `-p`: Hermes uses `-z`, OpenCode uses `run`, …), the run is gated by the autonomy broker (safe/propose by default, `--autonomy auto` for full agency), and output streams as the same `ChatEvent` NDJSON as `chat`:
 
 ```
 prevail agent-run --domain wealth --goal "summarize my open tasks" --cli hermes --json
@@ -176,7 +180,7 @@ Inside the TUI: `↑ ↓` between domains, `s` swap to apps, `e` edit the active
 
 ## Platform
 
-prevAIl is bun-only. Currently builds for:
+Glyph Engine is bun-only. Currently builds for:
 
 - macOS arm64 (Apple Silicon)
 - macOS x86_64 (Intel)
@@ -199,7 +203,7 @@ A terminal with UTF-8 + true-color is required. Tested on iTerm2, kitty, alacrit
 ## Docs · changelog · roadmap
 
 - [**CHANGELOG**](./CHANGELOG.md): what shipped in each tag
-- [**Releases**](https://github.com/fru-dev3/prevail-cli/releases): pre-built binaries
+- [**Releases**](https://github.com/fru-dev3/glyph-engine/releases): pre-built binaries
 - [**Demo vault**](./vault-demo): synthetic "Alex Rivera" persona
 - [**Connector architecture**](./docs/connector-architecture.md): auth probes, OAuth runner, manual recipes
 - [**Threat model**](./docs/threat-model.md): long-form threat model + worked example
@@ -208,9 +212,9 @@ A terminal with UTF-8 + true-color is required. Tested on iTerm2, kitty, alacrit
 
 ## Scope
 
-prevAIl is a **single-user terminal cockpit** for personal decisions. You run it on your own machine, with your own AI CLI credentials, against a folder of your own markdown.
+Glyph Engine is a **single-user terminal cockpit** for personal decisions. You run it on your own machine, with your own AI CLI credentials, against a folder of your own markdown.
 
-It is **not** a SaaS, **not** multi-tenant, **not** an enterprise audit-log system, **not** a replacement for a knowledge base. If you need any of those, prevAIl is the wrong tool.
+It is **not** a SaaS, **not** multi-tenant, **not** an enterprise audit-log system, **not** a replacement for a knowledge base. If you need any of those, Glyph Engine is the wrong tool.
 
 > **Vault sync caveat.** If you sync your vault folder via iCloud, Dropbox, Tailscale Drive, git, or any other mechanism, sync should cover `<vault>/` only and **MUST EXCLUDE `~/.prevail/`**. The latter contains secrets (Telegram bot tokens, OAuth refresh tokens) and machine-local state.
 

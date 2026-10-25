@@ -1,9 +1,17 @@
 # Changelog
 
-All notable changes to prevAIl are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/) and the project tracks [Semantic Versioning](https://semver.org/) on the `vX.Y.Z` tag scheme.
+All notable changes to Glyph Engine (formerly prevAIl, the Prevail CLI) are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/) and the project tracks [Semantic Versioning](https://semver.org/) on the `vX.Y.Z` tag scheme.
 
 The release page on GitHub mirrors the same notes for each tag:
-<https://github.com/fru-dev3/prevail/releases>
+<https://github.com/fru-dev3/glyph-engine/releases>
+
+---
+
+## [Unreleased]
+
+### Changed
+
+- Prevail is now Glyph. The engine is Glyph Engine; the command is still `prevail`. Help text, banners, notifications, emails, MCP descriptions and the notes the engine writes into your vault now say Glyph Engine (or Glyph Studio for the desktop app). Nothing else moved: `~/.prevail`, `PREVAIL_*` variables, the `prevail` MCP server id and every file name stay as they were.
 
 ---
 

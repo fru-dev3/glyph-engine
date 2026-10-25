@@ -1,6 +1,6 @@
 # Data flow
 
-How data moves through prevAIl, from keystroke to disk to recall.
+How data moves through Glyph Engine, from keystroke to disk to recall.
 
 ## 1. A turn end-to-end
 

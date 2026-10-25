@@ -1,12 +1,12 @@
 name: Bug report
-description: Something in prevAIl broke or behaved unexpectedly.
+description: Something in Glyph Engine broke or behaved unexpectedly.
 title: "bug: "
 labels: ["bug"]
 body:
   - type: input
     id: version
     attributes:
-      label: prevAIl version
+      label: Glyph Engine version
       placeholder: "Run `prevail --version`"
     validations:
       required: true

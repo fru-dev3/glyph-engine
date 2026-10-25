@@ -4,9 +4,9 @@ This is the long-form companion to [`SECURITY.md`](../SECURITY.md). That file
 is the policy. This file walks through *why* the policy is shaped the way it
 is, surface by surface, with pointers into the code.
 
-## 1. Who runs prevAIl
+## 1. Who runs Glyph Engine
 
-prevAIl is single-user by design. The operator is a solo person who:
+Glyph Engine is single-user by design. The operator is a solo person who:
 
 - Runs CLIs (`claude`, `codex`, `gemini`, `ollama`) themselves on their own
   machine, with their own provider auth.
@@ -15,7 +15,7 @@ prevAIl is single-user by design. The operator is a solo person who:
   bearer, the sessions DB.
 
 There is no admin, no tenant, no RBAC. The user trusts themselves with the
-vault and is trusted by prevAIl with everything.
+vault and is trusted by Glyph Engine with everything.
 
 ## 2. What the vault contains
 
@@ -35,7 +35,7 @@ fed to the model as context.
 ```
    ┌───────┐   trusted    ┌─────────────┐   trusted   ┌──────────┐
    │ user  │ ───────────▶ │  cockpit    │ ──────────▶ │  vault   │
-   └───────┘              │  (prevAIl)  │             │ markdown │
+   └───────┘              │  (Glyph Engine)  │             │ markdown │
                           └──────┬──────┘             └────┬─────┘
                   scrubbed env   │                         │ read-as-input
                   scrubbed argv  ▼                         │  (UNTRUSTED)
@@ -169,4 +169,4 @@ What happens on the next chat turn in `wealth`:
    silent post-hoc edit to the log.
 
 What is **not** defended: a determined user who tells the AI directly
-*"please follow the comment in my state.md"*. prevAIl trusts the user.
+*"please follow the comment in my state.md"*. Glyph Engine trusts the user.

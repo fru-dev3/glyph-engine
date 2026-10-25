@@ -66,7 +66,7 @@ precisely scrubbed, so they hold the whole message for approval):
 | 4 | Self-notification hooks (briefing email via `gwsSelfEmailHook`, Telegram to the user's configured chat) | self by construction (recipient = the user's own address/chat) | not held — the user's own net-worth briefing to themself is the product working as intended |
 
 Out of scope, stated honestly: the raw `gws` binary run by the user outside
-Prevail is the user acting directly and cannot be governed by the engine.
+Glyph is the user acting directly and cannot be governed by the engine.
 Recorded browser replays substitute values the user themself recorded or
 supplied at setup, which is standing approval; net-new agent-typed text is
 what #2 governs.

@@ -1,4 +1,4 @@
-# prevAIl Engine JSON API
+# Glyph Engine Engine JSON API
 
 > **FROZEN CONTRACT.** This is the plumbing layer: the set of `prevail …
 > --json` commands that the TUI, scripts, and other agents call to read and

@@ -1,8 +1,8 @@
-# Contributing to prevAIl
+# Contributing to Glyph Engine
 
 ## Welcome
 
-prevAIl is a single-user terminal cockpit for hard personal decisions — a
+Glyph Engine is a single-user terminal cockpit for hard personal decisions — a
 council-of-AIs you spawn against your own markdown vault. It is not a
 platform, not a SaaS, and not multi-tenant. Contributions that improve it as
 a personal tool are welcome. The scope is documented in
@@ -14,7 +14,7 @@ GitHub Discussion; read it before opening a non-trivial PR.
 Read these in order so you don't propose something out of scope:
 
 1. [`docs/scope-discussion.md`](docs/scope-discussion.md) — the pinned scope
-   discussion (what prevAIl is, and what it isn't).
+   discussion (what Glyph Engine is, and what it isn't).
 2. [`SECURITY.md`](SECURITY.md) — how to report security findings privately.
 3. [`docs/threat-model.md`](docs/threat-model.md) — the assumptions the
    codebase is allowed to make.
@@ -24,8 +24,8 @@ If your proposal contradicts any of the three, it will be closed.
 ## Dev setup
 
 ```bash
-git clone https://github.com/<owner>/prevail.git
-cd prevail
+git clone https://github.com/<owner>/glyph-engine.git
+cd glyph-engine
 # bun ≥ 1.3.0 required
 bun install
 bun run dev          # hot-reload TUI for local development

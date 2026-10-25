@@ -1,4 +1,4 @@
-# prevAIl Vault Specification — v2 (DRAFT / target)
+# Glyph Engine Vault Specification — v2 (DRAFT / target)
 
 > **Status: DESIGN TARGET, not yet implemented.** v1 (`VAULT-SPEC.md`) remains
 > the live contract until the migration lands. v2 is a schema-version bump — it

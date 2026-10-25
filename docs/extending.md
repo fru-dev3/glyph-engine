@@ -1,4 +1,4 @@
-# Extending prevAIl
+# Extending Glyph Engine
 
 How to add new pieces without breaking existing ones. Each section ends at
 the boundary where the rest of the code picks the change up for free.

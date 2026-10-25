@@ -1,14 +1,14 @@
 {
   "name": "prevail-cli",
   "version": "1.10.7",
-  "description": "prevAIl \u2014 a terminal cockpit for your life domains.",
+  "description": "Glyph Engine, formerly the Prevail CLI: a terminal cockpit for your life domains.",
   "type": "module",
   "private": false,
   "license": "GPL-3.0-only",
-  "homepage": "https://github.com/fru-dev3/prevail-cli",
+  "homepage": "https://github.com/fru-dev3/glyph-engine",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fru-dev3/prevail-cli.git"
+    "url": "https://github.com/fru-dev3/glyph-engine.git"
   },
   "keywords": [
     "tui",

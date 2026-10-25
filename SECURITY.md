@@ -1,8 +1,8 @@
 # Security policy
 
-prevAIl is a **single-user terminal application** that runs locally on your machine, executes AI CLIs as subprocesses, and reads/writes plain markdown in a vault folder you control. The threat model — and what's in scope vs out of scope — flows from that.
+Glyph Engine is a **single-user terminal application** that runs locally on your machine, executes AI CLIs as subprocesses, and reads/writes plain markdown in a vault folder you control. The threat model — and what's in scope vs out of scope — flows from that.
 
-If you find a security issue, please report it via [GitHub Security Advisories](https://github.com/fru-dev3/prevail-cli/security/advisories/new) (preferred) or email the maintainer privately. Do **not** open a public issue for security reports.
+If you find a security issue, please report it via [GitHub Security Advisories](https://github.com/fru-dev3/glyph-engine/security/advisories/new) (preferred) or email the maintainer privately. Do **not** open a public issue for security reports.
 
 We aim to acknowledge reports within 48 hours and ship a fix within two weeks for high-severity issues.
 
@@ -13,13 +13,13 @@ We aim to acknowledge reports within 48 hours and ship a fix within two weeks fo
 ### Who you are protecting against
 - **A compromised vault file.** Someone (or some upstream sync) drops malicious markdown into your vault. The AI reads vault content as context on every turn — if vault contents can issue commands to the AI, the threat model is broken.
 - **A compromised AI reply.** A panelist returns a reply containing markdown that tries to masquerade as chair output, hijack the journal distillation, or instruct the AI to leak / overwrite files.
-- **A compromised peer service.** When the MCP server is exposed or the Telegram bridge is reachable, the question is who's authorized to talk to prevAIl, and what they can do once they are.
+- **A compromised peer service.** When the MCP server is exposed or the Telegram bridge is reachable, the question is who's authorized to talk to Glyph Engine, and what they can do once they are.
 - **A leaked secrets file.** OAuth refresh tokens, Telegram bot tokens, CLI cookies — anything in `~/.prevail/` that leaks gives an attacker the keys to your council.
 
 ### Who you are NOT protecting against
-- **The user.** prevAIl trusts the human running it. There is no permission system, no RBAC, no sandbox between the user and the vault.
-- **A root-level system compromise.** If an attacker has root on your machine, prevAIl cannot save you. Defend the machine first.
-- **Multiple users on one install.** prevAIl is single-user by design. Two people sharing one install share one trust boundary.
+- **The user.** Glyph Engine trusts the human running it. There is no permission system, no RBAC, no sandbox between the user and the vault.
+- **A root-level system compromise.** If an attacker has root on your machine, Glyph Engine cannot save you. Defend the machine first.
+- **Multiple users on one install.** Glyph Engine is single-user by design. Two people sharing one install share one trust boundary.
 
 ---
 
@@ -66,13 +66,13 @@ We aim to acknowledge reports within 48 hours and ship a fix within two weeks fo
 
 ## Out of scope
 
-The following are intentionally NOT defended against. If you need any of them, prevAIl is the wrong tool — consider building a hosted, multi-tenant service on top of the council protocol instead.
+The following are intentionally NOT defended against. If you need any of them, Glyph Engine is the wrong tool — consider building a hosted, multi-tenant service on top of the council protocol instead.
 
-- **Multi-tenancy.** prevAIl is single-user. There is no isolation between concurrent users.
+- **Multi-tenancy.** Glyph Engine is single-user. There is no isolation between concurrent users.
 - **Tamper-evident vault.** The vault is plain markdown the user can edit anytime. The `.shasum` mechanism for `_log/` is *detective*, not *preventive* — it tells you something changed, it can't stop a change.
 - **Defense against the user's own AI choices.** If you tell `claude` to delete your vault, it will. The AI runs with your filesystem permissions.
 - **Encrypted vault at rest.** The vault is plaintext markdown. Use FileVault / LUKS / FDE if you want disk-level encryption.
-- **Network attacks against the AI CLIs.** prevAIl exec's `claude`, `codex`, `gemini`, etc. Their security posture is theirs. We don't sandbox their network behavior.
+- **Network attacks against the AI CLIs.** Glyph Engine exec's `claude`, `codex`, `gemini`, etc. Their security posture is theirs. We don't sandbox their network behavior.
 - **Audit-log integrity against the user.** The `_log/` shasum mechanism deters silent tampering but doesn't survive a determined user who edits both the log and the shasum file.
 
 ---
@@ -80,20 +80,20 @@ The following are intentionally NOT defended against. If you need any of them, p
 ## Known limitations
 
 - **Vault sync caveat.** If you sync your vault via iCloud / Dropbox / Tailscale Drive / git, sync should cover `<vault>/` only and **must exclude `~/.prevail/`**. The latter contains secrets and machine-local state.
-- **SSRF.** When `webAccess=allow` is set, the AI's web tools (controlled by claude / codex / gemini, not by prevAIl) can reach internal RFC1918 ranges and metadata endpoints (e.g. `http://169.254.169.254/`). prevAIl cannot stop this — if you run prevAIl on a machine inside a sensitive network, leave web access OFF.
-- **No quota / rate-limit awareness.** prevAIl will happily fire 32 council calls in a single turn (lens=all × 4 CLIs) until the `councilMaxCallsPerTurn` cap. AI-provider quotas are the user's responsibility.
+- **SSRF.** When `webAccess=allow` is set, the AI's web tools (controlled by claude / codex / gemini, not by Glyph Engine) can reach internal RFC1918 ranges and metadata endpoints (e.g. `http://169.254.169.254/`). Glyph Engine cannot stop this — if you run Glyph Engine on a machine inside a sensitive network, leave web access OFF.
+- **No quota / rate-limit awareness.** Glyph Engine will happily fire 32 council calls in a single turn (lens=all × 4 CLIs) until the `councilMaxCallsPerTurn` cap. AI-provider quotas are the user's responsibility.
 - **Telegram tokens at rest are plaintext.** chmod 0600 is enforced but a disk-read attacker still wins.
 
 ---
 
 ## Reporting a vulnerability
 
-- **Preferred:** Open a private security advisory at <https://github.com/fru-dev3/prevail-cli/security/advisories/new>.
+- **Preferred:** Open a private security advisory at <https://github.com/fru-dev3/glyph-engine/security/advisories/new>.
 - **Acceptable:** Email **security@fru.dev** with details and steps to reproduce.
 - **Not acceptable:** Open a public GitHub issue. Please give us a chance to fix and ship before disclosure.
 
 Include:
-- prevAIl version (`prevail --version`)
+- Glyph Engine version (`prevail --version`)
 - OS + version
 - Minimal reproduction, if possible
 - Your assessment of severity and impact

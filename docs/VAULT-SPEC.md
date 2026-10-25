@@ -1,6 +1,6 @@
-# prevAIl Vault Specification
+# Glyph Engine Vault Specification
 
-> **FROZEN CONTRACT.** Every prevAIl agent, engine, and UI builds against this
+> **FROZEN CONTRACT.** Every Glyph Engine agent, engine, and UI builds against this
 > document. Changes that break an existing rule require a schema-version bump
 > (see [Schema versioning](#schema-versioning)) and a migration. Additive,
 > backward-compatible changes (new *optional* files/fields) do not.
@@ -8,7 +8,7 @@
 The vault is a folder of **domains**. A domain is a slice of life or work —
 `wealth`, `health`, `business`, `career`, … — represented entirely as files on
 disk. The vault is plain files so it can live in any synced folder (iCloud,
-Dropbox, a git repo) and be read by any tool. prevAIl never requires a database
+Dropbox, a git repo) and be read by any tool. Glyph Engine never requires a database
 to function.
 
 ---
@@ -179,7 +179,7 @@ embedding store, search index) under `~/.prevail/` — outside the vault. Reason
 2. **Rebuildability.** The vault's Markdown/JSON/JSONL files are the source of
    truth. The index can always be regenerated from them, so losing it is harmless.
 
-If the index is deleted, prevAIl rebuilds it from vault files. The vault stays
+If the index is deleted, Glyph Engine rebuilds it from vault files. The vault stays
 human-readable and sync-safe forever.
 
 ---

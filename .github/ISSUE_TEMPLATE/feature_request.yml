@@ -14,19 +14,19 @@ body:
     id: proposal
     attributes:
       label: Proposed solution
-      description: How would you like prevAIl to handle this? Be concrete — describe the slash command, the chip on the ConfigBar, the new tab, etc.
+      description: How would you like Glyph Engine to handle this? Be concrete — describe the slash command, the chip on the ConfigBar, the new tab, etc.
     validations:
       required: true
   - type: textarea
     id: alternatives
     attributes:
       label: What's already close?
-      description: What existing prevAIl feature is closest to this? Why doesn't it fit?
+      description: What existing Glyph Engine feature is closest to this? Why doesn't it fit?
   - type: dropdown
     id: scope
     attributes:
       label: Is this in scope?
-      description: prevAIl is a single-user terminal tool. See the pinned scope discussion. If your request is multi-user / hosted / enterprise, it's likely out of scope.
+      description: Glyph Engine is a single-user terminal tool. See the pinned scope discussion. If your request is multi-user / hosted / enterprise, it's likely out of scope.
       options:
         - "Yes — single-user, local, follows the threat model"
         - "Unsure — would like to discuss"
