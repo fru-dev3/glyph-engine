@@ -802,6 +802,7 @@ USAGE
   prevail gws run --id <id> --json
                               execute one approved Google Workspace write
   prevail bench [...]         run the public council benchmark suite
+  prevail arena [...]         Glyph Arena: duels, blind picks, the routing policy (JSON out)
                               (bench list --json for the machine question list)
   prevail vault [...]         prune old logs, snapshot/restore the vault
                               archive/restore/list-archived domains (--json)
@@ -6542,6 +6543,12 @@ async function main() {
   // vault = pure passthrough, so this is a no-op for the common case.
   const { initVaultSession } = await import("./vault-session.ts");
   initVaultSession();
+  // `prevail arena ...`: Glyph Arena's commands (src/arena/cli.ts). JSON out.
+  if (process.argv[2] === "arena") {
+    const { arenaCommand } = await import("./arena/cli.ts");
+    process.exitCode = await arenaCommand(process.argv.slice(3));
+    return;
+  }
   const args = parseArgs(process.argv);
   if (args.help) {
     printHelp();

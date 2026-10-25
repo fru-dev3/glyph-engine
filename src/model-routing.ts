@@ -211,6 +211,11 @@ export interface RouteInput {
   overrides?: RouteOverride[];
   // Overrides needed in a bucket before a learned preference is honored. Default 2.
   learnThreshold?: number;
+  // Glyph Arena's route for this turn's league (arena/policy.ts lookupRoute), read
+  // by the caller. Honored only when it names this runtime and an available model,
+  // so it can never move a turn to another engine (or off a local one). Absent =>
+  // byte-identical to the heuristic pick.
+  arena?: { cli: string; model: string; why: string } | null;
 }
 
 export interface RouteDecision {
@@ -331,6 +336,14 @@ export function chooseModel(input: RouteInput): RouteDecision {
   // (domain + difficulty band) and that model is among the currently-available
   // candidates, honor it over the scored pick. Empty/absent history is a no-op,
   // so a fresh vault is byte-identical to the heuristic+classifier route.
+  // Layer 6 - Glyph Arena's policy: the recipe that won this league on the user's
+  // own tasks. Applied before the learned preference so the user's repeated manual
+  // pick still wins (Arena counts those picks as signals too).
+  let arenaApplied: string | null = null;
+  if (input.arena && input.arena.model) {
+    const hit = pool.find((c) => c.cli === input.arena!.cli && c.model === input.arena!.model);
+    if (hit) { best = hit; arenaApplied = input.arena.why; }
+  }
   let learnedApplied: string | null = null;
   if (input.overrides && input.overrides.length > 0) {
     const pref = learnedPreference(input.overrides, input.domain, difficultyBand(difficulty), input.learnThreshold ?? 2);
@@ -343,6 +356,8 @@ export function chooseModel(input: RouteInput): RouteDecision {
   const meta = metaFor(best.model);
   const reason = learnedApplied
     ? `learned: you usually pick ${learnedApplied} here`
+    : arenaApplied
+    ? `Arena: ${arenaApplied}`.slice(0, 240)
     : buildReason({
         difficulty,
         bias,
@@ -364,6 +379,7 @@ export function chooseModel(input: RouteInput): RouteDecision {
     confidence = Math.min(0.99, confidence + margin * 0.12);
   }
   if (learnedApplied) confidence = Math.max(confidence, 0.9);
+  else if (arenaApplied) confidence = Math.max(confidence, 0.85);
 
   return {
     cli: best.cli,

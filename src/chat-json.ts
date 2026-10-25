@@ -21,6 +21,8 @@
 // into the rebuildable SQLite/FTS index — keeping JSONL canonical and the
 // .db a regenerable cache (VAULT-SPEC §4).
 
+import { lookupRoute as lookupArenaRoute, readPolicy as readArenaPolicy } from "./arena/policy.ts";
+import { classifyKind as classifyArenaKind, classifyWeight as classifyArenaWeight } from "./arena/classify.ts";
 import { resolve } from "node:path";
 
 import {
@@ -632,8 +634,19 @@ export async function runChatJson(opts: ChatJsonOptions): Promise<number> {
     let overrides: RouteOverride[] = [];
     try { overrides = readRouteOverrides(vaultPath); } catch { overrides = []; }
 
+    // Glyph Arena's policy for this league (build/_meta/arena/policy.json). A
+    // missing or unreadable policy is null: today's routing, unchanged.
+    let arena: { cli: string; model: string; why: string } | null = null;
+    try {
+      const policy = readArenaPolicy(vaultPath);
+      if (policy) {
+        const r = lookupArenaRoute(policy, opts.domain || "general", classifyArenaKind(message), classifyArenaWeight(message));
+        if (r) arena = { cli: r.cli, model: r.model, why: r.why };
+      }
+    } catch { arena = null; }
+
     const decision = routeWithFallback(
-      { message, candidates, bias, localOnly, classified, domain: opts.domain, overrides },
+      { message, candidates, bias, localOnly, classified, domain: opts.domain, overrides, arena },
       { cli: cli.kind, model: "" },
     );
     model = decision.model;
