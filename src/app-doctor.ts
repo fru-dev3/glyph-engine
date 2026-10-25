@@ -123,7 +123,7 @@ export async function probeAll(vault: string, opts: DoctorOpts = {}): Promise<Pr
     for (const [tool, h] of Object.entries(ad.tools ?? {})) {
       if (!h.present) continue;
       const app = VENDOR[tool] ?? tool;
-      out.push(h.shape === "unknown" ? { app, check: `${tool} records`, status: "unknown_shape", detail: h.note ?? "a record shape this version does not know", fix: "update Prevail; until then this tool's tokens are not counted" } : { app, check: `${tool} records`, status: "ok", detail: "readable" });
+      out.push(h.shape === "unknown" ? { app, check: `${tool} records`, status: "unknown_shape", detail: h.note ?? "a record shape this version does not know", fix: "update Glyph Studio; until then this tool's tokens are not counted" } : { app, check: `${tool} records`, status: "ok", detail: "readable" });
     }
   } catch { /* no AI scan on this Mac yet */ }
   // 4. Capture gaps: a tool used in the last 3 days with no prompt captured for 7.
@@ -395,7 +395,7 @@ const money = (x: number) => `$${x >= 100 ? Math.round(x).toLocaleString("en-US"
 
 export function stackReviewMarkdown(stack: Stack, cards: Card[], month: string): string {
   const paid = stack.apps.filter((a) => a.monthly);
-  const lines = [`# Stack review, ${month}`, "", `Written by Prevail from your app records, usage and charges; every number comes from code. Statements and sign-ins it could not read are named, not guessed.`, ""];
+  const lines = [`# Stack review, ${month}`, "", `Written by Glyph from your app records, usage and charges; every number comes from code. Statements and sign-ins it could not read are named, not guessed.`, ""];
   lines.push("## Spend", "");
   lines.push(`- Known spend: ${money(stack.month_total)} a month across ${paid.length} paid app${paid.length === 1 ? "" : "s"}; ${stack.in_use} apps in use in the last 30 days.`);
   if (stack.ai.paid_monthly !== null) lines.push(`- AI: ${money(stack.ai.paid_monthly)} paid, ${money(stack.ai.api_equivalent)} of use at API prices this month${stack.ai.value_multiple !== null ? ` (${stack.ai.value_multiple}x)` : ""}.`);
@@ -414,7 +414,7 @@ export function stackReviewMarkdown(stack: Stack, cards: Card[], month: string):
   section("Unused and free", ["archive"]);
   if (stack.unknown) lines.push("", `${stack.unknown} signal${stack.unknown === 1 ? "" : "s"} matched no app (\`prevail apps unknown\`); mapping one makes a rule.`);
   const noFda = stack.fda.filter((f) => f.state === "needs-fda");
-  if (noFda.length) lines.push("", `Screen Time is not read on ${noFda.map((f) => f.host).join(", ")}: Prevail needs Full Disk Access there, so app minutes come from live focus only.`);
+  if (noFda.length) lines.push("", `Screen Time is not read on ${noFda.map((f) => f.host).join(", ")}: Glyph Studio needs Full Disk Access there, so app minutes come from live focus only.`);
   return `${lines.join("\n")}\n`;
 }
 
@@ -440,7 +440,7 @@ export function offboardingDraft(vault: string, id: string, now = Date.now()): s
   const renew = (m.renewal as { next?: string } | undefined)?.next;
   const body = [
     `# Offboarding ${rec.name} (draft, ${day})`, "",
-    "A checklist Prevail drafted. Nothing here has been done: you cancel, you send.", "",
+    "A checklist Glyph drafted. Nothing here has been done: you cancel, you send.", "",
     `- [ ] Cancel the plan${monthly ? ` (${money(monthly)} a month${renew ? `, renews ${renew}` : ""})` : ""} in ${rec.name}'s account or billing settings${renew ? ` before ${renew}` : ""}.`,
     `- [ ] Export your data from ${rec.name} first (account settings, export or download).`,
     "- [ ] Delete the account once the export is safe, if you will not come back.",

@@ -72,7 +72,7 @@ describe("MCP writes behind approval", () => {
   beforeEach(seed);
   test("create: queued in the Inbox, run the moment it is allowed, a retry says it is done", async () => {
     const q = await missionWriteTool(V, "create_mission", { name: "Trip to Foo Island", outcome: "A week on Foo Island", target: "2027-03-01", owner: "home" });
-    expect(q).toMatch(/^Not done yet: this waits for the user's approval in Prevail's Inbox/);
+    expect(q).toMatch(/^Not done yet: this waits for the user's approval in Glyph Studio's Inbox/);
     expect(readMission(V, "trip-to-foo-island")).toBeNull();
     const act = readPendingActs(V).find((a) => a.tool === "mcp__prevail-missions__create_mission")!;
     expect(act.summary).toBe('Start the project "Trip to Foo Island": A week on Foo Island, by 2027-03-01');

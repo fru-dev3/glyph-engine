@@ -440,7 +440,7 @@ export function gateBuiltin(vault: string, vaultLockOn: boolean, toolName: strin
       return { action: "deny", reason: `Vault Lock is on: ${name} may only touch files inside your vault. "${target}" is outside it and was blocked. Work within the vault, or the user can turn off Vault Lock in Privacy.` };
     }
     if (isFileWrite && target && touchesControlState(vault, target)) {
-      return { action: "deny", reason: `${name} to "${target}" was blocked: _meta holds Prevail's approval grants and autonomy policy, which only the user can change.` };
+      return { action: "deny", reason: `${name} to "${target}" was blocked: _meta holds Glyph's approval grants and autonomy policy, which only the user can change.` };
     }
     return { action: "allow" };
   }
@@ -462,7 +462,7 @@ export function gateBuiltin(vault: string, vaultLockOn: boolean, toolName: strin
       return { action: "deny", reason: `Vault Lock is on: that shell command references your home directory (~ or $HOME), which is outside the vault. Blocked. Work within the vault, or the user can turn off Vault Lock.` };
     }
     if (CONTROL_REF_RE.test(cmd)) {
-      return { action: "deny", reason: `Vault Lock is on: that shell command touches Prevail's _meta control state (approval grants, autonomy policy), which only the user can change. Blocked.` };
+      return { action: "deny", reason: `Vault Lock is on: that shell command touches Glyph's _meta control state (approval grants, autonomy policy), which only the user can change. Blocked.` };
     }
     if (BARE_CD_RE.test(cmd) || DOTDOT_RE.test(cmd)) {
       return { action: "deny", reason: `Vault Lock is on: that shell command climbs out of the working directory (bare cd or a ".." path). Use absolute paths inside the vault instead, or the user can turn off Vault Lock.` };
@@ -549,7 +549,7 @@ export function gateToolCall(vault: string, domain: string, toolName: string, to
   return {
     action: "deny",
     reason:
-      `This action was NOT run. Prevail queued it for the user's approval under Needs You (id ${rec.id}).${sens} ` +
+      `This action was NOT run. Glyph queued it for the user's approval under Needs You (id ${rec.id}).${sens} ` +
       `Tell the user what you are trying to do and that it awaits their approval; after they approve, call this exact tool with the exact same arguments to run it. Do not attempt another route. ${actMarker(rec.id)}`,
   };
 }
@@ -643,7 +643,7 @@ export async function runActGateHook(vault: string, domain: string, vaultLockOn 
     // Fail closed for gated shapes, open for builtins.
     decision = classifyAct(toolName) === "allow"
       ? { action: "allow" }
-      : { action: "deny", reason: `Prevail's action gate errored (${(e as Error).message}); the action was not run.` };
+      : { action: "deny", reason: `Glyph Engine's action gate errored (${(e as Error).message}); the action was not run.` };
   }
   // The app access log: every MCP call that belongs to a mirrored app, reads
   // included. Recorded after the decision and never able to change it.
@@ -664,7 +664,7 @@ export async function runActGateHook(vault: string, domain: string, vaultLockOn 
 export function hookOutput(toolName: string, decision: GateDecision): Record<string, unknown> {
   if (decision.action === "allow") {
     if (!toolName.startsWith("mcp__")) return {};
-    return { hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "allow", permissionDecisionReason: "allowed by Prevail's action gate" } };
+    return { hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "allow", permissionDecisionReason: "allowed by Glyph Engine's action gate" } };
   }
   return {
     hookSpecificOutput: {

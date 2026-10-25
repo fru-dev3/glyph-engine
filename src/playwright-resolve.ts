@@ -35,7 +35,7 @@ import { dirname, isAbsolute, join } from "node:path";
 // dump, which is meaningless to a user and exposes the CI build path. Actionable:
 // the only real remedy for a packaging miss is a fresh install / update.
 export const PLAYWRIGHT_UNAVAILABLE_MESSAGE =
-  "Browser automation isn't available in this build. The bundled browser engine could not be found. Try updating Prevail; if it persists, reinstall.";
+  "Browser automation isn't available in this build. The bundled browser engine could not be found. Try updating Glyph Studio; if it persists, reinstall.";
 
 // True when an error/message originates from playwright-core being unavailable
 // (failed on-disk resolution, then the in-binary fallback throwing a

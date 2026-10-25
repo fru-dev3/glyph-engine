@@ -128,7 +128,7 @@ export function candidates(vault: string, c: Computed): MetricProposal[] {
   // 1. The user's stated metrics.
   for (const { domain, line, file } of idealMetricLines(vault)) {
     const metric = metricFor(line);
-    push({ key: keyOf("ideal", domain, line), kind: "ideal", title: metric ? `${def(metric)?.title} for ${domain}` : shortTitle(line), why: metric ? `You listed "${line}" in what you track for ${domain}; this is the part Prevail can count today.` : `You listed "${line}" in what you track for ${domain}. Nothing measures it yet.`, ...(metric ? { metric } : {}), domain, quote: line, from: file });
+    push({ key: keyOf("ideal", domain, line), kind: "ideal", title: metric ? `${def(metric)?.title} for ${domain}` : shortTitle(line), why: metric ? `You listed "${line}" in what you track for ${domain}; this is the part Glyph can count today.` : `You listed "${line}" in what you track for ${domain}. Nothing measures it yet.`, ...(metric ? { metric } : {}), domain, quote: line, from: file });
   }
   // 2. Compass goals with nothing measuring them.
   const doc = readCompass(vault);
@@ -138,14 +138,14 @@ export function candidates(vault: string, c: Computed): MetricProposal[] {
     if (!["active", "confirmed", "prototyping"].includes(st) || served.has(g.id) || g.fields.some((f) => f.key === "signal")) continue;
     const metric = metricFor(g.title);
     const need = NEEDS.find(([re]) => re.test(g.title))?.[1];
-    push({ key: keyOf("goal", g.id), kind: metric ? "goal" : "source", title: metric ? `${def(metric)?.title}, for "${g.title}"` : `Measure "${g.title}"`, why: metric ? `"${g.title}" has no metric. ${def(metric)?.title} is the closest thing Prevail already counts.` : `"${g.title}" has no metric${need ? `; it needs ${need}` : ""}.`, ...(metric ? { metric } : {}), serves: g.id, servesTitle: g.title, from: "build/compass.md" });
+    push({ key: keyOf("goal", g.id), kind: metric ? "goal" : "source", title: metric ? `${def(metric)?.title}, for "${g.title}"` : `Measure "${g.title}"`, why: metric ? `"${g.title}" has no metric. ${def(metric)?.title} is the closest thing Glyph already counts.` : `"${g.title}" has no metric${need ? `; it needs ${need}` : ""}.`, ...(metric ? { metric } : {}), serves: g.id, servesTitle: g.title, from: "build/compass.md" });
   }
   // 5. Non-negotiables whose check has no source.
   for (const r of items(doc, "rule")) {
     if (r.tokens.status === "proposed") continue;
     const need = NEEDS.find(([re]) => re.test(r.title))?.[1];
     if (!need || served.has(r.id)) continue;
-    push({ key: keyOf("source", r.id), kind: "source", title: `Check "${r.title}"`, why: `To check your rule "${r.title}" without asking you, Prevail needs ${need}.`, serves: r.id, servesTitle: r.title, from: "build/compass.md" });
+    push({ key: keyOf("source", r.id), kind: "source", title: `Check "${r.title}"`, why: `To check your rule "${r.title}" without asking you, Glyph needs ${need}.`, serves: r.id, servesTitle: r.title, from: "build/compass.md" });
   }
   // 3. Built-in metrics that move most weeks but are not pinned.
   for (const m of defs) {

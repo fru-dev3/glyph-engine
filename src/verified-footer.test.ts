@@ -13,7 +13,7 @@ describe("buildVerifiedFooter — the no-fabricated-success contract", () => {
       [rec({ detail: "sent the digest", ok: true }), rec({ detail: "queued an invoice", queued: true }), rec({ detail: "delete failed", ok: false })],
       true, "claude",
     );
-    expect(f).toContain("What I actually did (verified by Prevail):");
+    expect(f).toContain("What I actually did (verified by Glyph):");
     expect(f).toContain("✓ sent the digest");     // check
     expect(f).toContain("⏳ queued an invoice");   // hourglass
     expect(f).toContain("✗ delete failed");       // cross
@@ -45,6 +45,6 @@ describe("buildVerifiedFooter — the no-fabricated-success contract", () => {
     // Guards against a regression where an empty ledger prints an empty
     // 'What I actually did:' header (which reads as success with no detail).
     const f = buildVerifiedFooter([], true, "claude");
-    expect(f.includes("What I actually did (verified by Prevail):\n✓")).toBe(false);
+    expect(f.includes("What I actually did (verified by Glyph):\n✓")).toBe(false);
   });
 });

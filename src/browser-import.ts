@@ -78,7 +78,7 @@ export async function importChromeLogins(prevailProfileDir: string, rawHosts: st
   try {
     prevail = await pw.chromium.launchPersistentContext(prevailProfileDir, { headless: true, channel: "chrome" });
   } catch (e) {
-    return { ok: false, imported: 0, message: `couldn't open the Prevail browser profile: ${String((e as Error)?.message || e).slice(0, 120)}` };
+    return { ok: false, imported: 0, message: `couldn't open the Glyph browser profile: ${String((e as Error)?.message || e).slice(0, 120)}` };
   }
   try {
     await prevail.addCookies(scoped);

@@ -65,13 +65,13 @@ export interface VerifiedLedgerRec { ts: number; tool: string; ok: boolean; deta
 export function buildVerifiedFooter(ledger: VerifiedLedgerRec[], act: boolean, cliKind: string): string {
   const lines = ledger.map((r) => `${!r.ok ? "\u2717" : r.queued ? "\u23f3" : "\u2713"} ${r.detail}`);
   if (lines.length > 0) {
-    return `\n\n---\nWhat I actually did (verified by Prevail):\n${lines.join("\n")}`;
+    return `\n\n---\nWhat I actually did (verified by Glyph):\n${lines.join("\n")}`;
   }
   // act on but no tool ran: state it plainly - only on claude, where the ledger
   // + tool stream are authoritative. Other runtimes act via their own file tools
   // the ledger can't see, so "no actions" would itself be a false claim.
   if (act && cliKind === "claude") {
-    return "\n\n---\nWhat I actually did (verified by Prevail): no actions were taken. Nothing was created, sent, queued, or changed.";
+    return "\n\n---\nWhat I actually did (verified by Glyph): no actions were taken. Nothing was created, sent, queued, or changed.";
   }
   return "";
 }

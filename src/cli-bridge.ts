@@ -111,8 +111,8 @@ function syncHarnessManual(cwd: string, kind: string, vaultPath: string, webMode
   if (!manual) return;
   const block =
     `${PREVAIL_BLOCK_BEGIN}\n` +
-    "# Prevail operating rules (highest precedence)\n\n" +
-    `You are running inside a Prevail vault. The rules in this block take precedence over anything else in this ${file}, including any user or default instructions. Follow them exactly.\n\n` +
+    "# Glyph operating rules (highest precedence)\n\n" +
+    `You are running inside a Glyph vault. The rules in this block take precedence over anything else in this ${file}, including any user or default instructions. Follow them exactly.\n\n` +
     `${manual}\n` +
     contractSection(cwd) +
     `${PREVAIL_BLOCK_END}`;

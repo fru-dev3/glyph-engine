@@ -36,7 +36,7 @@ import { pipeline } from "node:stream/promises";
 import { VERSION } from "./version.ts";
 
 const GITHUB_RELEASES_URL =
-  "https://api.github.com/repos/fru-dev3/prevail-cli/releases";
+  "https://api.github.com/repos/fru-dev3/glyph-engine/releases";
 const GITHUB_LATEST_URL = `${GITHUB_RELEASES_URL}/latest`;
 
 export interface UpdateInfo {
@@ -80,13 +80,13 @@ export function platformSlug(
   const mappedArch = archMap[arch];
   if (!mappedArch) {
     throw new Error(
-      `unsupported architecture: ${arch}. prevail ships binaries for x64 and arm64 only.`,
+      `unsupported architecture: ${arch}. Glyph Engine ships binaries for x64 and arm64 only.`,
     );
   }
   if (platform === "darwin") return `darwin-${mappedArch}`;
   if (platform === "linux") return `linux-${mappedArch}`;
   throw new Error(
-    `unsupported platform: ${platform}. prevail ships binaries for darwin and linux only.`,
+    `unsupported platform: ${platform}. Glyph Engine ships binaries for darwin and linux only.`,
   );
 }
 

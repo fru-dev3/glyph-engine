@@ -91,12 +91,12 @@ export interface RenderedNotification {
 
 // Render one notification. `bodyMarkdown` is the model/loop output verbatim.
 export function renderNotificationEmail(meta: NotificationMeta, bodyMarkdown: string, now = new Date()): RenderedNotification {
-  const subject = `Prevail · ${meta.name}${meta.domain ? ` · ${titleCaseWord(meta.domain)}` : ""}`;
+  const subject = `Glyph · ${meta.name}${meta.domain ? ` · ${titleCaseWord(meta.domain)}` : ""}`;
   const when = now.toISOString().replace("T", " ").slice(0, 19) + " UTC";
   const provenance = [
     `Sent by ${meta.kind.includes("loop") ? "the loop" : "routine"} "${meta.name}"${meta.cadence ? ` (${meta.cadence})` : ""}${meta.domain ? ` in your ${titleCaseWord(meta.domain)} domain` : ""}.`,
-    `Machine ${hostname()} · Prevail engine v${VERSION} · ${when}`,
-    meta.appPath ? `Open in Prevail: ${meta.appPath}` : "",
+    `Machine ${hostname()} · Glyph Engine v${VERSION} · ${when}`,
+    meta.appPath ? `Open in Glyph Studio: ${meta.appPath}` : "",
   ].filter(Boolean);
   const html = `
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BG};padding:24px 0;">

@@ -209,7 +209,7 @@ function CompactBranding({
     >
       {/* Row 1: brand + date + stats + cli health */}
       <box flexDirection="row" height={1}>
-        <text fg={theme.gold} attributes={1}>{"◈ prevAIl"}</text>
+        <text fg={theme.gold} attributes={1}>{"◈ Glyph Engine"}</text>
         <text fg={theme.goldDim}>{` v${VERSION}`}</text>
         <text fg={theme.fgFaint}>{"  ·  "}</text>
         <text fg={theme.gold}>{dateLabel}</text>
@@ -319,59 +319,14 @@ type Glyph = readonly [string, string, string, string, string, string, string];
 // uniform — narrow letters (I) get whitespace padding inside their
 // box rather than being squeezed.
 const G: Record<string, Glyph> = {
-  P: [
-    "██████╗   ",
-    "██╔══██╗  ",
-    "██████╔╝  ",
-    "██╔═══╝   ",
-    "██║       ",
-    "██║       ",
-    "╚═╝       ",
-  ],
-  R: [
-    "██████╗   ",
-    "██╔══██╗  ",
-    "██████╔╝  ",
-    "██╔══██╗  ",
-    "██║  ██║  ",
-    "██║  ██║  ",
-    "╚═╝  ╚═╝  ",
-  ],
-  E: [
-    "███████╗  ",
+  G: [
+    " ██████╗  ",
     "██╔════╝  ",
-    "█████╗    ",
-    "██╔══╝    ",
     "██║       ",
-    "███████╗  ",
-    "╚══════╝  ",
-  ],
-  V: [
-    "██╗   ██╗ ",
+    "██║  ███╗ ",
     "██║   ██║ ",
-    "██║   ██║ ",
-    "╚██╗ ██╔╝ ",
-    " ╚████╔╝  ",
-    "  ╚██╔╝   ",
-    "   ╚═╝    ",
-  ],
-  A: [
-    "  █████╗  ",
-    " ██╔══██╗ ",
-    " ███████╗ ",
-    " ██╔══██║ ",
-    " ██║  ██║ ",
-    " ██║  ██║ ",
-    " ╚═╝  ╚═╝ ",
-  ],
-  I: [
-    "██████╗   ",
-    "╚═██╔═╝   ",
-    "  ██║     ",
-    "  ██║     ",
-    "  ██║     ",
-    "██████╗   ",
-    "╚═════╝   ",
+    "╚██████╔╝ ",
+    " ╚═════╝  ",
   ],
   L: [
     "██╗       ",
@@ -382,14 +337,37 @@ const G: Record<string, Glyph> = {
     "███████╗  ",
     "╚══════╝  ",
   ],
+  Y: [
+    "██╗   ██╗ ",
+    "╚██╗ ██╔╝ ",
+    " ╚████╔╝  ",
+    "  ╚██╔╝   ",
+    "   ██║    ",
+    "   ██║    ",
+    "   ╚═╝    ",
+  ],
+  P: [
+    "██████╗   ",
+    "██╔══██╗  ",
+    "██████╔╝  ",
+    "██╔═══╝   ",
+    "██║       ",
+    "██║       ",
+    "╚═╝       ",
+  ],
+  H: [
+    "██╗  ██╗  ",
+    "██║  ██║  ",
+    "██║  ██║  ",
+    "███████║  ",
+    "██╔══██║  ",
+    "██║  ██║  ",
+    "╚═╝  ╚═╝  ",
+  ],
 };
 
-// Single gap value, applied between every letter — within PREV, within AI,
-// and across the group boundaries. The wordmark reads as ONE word
-// (PREVAIL) with mathematically equal spacing throughout. The AI block
-// still pops because of its cyan color, not because of extra whitespace.
+// Single gap value, applied between every letter of the wordmark.
 const LETTER_GAP = " ";
-const GROUP_GAP = LETTER_GAP;
 
 // Compose a group from its letters with single-cell gaps. Returns 7 rows.
 function compose(letters: readonly string[]): readonly string[] {
@@ -404,27 +382,17 @@ function compose(letters: readonly string[]): readonly string[] {
   return rows;
 }
 
-const LOGO_PREV = compose(["P", "R", "E", "V"]);
-const LOGO_AI = compose(["A", "I"]);
-const LOGO_L = compose(["L"]);
+const LOGO = compose(["G", "L", "Y", "P", "H"]);
 
 function BrandColumn() {
-  // Render each row as three spans: PREV (gold) — gap — AI (cyan) — gap —
-  // L (gold). The per-group GAP keeps the original ANSI-Shadow letter
-  // shapes intact (which were tuned to interlock) so the word reads
-  // cleanly, while the gap on either side of AI makes the cyan block
-  // pop as the visual center.
+  // The GLYPH wordmark, one row of letters per line.
   return (
     <box flexDirection="row" width={88}>
       <Mascot />
       <box flexDirection="column" paddingLeft={2}>
-        {LOGO_PREV.map((_, i) => (
-          <text key={`logo-${i}`} attributes={1}>
-            <span fg={theme.gold} attributes={1}>{LOGO_PREV[i]}</span>
-            <span fg={theme.gold} attributes={1}>{GROUP_GAP}</span>
-            <span fg={theme.aiAccent} attributes={1}>{LOGO_AI[i]}</span>
-            <span fg={theme.gold} attributes={1}>{GROUP_GAP}</span>
-            <span fg={theme.gold} attributes={1}>{LOGO_L[i]}</span>
+        {LOGO.map((row, i) => (
+          <text key={`logo-${i}`} fg={theme.gold} attributes={1}>
+            {row}
           </text>
         ))}
       </box>
@@ -529,7 +497,7 @@ function StatusColumn({
         </text>
       </box>
       <text fg={theme.fgDim}>
-        {`${timeLabel}  ·  prevail v${VERSION}  ·  opentui`}
+        {`${timeLabel}  ·  Glyph Engine v${VERSION}  ·  opentui`}
       </text>
       <StatRow label="vault" value={vaultLabel} valueColor={theme.fg} />
       {/* "chat" line dropped — it was just "no chats yet" most of the

@@ -208,7 +208,7 @@ async function handleUpdate(
       await tgSendMessage(
         cfg.botToken,
         chatId,
-        `Hi — this prevail bot doesn't recognize you yet. Ask its owner to run:\n\nprevail telegram add-user ${chatId}\n\nThen try again.`,
+        `Hi — this Glyph Engine bot doesn't recognize you yet. Ask its owner to run:\n\nprevail telegram add-user ${chatId}\n\nThen try again.`,
       ).catch(() => {});
     }
     return;
@@ -336,7 +336,7 @@ async function handleCommand(
         cfg.botToken,
         chatId,
         [
-          "prevAIl on Telegram — terminal cockpit, away from the keyboard.",
+          "Glyph Engine on Telegram: your terminal cockpit, away from the keyboard.",
           "",
           "/domains            list life domains in this vault",
           "/domain <name>      switch active domain (e.g. /domain wealth)",

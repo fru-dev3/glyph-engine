@@ -10,7 +10,7 @@ describe("branded notification email", () => {
 
   test("subject is branded and names the producer + domain", () => {
     const r = renderNotificationEmail(meta, md);
-    expect(r.subject).toBe("Prevail · PostHog Briefing · Posthog");
+    expect(r.subject).toBe("Glyph · PostHog Briefing · Posthog");
   });
 
   test("markdown actually renders - no raw ## or ** in the html", () => {
@@ -28,15 +28,15 @@ describe("branded notification email", () => {
     expect(r.html).toContain("LOOP BRIEFING");
     expect(r.html).toContain("Sent by the loop &quot;PostHog Briefing&quot;".replace("&quot;", "\"").replace("&quot;", "\"")); // quotes escape-agnostic
     expect(r.html).toContain("weekly");
-    expect(r.html).toContain("Prevail engine v");
-    expect(r.html).toContain("Open in Prevail: Domains &gt; PostHog &gt; Loops");
+    expect(r.html).toContain("Glyph Engine v");
+    expect(r.html).toContain("Open in Glyph Studio: Domains &gt; PostHog &gt; Loops");
     expect(r.html).toContain("2026-07-04 22:00:00 UTC");
   });
 
   test("plain-text fallback keeps the body and the provenance", () => {
     const r = renderNotificationEmail(meta, md);
     expect(r.text).toContain("**TL;DR**");
-    expect(r.text).toContain("Prevail engine v");
+    expect(r.text).toContain("Glyph Engine v");
   });
 
   test("email-safe: no external assets, no scripts, no emoji", () => {

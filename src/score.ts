@@ -448,7 +448,7 @@ function buildMissing(s: DomainSnapshot, breakdown: ScoreBreakdown): MissingItem
 
   // structure
   if (!s.hasSkills) {
-    out.push({ label: "No reusable skills yet — Prevail will suggest some as patterns emerge", severity: "info", kind: "skill" });
+    out.push({ label: "No reusable skills yet — Glyph will suggest some as patterns emerge", severity: "info", kind: "skill" });
   }
   if (!s.hasThreads) {
     out.push({ label: "No conversations yet — start a chat to build real context", severity: "info", kind: "structure" });

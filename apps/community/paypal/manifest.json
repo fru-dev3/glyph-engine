@@ -5,7 +5,7 @@
   "description": "Pull PayPal transaction history into the wealth + tax domains via the PayPal REST Transaction Search API (OAuth2 client-credentials).",
   "domains": ["wealth", "tax"],
   "integration": "api",
-  "connection": "PayPal REST Transaction Search. Create a REST app at developer.paypal.com, enable the Transaction Search feature, and provide its Client ID + Secret. Prevail mints an OAuth2 client-credentials token and pulls your transactions read-only.",
+  "connection": "PayPal REST Transaction Search. Create a REST app at developer.paypal.com, enable the Transaction Search feature, and provide its Client ID + Secret. Glyph Engine mints an OAuth2 client-credentials token and pulls your transactions read-only.",
   "connections": [
     {
       "kind": "api",

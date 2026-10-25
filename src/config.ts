@@ -771,7 +771,7 @@ export function detectVaultCandidates(): VaultCandidate[] {
     },
     {
       kind: "ai-folder",
-      label: "~/.ai/vault (existing Prevail-style folder)",
+      label: "~/.ai/vault (existing Glyph-style folder)",
       path: aiVault,
       exists: existsSync(aiVault),
     },

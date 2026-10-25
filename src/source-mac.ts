@@ -51,7 +51,7 @@ export async function syncPhotos(vault: string, opts: SyncOpts & { home?: string
   const db = photosLibrary(opts.home);
   if (!db) return { state: "absent", note: "no Photos library on this Mac" };
   const acc = accessOf(join(db, ".."));
-  if (acc !== "ok") return { state: "needs-fda", note: "grant Full Disk Access to Prevail to count photos" };
+  if (acc !== "ok") return { state: "needs-fda", note: "grant Full Disk Access to Glyph Studio to count photos" };
   const now = opts.now ?? Date.now();
   const since = (now - (opts.backfill ? 3650 : 400) * 86_400_000) / 1000 - CF_EPOCH;
   const rows = withCopy(db, (d) => {
@@ -82,7 +82,7 @@ export function messageEvents(rows: { d: number; me: number; h: string | null }[
 export async function syncMessages(vault: string, opts: SyncOpts & { home?: string } = {}): Promise<SyncResult> {
   const dir = join(opts.home ?? homedir(), "Library", "Messages");
   const acc = accessOf(dir);
-  if (acc !== "ok") return { state: acc === "needs-fda" ? "needs-fda" : "absent", ...(acc === "needs-fda" ? { note: "grant Full Disk Access to Prevail to count messages" } : {}) };
+  if (acc !== "ok") return { state: acc === "needs-fda" ? "needs-fda" : "absent", ...(acc === "needs-fda" ? { note: "grant Full Disk Access to Glyph Studio to count messages" } : {}) };
   const now = opts.now ?? Date.now();
   const sinceS = (now - (opts.backfill ? 3650 : 400) * 86_400_000) / 1000 - CF_EPOCH;
   const rows = withCopy(join(dir, "chat.db"), (d) => d.query("SELECT m.date AS d, m.is_from_me AS me, h.id AS h FROM message m LEFT JOIN handle h ON h.ROWID = m.handle_id WHERE COALESCE(m.associated_message_type,0) = 0 AND (m.date > ? OR m.date > ?)").all(sinceS * 1e9, sinceS) as { d: number; me: number; h: string | null }[]);
@@ -100,7 +100,7 @@ export function callEvents(rows: { d: number; dur: number; out: number; answered
 export async function syncCalls(vault: string, opts: SyncOpts & { home?: string } = {}): Promise<SyncResult> {
   const dir = join(opts.home ?? homedir(), "Library", "Application Support", "CallHistoryDB");
   const acc = accessOf(dir);
-  if (acc !== "ok") return { state: acc === "needs-fda" ? "needs-fda" : "absent", ...(acc === "needs-fda" ? { note: "grant Full Disk Access to Prevail to count calls" } : {}) };
+  if (acc !== "ok") return { state: acc === "needs-fda" ? "needs-fda" : "absent", ...(acc === "needs-fda" ? { note: "grant Full Disk Access to Glyph Studio to count calls" } : {}) };
   const now = opts.now ?? Date.now();
   const since = (now - (opts.backfill ? 3650 : 400) * 86_400_000) / 1000 - CF_EPOCH;
   const rows = withCopy(join(dir, "CallHistory.storedata"), (d) => d.query("SELECT ZDATE AS d, ZDURATION AS dur, ZORIGINATED AS out, ZANSWERED AS answered FROM ZCALLRECORD WHERE ZDATE > ?").all(since) as { d: number; dur: number; out: number; answered: number }[]);

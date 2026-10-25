@@ -135,7 +135,7 @@ export function acceptStackDiff(vault: string, now = Date.now()): { applied: num
   if (missing.length) {
     const head = "## Added from use";
     const rows = missing.map((i) => `| ${i.tool} | ${i.detail.replace(/, not in your stack$/, "")} | observed (${day}) |`).join("\n");
-    text = text.includes(`\n${head}`) ? text.replace(new RegExp(`(\\n${head}[^\\n]*\\n(?:[^\\n]*\\n)*?\\|[-| ]+\\|\\n)`), `$1${rows}\n`) : `${text.replace(/\s*$/, "\n")}\n${head}\n_Tools Prevail saw you use; give each a role and a bucket when you have a minute._\n\n| Tool | Role | Status |\n|---|---|---|\n${rows}\n`;
+    text = text.includes(`\n${head}`) ? text.replace(new RegExp(`(\\n${head}[^\\n]*\\n(?:[^\\n]*\\n)*?\\|[-| ]+\\|\\n)`), `$1${rows}\n`) : `${text.replace(/\s*$/, "\n")}\n${head}\n_Tools Glyph saw you use; give each a role and a bucket when you have a minute._\n\n| Tool | Role | Status |\n|---|---|---|\n${rows}\n`;
     applied += missing.length;
   }
   writeFileSync(p, text);

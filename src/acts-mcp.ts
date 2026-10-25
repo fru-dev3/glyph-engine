@@ -106,16 +106,16 @@ function resolveDomain(vaultPath: string, name: string | undefined): Domain {
 
 // ── Tools ──────────────────────────────────────────────────────────────────
 const CREATE_SKILL_DESC =
-  "Save a reusable SKILL into THIS Prevail vault (a SKILL.md under the domain's skills/ folder). " +
+  "Save a reusable SKILL into THIS Glyph vault (a SKILL.md under the domain's skills/ folder). " +
   "Use this whenever the user asks you to create, save, or remember a skill / procedure / how-to. " +
-  "Do NOT write to any host-native skill location (e.g. ~/.claude/skills) — Prevail skills live only in the vault.";
+  "Do NOT write to any host-native skill location (e.g. ~/.claude/skills) — Glyph skills live only in the vault.";
 
 const CREATE_LOOP_DESC =
-  "Create a recurring Prevail LOOP (an automation stored in the domain's _loops.json). " +
+  "Create a recurring Glyph LOOP (an automation stored in the domain's _loops.json). " +
   "Use this for any 'do X every day/week/month' or scheduled/briefing request (e.g. 'send a briefing every Sunday'). " +
   "cadence must be one of: continuous, daily, weekly, monthly (map 'every Sunday morning' → weekly). " +
   "The loop is created in SUGGEST autonomy: it proposes on its cadence and the user approves — it does not act unattended. " +
-  "Do NOT use any host-native scheduler, cron, or CronCreate — Prevail loops are the only durable scheduling here.";
+  "Do NOT use any host-native scheduler, cron, or CronCreate — Glyph loops are the only durable scheduling here.";
 
 const REMEMBER_DESC =
   "Append a durable fact to THIS domain's long-term memory (_memory.md in the vault). " +

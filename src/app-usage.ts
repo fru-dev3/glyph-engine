@@ -481,7 +481,7 @@ export function scanAppUsage(vault: string, opts: UsageOpts = {}): UsageScan {
           ? { state: "unknown-shape", note: `Biome records found (${unknown}) but none read as app focus; the stream format may have changed`, files: reads.reduce((a, r) => a + r.files, 0) }
           : { state: reads.length ? "ok" : "absent", files: reads.reduce((a, r) => a + r.files, 0), events: rec, ...(unknown ? { note: `${unknown} records skipped` } : {}) };
       } catch (e) { sources.screentime = { state: "unknown-shape", note: String(e).slice(0, 160) }; }
-    } else sources.screentime = { state: acc === "needs-fda" ? "needs-fda" : "absent", note: acc === "needs-fda" ? "grant Full Disk Access to Prevail to read Screen Time" : undefined };
+    } else sources.screentime = { state: acc === "needs-fda" ? "needs-fda" : "absent", note: acc === "needs-fda" ? "grant Full Disk Access to Glyph Studio to read Screen Time" : undefined };
     const kc = join(roots.home, "Library", "Application Support", "Knowledge", "knowledgeC.db");
     const kacc = accessOf(join(roots.home, "Library", "Application Support", "Knowledge"));
     if (kacc === "ok") {

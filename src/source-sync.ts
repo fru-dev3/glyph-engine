@@ -94,7 +94,7 @@ async function googleAccounts(): Promise<{ gws: string | null; accounts: GoogleA
 
 /** A gws failure as a short, honest class: what is wrong and who can fix it. */
 export function classifyGoogleError(text: string): string {
-  if (/disabled_client/i.test(text)) return "the Google sign-in client Prevail uses is disabled (Google Cloud); sign in with a new client";
+  if (/disabled_client/i.test(text)) return "the Google sign-in client Glyph uses is disabled (Google Cloud); sign in with a new client";
   if (/Account Restricted|servicerestricted/i.test(text)) return "Google restricted this account's Cloud access; appeal at accounts.google.com/info/servicerestricted";
   if (/invalid_grant|expired|revoked/i.test(text)) return "sign-in expired; sign in again";
   if (/insufficient.*scope|ACCESS_TOKEN_SCOPE_INSUFFICIENT|PERMISSION_DENIED/i.test(text)) return "this account did not grant read access for this service";
@@ -221,7 +221,7 @@ export async function syncGmail(vault: string, opts: SyncOpts = {}): Promise<Syn
   const host = opts.host ?? hostSlug();
   const { gws, accounts } = opts.google ?? (await googleAccounts());
   if (!gws) return { state: "needs-connection", note: "the Google Workspace CLI (gws) is not installed on this Mac" };
-  if (!accounts.length) return { state: "needs-connection", note: "no Google account is signed in for Prevail on this Mac" };
+  if (!accounts.length) return { state: "needs-connection", note: "no Google account is signed in for Glyph on this Mac" };
   const days = opts.backfill ? 180 : 30;
   const have = new Set(readMailHeaders(vault).map((h) => `${h.account}\t${h.id}`));
   const status: Record<string, string> = {};
@@ -321,7 +321,7 @@ export async function syncCalendar(vault: string, opts: SyncOpts = {}): Promise<
   const host = opts.host ?? hostSlug();
   const { gws, accounts } = opts.google ?? (await googleAccounts());
   if (!gws) return { state: "needs-connection", note: "the Google Workspace CLI (gws) is not installed on this Mac" };
-  if (!accounts.length) return { state: "needs-connection", note: "no Google account is signed in for Prevail on this Mac" };
+  if (!accounts.length) return { state: "needs-connection", note: "no Google account is signed in for Glyph on this Mac" };
   const back = opts.backfill ? 365 : 90;
   const timeMin = new Date(now - back * 86_400_000).toISOString();
   const timeMax = new Date(now + 60 * 86_400_000).toISOString();

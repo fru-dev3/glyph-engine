@@ -49,7 +49,7 @@ if [ "$UNINSTALL" = 1 ]; then
   exit 0
 fi
 
-[ -x "$PREVAIL_BIN" ] || { echo "no engine at $PREVAIL_BIN (install Prevail.app, or set PREVAIL_BIN)" >&2; exit 1; }
+[ -x "$PREVAIL_BIN" ] || { echo "no engine at $PREVAIL_BIN (install Glyph Studio, or set PREVAIL_BIN)" >&2; exit 1; }
 
 if [ -z "$HOST" ]; then
   for ts in tailscale /Applications/Tailscale.app/Contents/MacOS/Tailscale; do

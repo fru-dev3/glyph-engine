@@ -768,7 +768,7 @@ function parseArgs(argv: string[]): Args {
 }
 
 function printHelp() {
-  console.log(`prevail — a terminal cockpit for your life domains
+  console.log(`Glyph Engine: a terminal cockpit for your life domains. The command is prevail.
 
 USAGE
   prevail                     boot the cockpit (uses your saved vault)
@@ -1775,7 +1775,7 @@ async function decisionCommand(args: string[], vaultOverride: string | null): Pr
       console.log("");
       console.log("where they differed:");
       for (const d of sum.disagreements) {
-        console.log(`  Prevail ${d.actual} -> would have been ${d.proposed}   x${d.count}`);
+        console.log(`  Glyph Engine ${d.actual} -> would have been ${d.proposed}   x${d.count}`);
       }
     }
     if (sum.skipReasons.length > 0) {
@@ -3814,7 +3814,7 @@ async function connectorsCommand(args: string[]): Promise<void> {
     if (process.env.PREVAIL_APPS_DIR) userRoots.push(resolve(process.env.PREVAIL_APPS_DIR));
     const resolved = resolve(app.path);
     const underUser = userRoots.some((root) => resolved === root || resolved.startsWith(root + sep));
-    if (!underUser) return fail(`"${id}" is a built-in connector that ships with Prevail and can't be deleted. Connectors you added live in your vault and can be removed.`);
+    if (!underUser) return fail(`"${id}" is a built-in connector that ships with Glyph Engine and can't be deleted. Connectors you added live in your vault and can be removed.`);
     try {
       rmSync(app.path, { recursive: true, force: true });
     } catch (e) {
@@ -5614,7 +5614,7 @@ async function daemonCommand(args: string[], vaultOverride: string | null): Prom
 async function doctor(opts: { debug: boolean } = { debug: false }) {
   const { detectClis } = await import("./cli-bridge.ts");
   const cfg = readConfig();
-  console.log("prevail doctor\n");
+  console.log("Glyph Engine doctor\n");
   console.log(`config       ${cfg ? "found" : "missing (will run wizard on next boot)"}`);
   if (cfg) {
     const ok = existsSync(cfg.vaultPath);
@@ -6549,7 +6549,7 @@ async function main() {
   }
   if (args.version) {
     const { VERSION } = await import("./version.ts");
-    console.log(`prevail ${VERSION}`);
+    console.log(`prevail ${VERSION} (Glyph Engine)`);
     return;
   }
   if (args.doctor) {
@@ -6733,7 +6733,7 @@ async function main() {
     const { recommendationsJson, buildRecommendations } = await import("./recommendations.ts");
     if (args.recommendationsArgs.includes("--json")) { process.stdout.write(`${recommendationsJson(vault!)}\n`); return; }
     const recs = buildRecommendations(vault!);
-    if (recs.length === 0) { console.log("no recommendations right now — keep using Prevail and they'll appear."); return; }
+    if (recs.length === 0) { console.log("no recommendations right now — keep using Glyph and they'll appear."); return; }
     console.log(`${recs.length} recommendation${recs.length === 1 ? "" : "s"}:\n`);
     for (const r of recs) console.log(`  [${r.category}] ${r.title}\n    ${r.detail}\n`);
     return;

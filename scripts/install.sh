@@ -9,7 +9,7 @@
 
 set -euo pipefail
 
-REPO="${PREVAIL_REPO:-fru-dev3/prevail-cli}"
+REPO="${PREVAIL_REPO:-fru-dev3/glyph-engine}"
 BIN_DIR="${PREVAIL_BIN_DIR:-$HOME/.local/bin}"
 DATA_DIR="${PREVAIL_DATA_DIR:-$HOME/.prevail}"
 VERSION="${PREVAIL_VERSION:-latest}"
@@ -33,8 +33,8 @@ case "$uname_s-$uname_m" in
   *) echo "✗ unsupported platform: $uname_s $uname_m"; exit 1 ;;
 esac
 
-printf "\n  %s╲ │ ╱%s    %sPREVAIL%s\n" "$gold" "$reset" "$bold$gold" "$reset"
-printf "  %s─ ◈ ─%s    a personal ai cockpit\n" "$gold" "$reset"
+printf "\n  %s╲ │ ╱%s    %sGLYPH ENGINE%s\n" "$gold" "$reset" "$bold$gold" "$reset"
+printf "  %s─ ◈ ─%s    a personal AI cockpit (command: prevail)\n" "$gold" "$reset"
 printf "  %s╱ │ ╲%s    %sinstalling for %s%s\n\n" "$gold" "$reset" "$dim" "$target" "$reset"
 
 # Auto-migrate legacy ~/.aireadyu/ (pre-rename installs from v0.1.x) into

@@ -24,7 +24,7 @@ export function markDemoVault(vault: string): void {
     mkdirSync(resolve(vault), { recursive: true });
     writeFileSync(
       join(resolve(vault), DEMO_MARKER),
-      "prevail demo vault — seeded sample data, safe to clear on the switch to production.\n",
+      "Glyph demo vault: seeded sample data, safe to clear on the switch to production.\n",
     );
   } catch {
     /* best-effort: a missing marker just means we won't auto-clear it later */

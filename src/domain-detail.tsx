@@ -218,7 +218,7 @@ function DomainChat({ domain, setEmbeddedInputActive, selectedSkills }: { domain
               "\n",
             )}\nRead their definitions under ${domain.path}/skills/ and apply them where relevant.\n</selected_skills>`
         : "";
-    const prompt = `You are helping with the "${domain.name}" life domain in a personal-AI cockpit called prevAIl. The vault domain folder is ${domain.path}. Start by reading state.md if you need context. Use ONLY this domain's folder — do not read other domains or connectors.${skillsBlock}\n\nUser question: ${trimmed}`;
+    const prompt = `You are helping with the "${domain.name}" life domain in a personal-AI cockpit called Glyph Engine. The vault domain folder is ${domain.path}. Start by reading state.md if you need context. Use ONLY this domain's folder — do not read other domains or connectors.${skillsBlock}\n\nUser question: ${trimmed}`;
     runChatTurn({
       prompt,
       cwd: domain.path,

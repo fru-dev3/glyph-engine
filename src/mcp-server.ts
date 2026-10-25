@@ -608,7 +608,7 @@ export function mcpTools(): McpTool[] {
     },
     {
       name: "read_log",
-      description: "Read today's _log/YYYY-MM-DD.md for a domain - the self-curating decision log written by prevAIl after every turn.",
+      description: "Read today's _log/YYYY-MM-DD.md for a domain - the self-curating decision log written by Glyph Engine after every turn.",
       inputSchema: {
         type: "object",
         properties: {
@@ -720,7 +720,7 @@ export function mcpTools(): McpTool[] {
     },
     {
       name: "create_mission",
-      description: "Ask to start a project (a time-bound effort with an outcome and a target date). A write: it waits for the user's approval in Prevail's Inbox and is done the moment they allow it.",
+      description: "Ask to start a project (a time-bound effort with an outcome and a target date). A write: it waits for the user's approval in Glyph Studio's Inbox and is done the moment they allow it.",
       inputSchema: { type: "object", properties: { name: { type: "string" }, outcome: { type: "string" }, target: { type: "string", description: "YYYY-MM-DD" }, owner: { type: "string", description: "the owner domain slug" }, consult: { type: "array", items: { type: "string" } }, inform: { type: "array", items: { type: "string" } } }, required: ["name"] },
     },
     {
@@ -805,7 +805,7 @@ export function mcpTools(): McpTool[] {
     },
     {
       name: "read_recommendations",
-      description: "Prevail's one ranked 'what to do next' list across the whole vault: instructions to save as rules, project next steps and stuck projects to restart, connectors to sign in or sync, recurring people and places to save, better model defaults, and context gaps. Deterministic, ranked by leverage.",
+      description: "Glyph's one ranked 'what to do next' list across the whole vault: instructions to save as rules, project next steps and stuck projects to restart, connectors to sign in or sync, recurring people and places to save, better model defaults, and context gaps. Deterministic, ranked by leverage.",
       inputSchema: { type: "object", properties: {} },
     },
     {
@@ -819,7 +819,7 @@ export function mcpTools(): McpTool[] {
     },
     {
       name: "read_memory",
-      description: "Read Prevail's learned knowledge: the durable per-domain MEMORY.md when a domain is given, otherwise the vault-wide omega.md (cross-domain lessons). This is the distilled long-term context, not raw chat history.",
+      description: "Read Glyph's learned knowledge: the durable per-domain MEMORY.md when a domain is given, otherwise the vault-wide omega.md (cross-domain lessons). This is the distilled long-term context, not raw chat history.",
       inputSchema: {
         type: "object",
         properties: { domain: { type: "string", description: "Optional; omit for vault-wide omega." } },
@@ -900,7 +900,7 @@ export function mcpTools(): McpTool[] {
     },
     {
       name: "approve_loop_action",
-      description: "Execute a loop action that was queued for approval, using Prevail's agent tools. Pass the exact action text from run_loop. Higher-stakes than other tools - only call when the user has approved this action.",
+      description: "Execute a loop action that was queued for approval, using Glyph Engine's agent tools. Pass the exact action text from run_loop. Higher-stakes than other tools - only call when the user has approved this action.",
       inputSchema: {
         type: "object",
         properties: {
@@ -927,7 +927,7 @@ export function mcpTools(): McpTool[] {
     },
     {
       name: "list_apps",
-      description: "List the connected apps/connectors (Gmail, GitHub, bank feeds, …) with the life domains they feed and how they connect. These are the data sources Prevail pulls into the vault.",
+      description: "List the connected apps/connectors (Gmail, GitHub, bank feeds, …) with the life domains they feed and how they connect. These are the data sources Glyph pulls into the vault.",
       inputSchema: { type: "object", properties: {} },
     },
     {
@@ -951,7 +951,7 @@ export function mcpTools(): McpTool[] {
     },
     {
       name: "run_playbook",
-      description: "Run a playbook NOW (by id from list_playbooks). It executes each step through Prevail's safety gate (global pause + per-action-class policy + audit); read-only/allowed steps run, anything needing consent is recorded as 'ask' and skipped. Returns the per-step outcome and the run directory. Use for composite jobs like building a net-worth picture.",
+      description: "Run a playbook NOW (by id from list_playbooks). It executes each step through Glyph Engine's safety gate (global pause + per-action-class policy + audit); read-only/allowed steps run, anything needing consent is recorded as 'ask' and skipped. Returns the per-step outcome and the run directory. Use for composite jobs like building a net-worth picture.",
       inputSchema: {
         type: "object",
         properties: { id: { type: "string", description: "Playbook id from list_playbooks." }, domain: { type: "string", description: "The domain a built-in playbook runs in (optional)." } },
@@ -960,7 +960,7 @@ export function mcpTools(): McpTool[] {
     },
     {
       name: "connect_app",
-      description: "Connect a new app/data source. Prevail's Connection Agent researches the best way to connect it right now (MCP, an official API/CLI, a gateway, or a browser login), scaffolds it into the vault wired to the given domains, and returns a plan with the ONE auth step the user must complete. Higher-stakes: creates vault files and may require the user to authorize.",
+      description: "Connect a new app/data source. Glyph's Connection Agent researches the best way to connect it right now (MCP, an official API/CLI, a gateway, or a browser login), scaffolds it into the vault wired to the given domains, and returns a plan with the ONE auth step the user must complete. Higher-stakes: creates vault files and may require the user to authorize.",
       inputSchema: {
         type: "object",
         properties: {
@@ -1360,7 +1360,7 @@ async function tApproveLoopAction(args: Record<string, unknown>, vaultPath: stri
   // agent's say-so, bypassing every gate the desktop enforces.
   const gate = gateAction(action, { vault: vaultPath, autonomousActs: isAuto(vaultPath) });
   if (gate.decision !== "auto") {
-    return `Not executed (${gate.cls}: ${gate.reason ?? "needs approval"}). This action needs the user's approval in Prevail's Decision Inbox.`;
+    return `Not executed (${gate.cls}: ${gate.reason ?? "needs approval"}). This action needs the user's approval in Glyph Studio's Decision Inbox.`;
   }
   const clis = await detectClis();
   if (clis.length === 0) throw new Error("no CLIs detected");

@@ -215,7 +215,7 @@ export async function yearlyReview(vault: string, o: { year?: number; now?: numb
   const text = [
     `# Your yearly review, ${year}`,
     "",
-    "Written by Prevail from your Compass and its history; nothing here changes the Compass. Answer in your own words under each question, or say it to your chief of staff.",
+    "Written by Glyph from your Compass and its history; nothing here changes the Compass. Answer in your own words under each question, or say it to your chief of staff.",
     "",
     "## Purpose",
     purpose ? `> ${purpose}` : "Not written yet.",

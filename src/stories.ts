@@ -342,7 +342,7 @@ ${stat(int(s.exploration.trips), `trips, ${s.exploration.places.length} places, 
 <h2>AI and tools</h2>${s.ai.byTool.length ? bars(s.ai.byTool.slice(0, 6).map((t) => ({ label: t.tool, v: s.ai.usd ? Math.round((t.usd / s.ai.usd) * 100) : 0, note: money(t.usd) }))) : "<p class=\"muted\">No AI tool records yet.</p>"}${s.tools.length ? `<p class="muted">Apps you used on the most days: ${esc(s.tools.map((t) => `${t.app} (${t.days})`).join(", "))}</p>` : ""}
 <h2>Month by month</h2>${s.months.map((m) => `<p><strong>${esc(new Date(`${m.month}-15T12:00:00`).toLocaleDateString("en-US", { month: "long" }))}</strong>: ${esc(m.lines.filter((l) => !l.documentary).slice(0, 4).map((l) => `${l.title} ${fmtUnit(l.value, l.unit)}`).join(", ") || "nothing recorded")}${m.surprise ? `. ${esc(m.surprise)}` : ""}</p>`).join("")}
 ${s.notes.length ? `<p class="muted">${esc(s.notes.join(" "))}</p>` : ""}
-<footer>Made by Prevail from the files in your vault.</footer>
+<footer>Made by Glyph from the files in your vault.</footer>
 </main></body></html>
 `;
 }

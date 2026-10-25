@@ -62,7 +62,7 @@ export async function missionWriteTool(vault: string, tool: MissionWrite, raw: R
   if (done) return `Already done: ${done}`;
   const g = gateEngineAct(vault, "general", `${MISSION_TOOL_PREFIX}${tool}`, a, await summaryOf(vault, tool, a));
   if (g.state === "declined") return "The user declined this. It was not done; do not ask again right away.";
-  if (g.state === "queued") return `Not done yet: this waits for the user's approval in Prevail's Inbox (id ${g.id}). Once they allow it, Prevail does it at once; you do not need to call again.`;
+  if (g.state === "queued") return `Not done yet: this waits for the user's approval in Glyph Studio's Inbox (id ${g.id}). Once they allow it, Glyph does it at once; you do not need to call again.`;
   return run(vault, tool, a);
 }
 

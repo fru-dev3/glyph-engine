@@ -52,7 +52,7 @@ describe("the doctor", () => {
     upsertRecord(V, { id: "anthropic", name: "Anthropic" });
     upsertRecord(V, { id: "github", name: "GitHub" });
     writeFileSync(join(V, "build", "_meta", "apps", "adapters.mac-a.json"), JSON.stringify({ tools: { claude: { present: true, shape: "ok" }, codex: { present: true, shape: "unknown", note: "a new rollout shape" } } }));
-    writeFileSync(join(V, "build", "_meta", "source-state.json"), JSON.stringify({ gmail: { state: "auth-failed", note: "the Google sign-in client Prevail uses is disabled (Google Cloud)" } }));
+    writeFileSync(join(V, "build", "_meta", "source-state.json"), JSON.stringify({ gmail: { state: "auth-failed", note: "the Google sign-in client Glyph uses is disabled (Google Cloud)" } }));
     ev("codex", [{ ts: "2026-09-29", src: "codex", kind: "ai.session", n: 2, host: "mac-a", tier: "measured", attrs: {} }]);
     const exec: Exec = (cmd, args) => (cmd.endsWith("/gh") && args[0] === "auth" ? { ok: false, out: "", err: "You are not logged into any GitHub hosts" } : { ok: true, out: `${cmd.split("/").pop()} 1.2.3\n`, err: "" });
     const which = (b: string) => (["claude", "gh"].includes(b) ? `/fake/${b}` : null);

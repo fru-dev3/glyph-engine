@@ -41,7 +41,7 @@ describe("notAuthedMessage — names the account, the service, and the panel", (
     const msg = notAuthedMessage(["gmail", "messages", "send"], "work");
     expect(msg).toContain('"work"');   // WHICH account
     expect(msg).toContain("Gmail");     // WHICH service/scope area
-    expect(msg).toContain("Prevail Google panel"); // WHERE to fix it
+    expect(msg).toContain("Glyph Studio Google panel"); // WHERE to fix it
     expect(msg.toLowerCase()).toContain("approve all");
   });
 

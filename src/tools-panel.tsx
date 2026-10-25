@@ -60,7 +60,7 @@ export function ToolsPanel({ onClose, onOpenBenchmark }: Props) {
             statusFg={theme.aiAccent}
           >
             <text fg={theme.fg}>
-              Run prevAIl's canonical Q&amp;A benchmark against the model of
+              Run Glyph Engine's canonical Q&amp;A benchmark against the model of
               your choice. See per-question keyword scores, LLM-judge
               scores, and a cross-run leaderboard — without leaving the
               cockpit.
@@ -83,12 +83,12 @@ export function ToolsPanel({ onClose, onOpenBenchmark }: Props) {
             (Claude Desktop, Cursor, Continue, Goose) can call. */}
         <Section
           glyph="◆"
-          title="MCP server — use prevAIl in other apps"
+          title="MCP server — use Glyph Engine in other apps"
           status="ready to wire"
           statusFg={theme.ok}
         >
           <text fg={theme.fg}>
-            prevAIl can be plugged into Claude Desktop, Cursor, Continue,
+            Glyph Engine can be plugged into Claude Desktop, Cursor, Continue,
             Goose, or any host that speaks MCP. Exposes 5 tools: council,
             chat, list_domains, read_state, read_log.
           </text>
@@ -121,7 +121,7 @@ export function ToolsPanel({ onClose, onOpenBenchmark }: Props) {
           statusFg={tgConfigured ? theme.ok : theme.fgDim}
         >
           <text fg={theme.fg}>
-            Run prevAIl on your phone. Daemon long-polls Telegram; you
+            Run Glyph Engine on your phone. Daemon long-polls Telegram; you
             chat from anywhere with the same engines + council + vault.
           </text>
           <text> </text>
@@ -169,7 +169,7 @@ export function ToolsPanel({ onClose, onOpenBenchmark }: Props) {
         >
           <text fg={theme.fg}>
             Record your gut take BEFORE the council fires. 90 days
-            later, prevAIl asks how it actually went. Builds a
+            later, Glyph Engine asks how it actually went. Builds a
             scoreboard of when your gut beats the council and when
             it doesn't.
           </text>

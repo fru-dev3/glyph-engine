@@ -122,17 +122,17 @@ function hasManifest(app: AppSkill): boolean {
 function integrationExplain(kind: string): string {
   switch (kind) {
     case "api":
-      return "    REST or GraphQL API. prevAIl reads stored API keys from env vars (e.g. PLAID_SECRET) and calls the service directly. Best for services with first-party developer APIs.";
+      return "    REST or GraphQL API. Glyph Engine reads stored API keys from env vars (e.g. PLAID_SECRET) and calls the service directly. Best for services with first-party developer APIs.";
     case "oauth":
-      return "    OAuth 2.0 (usually with PKCE). prevAIl runs the consent flow once, stores a refresh token at ~/.prevail/connectors/<id>/auth/refresh.token, then mints access tokens as needed. Best for Google services, GitHub Apps, Notion, Linear.";
+      return "    OAuth 2.0 (usually with PKCE). Glyph Engine runs the consent flow once, stores a refresh token at ~/.prevail/connectors/<id>/auth/refresh.token, then mints access tokens as needed. Best for Google services, GitHub Apps, Notion, Linear.";
     case "browser":
-      return "    Browser automation via Playwright against your logged-in session. No API key — prevAIl uses Chrome cookies. Best for services WITHOUT public APIs (LinkedIn, most bank portals, AppFolio, real-estate sites).";
+      return "    Browser automation via Playwright against your logged-in session. No API key — Glyph Engine uses Chrome cookies. Best for services WITHOUT public APIs (LinkedIn, most bank portals, AppFolio, real-estate sites).";
     case "mcp":
-      return "    Wrapped via a local MCP server binary on your PATH. prevAIl spawns the server and calls its tools. Best for services with an existing MCP wrapper (Google Calendar, Filesystem, Slack).";
+      return "    Wrapped via a local MCP server binary on your PATH. Glyph Engine spawns the server and calls its tools. Best for services with an existing MCP wrapper (Google Calendar, Filesystem, Slack).";
     case "a2a":
-      return "    Agent-to-agent — another prevAIl-compatible agent on your network (Paperclip on Mac mini, Khoj instance). Uses MCP over HTTP/WS. Allowlisted by fingerprint.";
+      return "    Agent-to-agent — another Glyph-compatible agent on your network (Paperclip on Mac mini, Khoj instance). Uses MCP over HTTP/WS. Allowlisted by fingerprint.";
     case "manual":
-      return "    Manual integration. You drop files into a watched folder, or paste data into a state.md. prevAIl reads them. Best when no programmatic integration exists yet.";
+      return "    Manual integration. You drop files into a watched folder, or paste data into a state.md. Glyph Engine reads them. Best when no programmatic integration exists yet.";
     default:
       return "    Unknown integration type.";
   }

@@ -445,9 +445,9 @@ budget: { minutes: 4, usd: 0.20, passes: 1 }
 handoff: offer
 done_when:
   - each repair names what is broken, the evidence and the fix
-  - each fix is a task for the user or a step Prevail can take
+  - each fix is a task for the user or a step Glyph can take
   - says "nothing to repair" when that is true`,
-  "Keeps Prevail itself healthy: connections, failing loops, capture gaps, duplicates.",
+  "Keeps Glyph Studio itself healthy: connections, failing loops, capture gaps, duplicates.",
   "1. Start from the health report below (computed by code).\n2. One repair per problem: what is broken, since when, the fix.\n3. File each fix as a task for the user; never change a connection or a credential yourself.",
   "Touch a credential, a token or a connection. Delete anything."),
   // Phase 4: the last four. Drafts are stored and never sent; the Tutor files

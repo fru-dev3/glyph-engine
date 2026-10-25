@@ -68,11 +68,11 @@ export function runGwsDoctor(
   },
 ): string {
   if (!machine.hasBinary()) {
-    return "Google connector doctor: the gws CLI is NOT installed on this machine. Install it (brew install gws) and connect an account from the Prevail Google panel.";
+    return "Google connector doctor: the gws CLI is NOT installed on this machine. Install it (brew install gws) and connect an account from the Glyph Studio Google panel.";
   }
   const profiles = machine.profiles();
   if (profiles.length === 0) {
-    return "Google connector doctor: gws is installed but NO Google accounts are connected on this machine. Connect one from the Prevail Google panel.";
+    return "Google connector doctor: gws is installed but NO Google accounts are connected on this machine. Connect one from the Glyph Studio Google panel.";
   }
   const lines: string[] = [`Google connector doctor - ${profiles.length} account(s) on this machine:`];
   for (const p of profiles) {
@@ -97,7 +97,7 @@ export function runGwsDoctor(
       const apiOk = apis.length === 0 ? null : apis.includes(svc.api); // no list -> unknown, do not accuse
       if (scopeOk && apiOk !== false) continue; // healthy (or unknown-but-scoped): stay quiet
       if (!scopeOk) {
-        lines.push(`    ${svc.label}: scope NOT granted for this account - re-authorize "${p.label}" from the Prevail Google panel and approve ALL permissions.`);
+        lines.push(`    ${svc.label}: scope NOT granted for this account - re-authorize "${p.label}" from the Glyph Studio Google panel and approve ALL permissions.`);
       } else if (apiOk === false) {
         lines.push(`    ${svc.label}: the ${svc.label} API is DISABLED on OAuth project ${st.project_id ?? "(unknown)"} - one-time fix: open https://console.developers.google.com/apis/api/${svc.api}/overview${st.project_id ? `?project=${st.project_id}` : ""} and click Enable (fixes every account sharing this client).`);
       }

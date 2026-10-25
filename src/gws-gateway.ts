@@ -63,7 +63,7 @@ export function notAuthedMessage(args: string[], account?: string): string {
   return (
     `${svc} could not authenticate as your "${acct}" Google account. ` +
     `You may be signed in, but a permission (scope) this action needs was not granted for that account. ` +
-    `Open the Prevail Google panel, re-authorize the "${acct}" account, and approve ALL requested permissions. ` +
+    `Open the Glyph Studio Google panel, re-authorize the "${acct}" account, and approve ALL requested permissions. ` +
     `If it still fails, that account's Google OAuth client is not enabled for this API.`
   );
 }

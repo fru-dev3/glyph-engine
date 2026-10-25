@@ -345,7 +345,7 @@ async function probeHttp(spec: AuthCheckSpec, ts: number): Promise<ProbeResult> 
       ok: false,
       status: "error",
       message: `refusing to send engine secret ${spec.auth_header_env} to ${url}`,
-      fixHint: "auth_header_env must name the app's own key, not a Prevail engine secret",
+      fixHint: "auth_header_env must name the app's own key, not a Glyph Engine secret",
       ts,
     };
   }

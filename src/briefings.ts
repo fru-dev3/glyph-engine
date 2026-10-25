@@ -127,7 +127,7 @@ export async function deliverBriefing(
     delivered.log = true;
   }
   if ((entry.deliver === "telegram" || entry.deliver === "both") && deliverTelegram) {
-    const header = `[Prevail] ${entry.name} · ${entry.domain}\n\n`;
+    const header = `[Glyph] ${entry.name} · ${entry.domain}\n\n`;
     try { delivered.telegram = await deliverTelegram(header + output); }
     catch { /* never fail a briefing on a delivery hiccup */ }
   }

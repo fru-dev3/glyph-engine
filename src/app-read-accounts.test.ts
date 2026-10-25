@@ -70,7 +70,7 @@ describe("Bug 1: an app's read tools are pre-allowed on its turns", () => {
 
   test("the act-gate hook answers an allowed read with an explicit allow; writes still deny", () => {
     expect(hookOutput("mcp__claude_ai_Foo_Mail__search_threads", { action: "allow" })).toEqual({
-      hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "allow", permissionDecisionReason: "allowed by Prevail's action gate" },
+      hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "allow", permissionDecisionReason: "allowed by Glyph Engine's action gate" },
     });
     expect(hookOutput("Read", { action: "allow" })).toEqual({});
     expect(hookOutput("mcp__claude_ai_Foo_Mail__send_message", { action: "deny", reason: "queued" })).toEqual({
