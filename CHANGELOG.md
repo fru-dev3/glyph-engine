@@ -7,6 +7,13 @@ The release page on GitHub mirrors the same notes for each tag:
 
 ---
 
+
+## [1.10.9] 2026-10-25 · Glyph Arena
+
+- **`src/arena`: all of Glyph Arena's logic**, next to the providers it uses. Recipes (model + prompt + vault context + tools), ghost replays of your own past prompts, canonical questions, weekly sentinels with mechanical checkers, duels decided by checker, agreement, judge or a two-second blind pick, standings with Wilson bounds and "equivalent, use the cheaper", an adverse-event register with per-domain suspensions, a monthly spend cap checked before every call, and the Home Only league (health and money run on local models only, refused before any call).
+- **`prevail arena <command>`** (JSON out) and a separate compiled entry, `arena-engine`, which the Glyph Arena app bundles.
+- **Auto follows the policy**: `build/_meta/arena/policy.json` routes a turn on its own runtime with the reason `Arena: <why>`. No policy, no change. A repeated manual pick still wins.
+
 ## [1.10.8] - 2026-10-25 · Prevail is now Glyph
 
 ### Changed
