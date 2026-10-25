@@ -293,6 +293,26 @@ describe("policy writer", () => {
     expect(r.verdict).toBe("home_only");
   });
 
+  test("Home Only duels stay out of the any-domain fallbacks, and lookup never falls back to cloud for them", () => {
+    const ds = [1, 2, 3, 4].map(() => duel(localA, localB, "a", { league: { domain: "health", kind: "planning", weight: "light" } }));
+    ds.push(...[1, 2, 3, 4].map(() => duel(cloudA, cloudB, "a", { league: { domain: "travel", kind: "planning", weight: "light" } })));
+    const p = buildPolicy({ duels: ds, signals: [], recipes: [cloudA, cloudB, localA, localB], suspended: [], config: cfg, spent: 0, month: "m" });
+    const wide = p.routes.find((r) => r.domain === "*" && r.kind === "planning" && r.weight === "*")!;
+    expect(wide.recipe).toBe(cloudA.id);
+    expect(wide.games).toBe(4); // travel only
+    expect(lookupRoute(p, "tax", "planning", "light")).toBeNull(); // a Home Only domain with no data: no cloud fallback
+    expect(lookupRoute(p, "learning", "planning", "light")!.recipe).toBe(cloudA.id);
+  });
+
+  test("the equivalence why names a pair that actually met", () => {
+    const ds = [
+      ...[1, 2, 3].map(() => duel(cloudA, cloudB, "tie")),
+      ...[1, 2, 3].map(() => duel(cloudB, localA, "tie", {}, 0.01, 0.0)),
+    ];
+    const p = buildPolicy({ duels: ds, signals: [], recipes: [cloudA, cloudB, localA], suspended: [], config: cfg, spent: 0, month: "m" });
+    for (const r of p.routes) expect(r.why).not.toContain("in 0 meetings");
+  });
+
   test("lookup falls back from exact to wider leagues", () => {
     const p = { routes: [
       { domain: "*", kind: "coding", weight: "*", recipe: "wide" },

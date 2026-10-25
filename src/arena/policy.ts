@@ -3,6 +3,7 @@
 // with a readable twin, policy.md. lookupRoute is what any harness calls.
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { isLocalCliKind } from "../model-pricing.ts";
 import { runtimePath } from "../path-safety.ts";
 import { vreadFile } from "../vault-session.ts";
 import { isSuspended } from "./adverse.ts";
@@ -52,8 +53,11 @@ export function buildPolicy(inp: BuildInput): Policy {
   const modelOf = (id: string) => byId.get(id)?.model ?? id;
   const routes: PolicyRoute[] = [];
 
+  // The Home Only league stands alone: its duels never feed the any-domain fallbacks.
+  const homeDomain = (d: string) => isHomeOnlyTask({ domain: d, prompt: "" }, inp.config);
   for (const league of candidateLeagues(inp.duels)) {
-    const duels = inp.duels.filter((d) => inLeague(d, league));
+    if (league.domain === "*" && inp.duels.every((d) => !inLeague(d, league) || homeDomain(d.league.domain))) continue;
+    const duels = inp.duels.filter((d) => inLeague(d, league) && (league.domain !== "*" || !homeDomain(d.league.domain)));
     const sigs = inp.signals.filter((s) =>
       (league.domain === "*" || s.domain === league.domain)
       && (league.kind === "*" || !s.kind || s.kind === league.kind)
@@ -78,7 +82,9 @@ export function buildPolicy(inp: BuildInput): Policy {
     let verdict: PolicyRoute["verdict"] = homeOnly ? "home_only" : "best";
     let why = "";
     if (peers.length > 1 && priciest.cost_avg > pick.cost_avg) {
-      const other = priciest;
+      // Name the pair that was actually measured: the pick against the leader, or,
+      // when the leader is the cheapest, the leader against the priciest equal.
+      const other = pick.recipe === leaderRow.recipe ? priciest : leaderRow;
       const h = headToHead(duels, pick.recipe, other.recipe);
       const ratio = pick.cost_avg > 0 ? other.cost_avg / pick.cost_avg : Infinity;
       why = `Equivalent to ${byId.get(other.recipe)?.label ?? other.recipe} (${h.x}-${h.y}, ${h.ties} even in ${h.games} meetings) and ${
@@ -92,7 +98,7 @@ export function buildPolicy(inp: BuildInput): Policy {
       const rec = `${pick.wins}-${pick.losses}-${pick.ties}`;
       why = `${r.label} leads with ${rec} (${pct(pick.rate)} of points) over ${pick.games} games`
         + (runner ? `; next is ${byId.get(runner.recipe)?.label ?? runner.recipe} at ${pct(runner.rate)}` : "")
-        + `; ${money(pick.cost_avg)} an answer.`;
+        + `; ${pick.cost_avg < 0.0005 ? "free to run" : `${money(pick.cost_avg)} an answer`}.`;
     }
     if (homeOnly) why = `Home Only: local models only. ${why}`;
     if (pick.games < inp.config.min_games * 2 && verdict === "best") verdict = "provisional";
@@ -132,8 +138,11 @@ export function buildPolicy(inp: BuildInput): Policy {
 }
 
 /** Most specific route first; "*" is a wildcard. */
-export function lookupRoute(policy: Pick<Policy, "routes"> & Partial<Pick<Policy, "suspended">>, domain: string, kind: TaskKind, weight: Weight): PolicyRoute | null {
-  const benched = (r: PolicyRoute) => (policy.suspended ?? []).some((s) => s.model === r.model && (s.domain === "*" || s.domain === domain));
+export function lookupRoute(policy: Pick<Policy, "routes"> & Partial<Pick<Policy, "suspended" | "home_only">>, domain: string, kind: TaskKind, weight: Weight): PolicyRoute | null {
+  const home = (policy.home_only ?? []).includes(domain);
+  const benched = (r: PolicyRoute) =>
+    (policy.suspended ?? []).some((s) => s.model === r.model && (s.domain === "*" || s.domain === domain))
+    || (home && !isLocalCliKind(r.cli));
   const order: [string, string, string][] = [
     [domain, kind, weight],
     [domain, kind, "*"],

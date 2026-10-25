@@ -62,6 +62,11 @@ export async function arenaCommand(argv: string[]): Promise<number> {
     out({ commands: ["status", "recipes [add|toggle|runtimes]", "tasks", "replay", "duel", "pick [next|submit]", "flag", "adverse [add|lift]", "signal", "policy [rebuild|route]", "league", "duels", "config [set]", "sentinel", "scout [add|web]"] });
     return 0;
   }
+  if (cmd === "where") {
+    const flag = str(flags, "vault");
+    out({ path: vault, source: flag ? "--vault" : process.env.PREVAIL_VAULT ? "chosen in Glyph Arena" : vault ? "shared with Glyph Studio" : "none" });
+    return 0;
+  }
   if (!vault) {
     out({ error: "no vault: pass --vault, set PREVAIL_VAULT, or set vaultPath in ~/.prevail/config.json" });
     return 2;

@@ -1,10 +1,10 @@
 // Arena operations the app and the CLI share: blind picks, flags, signals,
 // sentinels, scouting, the policy rebuild and the status snapshot.
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { detectSubprocessClis } from "../cli-bridge.ts";
 import { readModelSuggestions, scoutModels } from "../model-scout.ts";
-import { runtimePath } from "../path-safety.ts";
+import { DOMAINS_DIR, dataRoot, runtimePath } from "../path-safety.ts";
 import { readRouteOverrides } from "../route-learning.ts";
 import { vwriteFileAtomic } from "../vault-session.ts";
 import { currentSuspensions, recordAdverse } from "./adverse.ts";
@@ -236,6 +236,18 @@ export function leagueTable(vault: string, league: League) {
   return { league, standings: standings(duels, sigs, modelOf), duels: duels.length };
 }
 
+/** The vault's life domains (folder names), for the league pickers. */
+export function vaultDomains(vault: string): string[] {
+  try {
+    return readdirSync(join(dataRoot(vault), DOMAINS_DIR), { withFileTypes: true })
+      .filter((d) => d.isDirectory() && !d.name.startsWith(".") && !d.name.startsWith("_"))
+      .map((d) => d.name)
+      .sort();
+  } catch {
+    return [];
+  }
+}
+
 export function status(vault: string) {
   const cfg = readConfig(vault);
   const duels = readDuels(vault);
@@ -270,6 +282,7 @@ export function status(vault: string) {
     leagues: [...leagues.values()].sort((a, b) => b.duels - a.duels),
     suspended: currentSuspensions(vault),
     sentinel_due: sentinelDue(vault),
+    domains: vaultDomains(vault),
     studio_policy_path: join(runtimePath(vault, "_meta"), "arena", "policy.json"),
   };
 }
