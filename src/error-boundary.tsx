@@ -38,7 +38,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (this.state.hasError) {
       return (
         <box flexDirection="column" padding={2}>
-          <text fg={theme.warn ?? theme.gold} attributes={1}>
+          <text fg={theme.warn ?? theme.brand} attributes={1}>
             ! {this.props.name} crashed
           </text>
           <text fg={theme.fgDim}>

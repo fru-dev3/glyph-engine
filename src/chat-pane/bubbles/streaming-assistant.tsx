@@ -23,7 +23,7 @@ export function StreamingAssistantBubble({ msg, tick }: { msg: ChatMsg; tick: nu
       >
         {content.length === 0 ? (
           <box flexDirection="row">
-            <text fg={theme.gold}>{char}</text>
+            <text fg={theme.brand}>{char}</text>
             <text fg={theme.fgDim}>  receiving…</text>
           </box>
         ) : (

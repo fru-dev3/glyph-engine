@@ -28,7 +28,7 @@ function MarkdownLine({ line }: { line: string }) {
   const h1 = line.match(/^#\s+(.*)$/);
   if (h1) {
     return (
-      <text fg={theme.gold} attributes={1}>
+      <text fg={theme.brand} attributes={1}>
         {h1[1]}
       </text>
     );
@@ -36,14 +36,14 @@ function MarkdownLine({ line }: { line: string }) {
   const h2 = line.match(/^##\s+(.*)$/);
   if (h2) {
     return (
-      <text fg={theme.gold}>
+      <text fg={theme.brand}>
         {h2[1]}
       </text>
     );
   }
   const h3 = line.match(/^###\s+(.*)$/);
   if (h3) {
-    return <text fg={theme.goldDim}>{h3[1]}</text>;
+    return <text fg={theme.brandDim}>{h3[1]}</text>;
   }
 
   if (/^\s*>\s*/.test(line)) {
@@ -89,7 +89,7 @@ function MarkdownLine({ line }: { line: string }) {
   if (meta) {
     return (
       <text fg={theme.fg}>
-        <span fg={theme.gold}>{meta[1]}:</span> {stripInline(meta[2])}
+        <span fg={theme.brand}>{meta[1]}:</span> {stripInline(meta[2])}
       </text>
     );
   }

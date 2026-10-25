@@ -5,7 +5,7 @@ import type { ChatMsg } from "../types.ts";
 // Post-turn "serendipity" injection — rendered as a dim, narrow bubble
 // directly under the main reply. The ◉ glyph differentiates it from
 // council bubbles (⚖) and ordinary assistant bubbles. Color is dim
-// gold so the user clearly sees it's adjacent commentary, not the
+// green so the user clearly sees it's adjacent commentary, not the
 // answer to their question.
 export function SerendipityBubble({ msg }: { msg: ChatMsg }) {
   const labelParts: string[] = ["serendipity"];
@@ -16,7 +16,7 @@ export function SerendipityBubble({ msg }: { msg: ChatMsg }) {
       <box
         flexDirection="column"
         border
-        borderColor={theme.goldDim}
+        borderColor={theme.brandDim}
         backgroundColor={theme.bg}
         title={` ◉ ${labelParts.join(" · ")} `}
         titleAlignment="left"

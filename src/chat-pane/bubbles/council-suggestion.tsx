@@ -23,7 +23,7 @@ export function CouncilSuggestionBubble({
     >
       <text fg={theme.aiAccent} attributes={1}>⚖ this looks council-worthy</text>
       <text fg={theme.fgFaint}>  ·  </text>
-      <text fg={clickable ? theme.gold : theme.fgDim}>
+      <text fg={clickable ? theme.brand : theme.fgDim}>
         {clickable ? "click to re-run through council" : "re-send with /council to get a panel verdict"}
       </text>
     </box>

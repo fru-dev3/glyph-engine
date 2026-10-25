@@ -5,12 +5,12 @@ import type { ChatMsg } from "../types.ts";
 import { formatMetaBadge } from "./meta-badge.ts";
 
 // Final synthesized recommendation across the council. Visually distinct:
-// brighter gold border, thicker title, and a clear bottom-title hint.
+// brighter green border, thicker title, and a clear bottom-title hint.
 //
 // When the chair produced the four-section format, we render Divergence in
 // its own electric-cyan accent panel — the actual point of running a
 // council is the disagreement, and burying it inside a wall of text
-// defeats the purpose. The Verdict line gets its own gold-edged hero block.
+// defeats the purpose. The Verdict line gets its own green-edged hero block.
 export function CouncilVerdictBubble({ msg }: { msg: ChatMsg }) {
   const synthCli = msg.cli ?? "claude";
   const labelParts: string[] = [synthCli];
@@ -23,7 +23,7 @@ export function CouncilVerdictBubble({ msg }: { msg: ChatMsg }) {
       <box
         flexDirection="column"
         border
-        borderColor={theme.goldBright}
+        borderColor={theme.brandBright}
         backgroundColor={theme.bg}
         title={` ◆ council verdict${titleSuffix} `}
         titleAlignment="left"
@@ -77,12 +77,12 @@ function VerdictSections({ parsed }: { parsed: ReturnType<typeof parseVerdict> }
         <box
           flexDirection="column"
           border
-          borderColor={theme.gold}
+          borderColor={theme.brand}
           paddingLeft={1}
           paddingRight={1}
           marginTop={1}
         >
-          <text fg={theme.gold} attributes={1}>⚖ Verdict</text>
+          <text fg={theme.brand} attributes={1}>⚖ Verdict</text>
           <text> </text>
           {renderMarkdownLines(parsed.verdict)}
         </box>

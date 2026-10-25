@@ -12,7 +12,7 @@
 //
 // parseVerdict pulls the four sections out so the renderer can give each
 // its own visual treatment (Divergence in an accent panel, Verdict in a
-// gold-edged hero), and so the daemon can ship them as separate Telegram
+// green-edged hero), and so the daemon can ship them as separate Telegram
 // messages with their own headers.
 
 export interface ParsedVerdict {

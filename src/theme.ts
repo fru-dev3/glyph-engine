@@ -1,11 +1,10 @@
 export const theme = {
-  gold: "#C4A35A",
-  goldDim: "#8A7340",
-  goldBright: "#F5E0A8",
-  // aiAccent: high-contrast electric cyan, used for the "AI" inside the
-  // prevAIl wordmark. Complementary to gold, so it pops hard against both
-  // the dark background and the surrounding gold letters. This is the
-  // visual handle on the brand thesis — the AI hidden inside prevail.
+  // Brand: office green, lifted for the dark terminal (#008000 on light).
+  // Green, never gold.
+  brand: "#3FA34D",
+  brandDim: "#2A6E34",
+  brandBright: "#B9F0B0",
+  // aiAccent: high-contrast electric cyan, kept for AI-specific highlights.
   aiAccent: "#3CD8FF",
   aiAccentDim: "#1A9DC8",
   bg: "#0E0E0E",
@@ -13,14 +12,14 @@ export const theme = {
   fg: "#E6E6E6",
   fgDim: "#9A9A9A",
   fgFaint: "#5A5A5A",
-  accent: "#C4A35A",
+  accent: "#3FA34D",
   warn: "#E08A3C",
   ok: "#7BB369",
-  selBg: "#2A2418",
-  selFg: "#F2E2B6",
+  selBg: "#16261A",
+  selFg: "#D8F5D2",
   border: "#3A3A3A",
-  borderFocus: "#C4A35A",
-  bubbleUser: "#C4A35A",
+  borderFocus: "#3FA34D",
+  bubbleUser: "#3FA34D",
   bubbleAssistant: "#5F7A8C",
   bubbleSystem: "#3A3A3A",
   inputBorder: "#5F7A8C",

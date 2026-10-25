@@ -70,7 +70,7 @@ export function EditorPane({ target, filename, onExit }: Props) {
       flexDirection="column"
       flexGrow={1}
       border
-      borderColor={theme.gold}
+      borderColor={theme.brand}
       backgroundColor={theme.bg}
       title={` editing ${target.name}/${filename} `}
       titleAlignment="left"
@@ -89,7 +89,7 @@ export function EditorPane({ target, filename, onExit }: Props) {
       </box>
       {status && (
         <box height={1} paddingLeft={2} backgroundColor={theme.bgPanel}>
-          <text fg={theme.gold}>{status}</text>
+          <text fg={theme.brand}>{status}</text>
         </box>
       )}
     </box>

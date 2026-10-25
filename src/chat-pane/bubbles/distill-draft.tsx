@@ -16,7 +16,7 @@ export function DistillDraftBubble({
       <box
         flexDirection="column"
         border
-        borderColor={theme.gold}
+        borderColor={theme.brand}
         backgroundColor={theme.bg}
         title=" 🪄 distilled skill draft "
         titleAlignment="left"
@@ -35,7 +35,7 @@ export function DistillDraftBubble({
           backgroundColor={theme.selBg}
           onMouseDown={() => onAccept(msg.ts, msg.content)}
         >
-          <text fg={theme.gold} attributes={1}>▶ accept and save</text>
+          <text fg={theme.brand} attributes={1}>▶ accept and save</text>
         </box>
         <text fg={theme.bg}>  </text>
         <box

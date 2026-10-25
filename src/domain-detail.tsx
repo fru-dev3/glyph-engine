@@ -262,7 +262,7 @@ function DomainChat({ domain, setEmbeddedInputActive, selectedSkills }: { domain
         )}
         {history.map((m, i) => (
           <box key={i} flexDirection="column" paddingTop={1}>
-            <text fg={m.role === "user" ? theme.gold : theme.fgDim}>
+            <text fg={m.role === "user" ? theme.brand : theme.fgDim}>
               {m.role === "user" ? "  › " : "  ▸ "}
               <span fg={theme.fg}>{m.content}</span>
             </text>
@@ -376,7 +376,7 @@ function SkillsList({
           if (!rows || rows.length === 0) return null;
           return (
             <box key={`group-${g}`} flexDirection="column">
-              <text fg={theme.goldDim}>
+              <text fg={theme.brandDim}>
                 ▸ {GROUP_LABEL[g]}  ({rows.length})
               </text>
               {rows.map(({ idx, skill }) => {
@@ -427,7 +427,7 @@ function SkillsList({
                               onEditSkill(idx);
                             }}
                           >
-                            <text fg={theme.goldDim} bg={bg}>✎</text>
+                            <text fg={theme.brandDim} bg={bg}>✎</text>
                             <text fg={theme.fgFaint} bg={bg}> edit</text>
                           </box>
                         )}
@@ -463,12 +463,12 @@ function SkillsList({
             height={1}
             onMouseDown={onNewSkill}
           >
-            <text fg={theme.goldDim}>{"  + new skill"}</text>
+            <text fg={theme.brandDim}>{"  + new skill"}</text>
           </box>
         )}
         {linkedApps.length > 0 && (
           <box flexDirection="column">
-            <text fg={theme.goldDim}>
+            <text fg={theme.brandDim}>
               ▸ apps available for {domainName}  ({linkedApps.length})
             </text>
             {linkedApps.map((a) => {

@@ -440,7 +440,7 @@ export function BenchmarkPanel({ onClose, vaultPath, availableClis, domainNames 
         {questions.map((q, i) => {
           const active = i === selectedQuestionIdx;
           const expanded = expandedQuestionId === q.id;
-          const fg = active ? theme.gold : theme.fgDim;
+          const fg = active ? theme.brand : theme.fgDim;
           const pointer = active ? "›" : " ";
           const arrow = expanded ? "▾" : "▸";
           return (
@@ -526,7 +526,7 @@ export function BenchmarkPanel({ onClose, vaultPath, availableClis, domainNames 
                   if (q) openExistingInFinder(q);
                 }}
               >
-                <text fg={theme.goldDim}>{"✎ edit highlighted"}</text>
+                <text fg={theme.brandDim}>{"✎ edit highlighted"}</text>
               </box>
               <text fg={theme.fgFaint}>{"  "}</text>
             </>
@@ -545,7 +545,7 @@ export function BenchmarkPanel({ onClose, vaultPath, availableClis, domainNames 
           </box>
         </box>
         {customizeMessage && (
-          <text fg={theme.gold}>{`  ${customizeMessage}`}</text>
+          <text fg={theme.brand}>{`  ${customizeMessage}`}</text>
         )}
 
         {/* SUB-FORM: new question. Single-line inputs for domain + a
@@ -591,7 +591,7 @@ export function BenchmarkPanel({ onClose, vaultPath, availableClis, domainNames 
                 backgroundColor={theme.selBg}
                 onMouseDown={commitNewQuestion}
               >
-                <text fg={theme.gold} attributes={1}>{"▸ write stub & open in editor"}</text>
+                <text fg={theme.brand} attributes={1}>{"▸ write stub & open in editor"}</text>
               </box>
               <text fg={theme.fgFaint}>{"   "}</text>
               <box
@@ -745,7 +745,7 @@ export function BenchmarkPanel({ onClose, vaultPath, availableClis, domainNames 
               backgroundColor={theme.selBg}
               onMouseDown={() => void fireRun()}
             >
-              <text fg={theme.gold} attributes={1}>
+              <text fg={theme.brand} attributes={1}>
                 {`▸ run ${allSelections.length || 1} model${(allSelections.length || 1) === 1 ? "" : "s"} × ${questions.length} question${questions.length === 1 ? "" : "s"}`}
               </text>
             </box>
@@ -765,7 +765,7 @@ export function BenchmarkPanel({ onClose, vaultPath, availableClis, domainNames 
 
         {/* Progress / status */}
         {(mode === "running" || mode === "scoring") && activeModel && (
-          <text fg={theme.gold} attributes={1}>{`▸ ${activeModel}`}</text>
+          <text fg={theme.brand} attributes={1}>{`▸ ${activeModel}`}</text>
         )}
         {mode === "running" && (
           <>
@@ -784,7 +784,7 @@ export function BenchmarkPanel({ onClose, vaultPath, availableClis, domainNames 
           </>
         )}
         {mode === "scoring" && (
-          <text fg={theme.gold}>{"scoring run via LLM judge…"}</text>
+          <text fg={theme.brand}>{"scoring run via LLM judge…"}</text>
         )}
         {mode === "error" && error && (
           <text fg={theme.warn}>{`✗ ${error}`}</text>
@@ -797,7 +797,7 @@ export function BenchmarkPanel({ onClose, vaultPath, availableClis, domainNames 
           <>
             <text fg={theme.aiAccent} attributes={1}>{`◈ results — ${results.length} model${results.length === 1 ? "" : "s"}`}</text>
             {loadedRunLabel && (
-              <text fg={theme.gold}>{`  ◆ viewing saved run: ${loadedRunLabel}  (click another leaderboard row to swap, or run a benchmark above for fresh results)`}</text>
+              <text fg={theme.brand}>{`  ◆ viewing saved run: ${loadedRunLabel}  (click another leaderboard row to swap, or run a benchmark above for fresh results)`}</text>
             )}
             <text fg={theme.fgFaint}>{"  click any question row to see the prompt + expected decision + model's reply"}</text>
             <text> </text>
@@ -805,7 +805,7 @@ export function BenchmarkPanel({ onClose, vaultPath, availableClis, domainNames 
               const modelLabel = r.model === "" ? `${r.cli} (default)` : `${r.cli} · ${r.model}`;
               return (
                 <box key={`${r.cli}-${r.model}`} flexDirection="column">
-                  <text fg={theme.gold} attributes={1}>{`  ${modelLabel}`}</text>
+                  <text fg={theme.brand} attributes={1}>{`  ${modelLabel}`}</text>
                   <text fg={theme.fg}>
                     {`    keyword_avg: ${r.score.keyword_avg ?? "—"}%   judge_avg: ${r.score.judge_avg ?? "—"} / 10   (${r.score.questionScores.length} questions)`}
                   </text>
@@ -913,7 +913,7 @@ export function BenchmarkPanel({ onClose, vaultPath, availableClis, domainNames 
                   height={1}
                   onMouseDown={() => openHistoricalRun(e)}
                 >
-                  <text fg={isLoaded ? theme.gold : theme.fg}>
+                  <text fg={isLoaded ? theme.brand : theme.fg}>
                     {`  ${isLoaded ? "▸" : " "} ${j.padStart(8)}  ${k.padStart(9)}  ${String(e.questions).padStart(9)}  ${e.label}`}
                   </text>
                 </box>

@@ -407,7 +407,7 @@ function escapeHtml(s: string): string {
 function htmlPage(title: string, body: string): string {
   return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)} · Glyph Engine</title>
 <style>body{font-family:-apple-system,system-ui,sans-serif;max-width:520px;margin:80px auto;padding:32px;color:#222;background:#fafaf6}
-h1{color:#C4A35A;margin:0 0 16px 0}p{line-height:1.5}code{background:#eee;padding:2px 6px;border-radius:3px}</style>
+h1{color:#008000;margin:0 0 16px 0}p{line-height:1.5}code{background:#eee;padding:2px 6px;border-radius:3px}</style>
 </head><body><h1>${escapeHtml(title)}</h1>${body}</body></html>`;
 }
 

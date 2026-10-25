@@ -69,7 +69,7 @@ function CouncilConfigBubble({
       <box
         flexDirection="column"
         border
-        borderColor={theme.gold}
+        borderColor={theme.brand}
         backgroundColor={theme.bg}
         title=" ◆ council panel · click to toggle "
         titleAlignment="left"
@@ -85,11 +85,11 @@ function CouncilConfigBubble({
           const inPanel = detected && isInPanel(kind);
           const checkbox = inPanel ? "[×]" : detected ? "[ ]" : "[—]";
           const checkboxFg = inPanel
-            ? theme.gold
+            ? theme.brand
             : detected
               ? theme.fgDim
               : theme.fgFaint;
-          const nameFg = detected ? theme.gold : theme.fgFaint;
+          const nameFg = detected ? theme.brand : theme.fgFaint;
           const pinnedList = cfg.models[kind] ?? [];
           const hasAnyPin = pinnedList.length > 0;
           const picks = MODEL_QUICKPICKS[kind] ?? [];
@@ -234,7 +234,7 @@ function CouncilConfigBubble({
           return (
             <box flexDirection="column" paddingTop={0}>
               <box flexDirection="row" height={1}>
-                <text fg={theme.gold} attributes={1}>verdict synthesizer</text>
+                <text fg={theme.brand} attributes={1}>verdict synthesizer</text>
                 <text fg={theme.fgFaint}>
                   {"  → "}
                   {chair
@@ -278,7 +278,7 @@ function CouncilConfigBubble({
           return (
             <box flexDirection="column" paddingTop={0}>
               <box flexDirection="row" height={1}>
-                <text fg={theme.gold} attributes={1}>response framework</text>
+                <text fg={theme.brand} attributes={1}>response framework</text>
                 <text fg={theme.fgFaint}>
                   {"  → "}
                   {activeFw ? `${activeFw.label} · ${activeFw.blurb}` : "none (model picks structure)"}
@@ -315,7 +315,7 @@ function CouncilConfigBubble({
             paddingRight={1}
             backgroundColor={councilMode ? theme.selBg : theme.bgPanel}
           >
-            <text fg={councilMode ? theme.goldBright : theme.gold} attributes={1}>
+            <text fg={councilMode ? theme.brandBright : theme.brand} attributes={1}>
               {councilMode ? "▣ council mode ON" : "▸ ask the council  (next message fans out)"}
             </text>
           </box>
@@ -376,7 +376,7 @@ export function CouncilConfigPanel({
       />
       <box flexGrow={1} />
       <box flexDirection="row" height={1} onMouseDown={onClose}>
-        <text fg={theme.gold} attributes={1}>[ done ]</text>
+        <text fg={theme.brand} attributes={1}>[ done ]</text>
         <text fg={theme.fgFaint}>  · esc also closes</text>
       </box>
     </box>
@@ -396,8 +396,8 @@ function CouncilModelChip({
   // these as buttons (the borderless ModelChip in the picker bar reads as
   // text, which confused users in the inline council bubble).
   const bg = active ? theme.selBg : theme.bgPanel;
-  const fg = active ? theme.goldBright : theme.gold;
-  const border = active ? theme.goldBright : theme.fgDim;
+  const fg = active ? theme.brandBright : theme.brand;
+  const border = active ? theme.brandBright : theme.fgDim;
   return (
     <box
       flexDirection="row"

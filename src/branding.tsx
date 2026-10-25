@@ -110,7 +110,7 @@ export function Branding({
       flexDirection="column"
       height={9}
       border={["bottom"]}
-      borderColor={theme.gold}
+      borderColor={theme.brand}
       backgroundColor={theme.bg}
       paddingTop={1}
       paddingBottom={0}
@@ -202,17 +202,17 @@ function CompactBranding({
       flexDirection="column"
       height={3}
       border={["bottom"]}
-      borderColor={theme.gold}
+      borderColor={theme.brand}
       backgroundColor={theme.bg}
       paddingLeft={1}
       paddingRight={1}
     >
       {/* Row 1: brand + date + stats + cli health */}
       <box flexDirection="row" height={1}>
-        <text fg={theme.gold} attributes={1}>{"◈ Glyph Engine"}</text>
-        <text fg={theme.goldDim}>{` v${VERSION}`}</text>
+        <text fg={theme.brand} attributes={1}>{"◈ Glyph Engine"}</text>
+        <text fg={theme.brandDim}>{` v${VERSION}`}</text>
         <text fg={theme.fgFaint}>{"  ·  "}</text>
-        <text fg={theme.gold}>{dateLabel}</text>
+        <text fg={theme.brand}>{dateLabel}</text>
         <text fg={theme.fgFaint}>{"  "}</text>
         <text fg={theme.fgDim}>{timeLabel}</text>
         <text fg={theme.fgFaint}>{"  ·  "}</text>
@@ -247,7 +247,7 @@ function CompactBranding({
           label="⚖ C:"
           value={globalCouncilOn ? "ON" : "OFF"}
           active={!!globalCouncilOn}
-          activeFg={theme.gold}
+          activeFg={theme.brand}
           onMouseDown={onToggleGlobalCouncil}
           paddingLeft={1}
         />
@@ -306,7 +306,7 @@ function CompactBranding({
 //
 // Letters are tuned to read at terminal scale: bold strokes, no tapering,
 // minimum 2-cell strokes so the cyan AI block carries weight against
-// PREV+L in gold.
+// PREV+L in green.
 
 type Glyph = readonly [string, string, string, string, string, string, string];
 
@@ -391,7 +391,7 @@ function BrandColumn() {
       <Mascot />
       <box flexDirection="column" paddingLeft={2}>
         {LOGO.map((row, i) => (
-          <text key={`logo-${i}`} fg={theme.gold} attributes={1}>
+          <text key={`logo-${i}`} fg={theme.brand} attributes={1}>
             {row}
           </text>
         ))}
@@ -403,9 +403,9 @@ function BrandColumn() {
 function Mascot() {
   return (
     <box flexDirection="column" width={9} paddingTop={1}>
-      <text fg={theme.goldDim}> ╲ │ ╱ </text>
-      <text fg={theme.gold} attributes={1}> ─ ◈ ─ </text>
-      <text fg={theme.goldDim}> ╱ │ ╲ </text>
+      <text fg={theme.brandDim}> ╲ │ ╱ </text>
+      <text fg={theme.brand} attributes={1}> ─ ◈ ─ </text>
+      <text fg={theme.brandDim}> ╱ │ ╲ </text>
       <text> </text>
       <text fg={theme.fgFaint}>EST 2026</text>
     </box>
@@ -480,10 +480,10 @@ function StatusColumn({
   return (
     <box flexDirection="column" flexGrow={1} paddingLeft={2}>
       <box flexDirection="row" height={1}>
-        <text fg={theme.gold} attributes={1}>
+        <text fg={theme.brand} attributes={1}>
           {dateLabel}
         </text>
-        <text fg={theme.goldDim}>{`  ·  ${yearLabel}`}</text>
+        <text fg={theme.brandDim}>{`  ·  ${yearLabel}`}</text>
         <box flexGrow={1} />
         {/* Compact stats moved here from the brand column so the banner is
             shorter and the chat area gets more vertical real estate. */}
@@ -523,7 +523,7 @@ function StatusColumn({
           label="⚖ Council:"
           value={globalCouncilOn ? "ON" : "OFF"}
           active={!!globalCouncilOn}
-          activeFg={theme.gold}
+          activeFg={theme.brand}
           onMouseDown={onToggleGlobalCouncil}
           paddingLeft={2}
         />

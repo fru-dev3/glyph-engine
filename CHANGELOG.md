@@ -7,11 +7,12 @@ The release page on GitHub mirrors the same notes for each tag:
 
 ---
 
-## [Unreleased]
+## [1.10.8] - 2026-10-25 · Prevail is now Glyph
 
 ### Changed
 
 - Prevail is now Glyph. The engine is Glyph Engine; the command is still `prevail`. Help text, banners, notifications, emails, MCP descriptions and the notes the engine writes into your vault now say Glyph Engine (or Glyph Studio for the desktop app). Nothing else moved: `~/.prevail`, `PREVAIL_*` variables, the `prevail` MCP server id and every file name stay as they were.
+- The terminal theme is office green instead of gold, and the logo in `assets/` is the Glyph mark.
 
 ---
 

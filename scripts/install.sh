@@ -15,11 +15,11 @@ DATA_DIR="${PREVAIL_DATA_DIR:-$HOME/.prevail}"
 VERSION="${PREVAIL_VERSION:-latest}"
 
 bold=$(printf '\033[1m')
-gold=$(printf '\033[38;5;179m')
+green=$(printf '\033[38;5;71m')
 dim=$(printf '\033[2m')
 reset=$(printf '\033[0m')
 
-say() { printf "  %s%s%s\n" "$gold" "$1" "$reset"; }
+say() { printf "  %s%s%s\n" "$green" "$1" "$reset"; }
 note() { printf "  %s%s%s\n" "$dim" "$1" "$reset"; }
 
 uname_s=$(uname -s)
@@ -33,9 +33,9 @@ case "$uname_s-$uname_m" in
   *) echo "✗ unsupported platform: $uname_s $uname_m"; exit 1 ;;
 esac
 
-printf "\n  %s╲ │ ╱%s    %sGLYPH ENGINE%s\n" "$gold" "$reset" "$bold$gold" "$reset"
-printf "  %s─ ◈ ─%s    a personal AI cockpit (command: prevail)\n" "$gold" "$reset"
-printf "  %s╱ │ ╲%s    %sinstalling for %s%s\n\n" "$gold" "$reset" "$dim" "$target" "$reset"
+printf "\n  %s╲ │ ╱%s    %sGLYPH ENGINE%s\n" "$green" "$reset" "$bold$green" "$reset"
+printf "  %s─ ◈ ─%s    a personal AI cockpit (command: prevail)\n" "$green" "$reset"
+printf "  %s╱ │ ╲%s    %sinstalling for %s%s\n\n" "$green" "$reset" "$dim" "$target" "$reset"
 
 # Auto-migrate legacy ~/.aireadyu/ (pre-rename installs from v0.1.x) into
 # the new ~/.prevail/. Only fires when the new dir doesn't exist yet, so
@@ -112,6 +112,6 @@ case ":$PATH:" in
 esac
 
 printf "\n  %sdone.%s next:\n" "$bold" "$reset"
-printf "    %sprevail%s          ← first-run wizard\n" "$gold" "$reset"
-printf "    %sprevail demo%s     ← jump straight into the synthetic vault\n" "$gold" "$reset"
-printf "    %sprevail doctor%s   ← check installed AI clis\n\n" "$gold" "$reset"
+printf "    %sprevail%s          ← first-run wizard\n" "$green" "$reset"
+printf "    %sprevail demo%s     ← jump straight into the synthetic vault\n" "$green" "$reset"
+printf "    %sprevail doctor%s   ← check installed AI clis\n\n" "$green" "$reset"

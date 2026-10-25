@@ -31,7 +31,7 @@ interface ChipProps {
   label: string;             // e.g. "◆ Framework:"
   value: string;             // e.g. "BLUF" or "OFF"
   active: boolean;           // whether the value should pop (theme.aiAccent + bold) vs dim
-  activeFg?: string;         // override the value fg when active (gold for Council ON)
+  activeFg?: string;         // override the value fg when active (green for Council ON)
   onMouseDown?: () => void;
   paddingLeft?: number;      // defaults to 1
   paddingRight?: number;     // defaults to 1

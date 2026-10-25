@@ -15,7 +15,7 @@ export function ThinkingBubble({ tick, cliLabel }: { tick: number; cliLabel: str
         paddingLeft={1}
         paddingRight={1}
       >
-        <text fg={theme.gold}>{char}</text>
+        <text fg={theme.brand}>{char}</text>
         <text fg={theme.fgDim}>  {word}…</text>
       </box>
     </box>

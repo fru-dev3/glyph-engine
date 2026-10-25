@@ -91,7 +91,7 @@ export function AppDetail({ app, view, skillIdx, onPickSkill, topBar, setEmbedde
               <ConnectorCompactSummary app={app} skillsCount={skills.length} />
               <text> </text>
               <text fg={theme.border}>{"─".repeat(80)}</text>
-              <text fg={theme.gold} attributes={1}>▸ Data</text>
+              <text fg={theme.brand} attributes={1}>▸ Data</text>
               <ConnectorDataPanel app={app} />
             </>
           )}
@@ -262,7 +262,7 @@ function ConnectorCompactSummary({ app, skillsCount }: { app: AppSkill; skillsCo
           Boxes with explicit padding are layout cells — whitespace
           inside them is preserved. */}
       <box flexDirection="row" height={1}>
-        <box flexDirection="row"><text fg={theme.gold} attributes={1}>{app.title}</text></box>
+        <box flexDirection="row"><text fg={theme.brand} attributes={1}>{app.title}</text></box>
         <box flexDirection="row" paddingLeft={3}>
           <text fg={theme.fgFaint}>{integrationLabel[integration] ?? integration}</text>
         </box>
@@ -371,7 +371,7 @@ function ConnectorAuthPanel({ app }: { app: AppSkill }) {
   const manifest = hasManifest(app);
   return (
     <box flexDirection="column">
-      <text fg={theme.gold} attributes={1}>▸ How does {app.title} connect?</text>
+      <text fg={theme.brand} attributes={1}>▸ How does {app.title} connect?</text>
       <text> </text>
       <text fg={theme.fgDim}>{"  integration type: "}<span fg={theme.fg}>{app.integration ?? "(undeclared)"}</span></text>
       <text> </text>
@@ -449,7 +449,7 @@ function ConnectorSyncPanel({ app, skills }: { app: AppSkill; skills: SkillSpec[
   const cronSkills = skills.filter((s) => s.trigger?.startsWith("cron("));
   return (
     <box flexDirection="column">
-      <text fg={theme.gold} attributes={1}>▸ Scheduled syncs</text>
+      <text fg={theme.brand} attributes={1}>▸ Scheduled syncs</text>
       <text> </text>
       {cronSkills.length === 0 ? (
         <text fg={theme.fgFaint}>{"  no cron-triggered skills declared for this connector."}</text>
@@ -489,7 +489,7 @@ function ConnectorSkillsPanel({ app, skills }: { app: AppSkill; skills: SkillSpe
   };
   return (
     <box flexDirection="column">
-      <text fg={theme.gold} attributes={1}>▸ Runnable skills ({skills.length})</text>
+      <text fg={theme.brand} attributes={1}>▸ Runnable skills ({skills.length})</text>
       <text> </text>
       {skills.map((s) => {
         const r = results.get(s.id);
@@ -540,7 +540,7 @@ function ConnectorDataPanel({ app }: { app: AppSkill }) {
   const totalBytes = entries.reduce((s, e) => s + e.size, 0);
   return (
     <box flexDirection="column">
-      <text fg={theme.gold} attributes={1}>▸ Data store ({entries.length} files · {formatBytes(totalBytes)})</text>
+      <text fg={theme.brand} attributes={1}>▸ Data store ({entries.length} files · {formatBytes(totalBytes)})</text>
       <text fg={theme.fgFaint}>{`  rooted at ${dataDir.replace(process.env.HOME ?? "", "~")}`}</text>
       <text> </text>
       {entries.length === 0 ? (

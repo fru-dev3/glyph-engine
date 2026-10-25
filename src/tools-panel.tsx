@@ -73,7 +73,7 @@ export function ToolsPanel({ onClose, onOpenBenchmark }: Props) {
               backgroundColor={theme.selBg}
               onMouseDown={onOpenBenchmark}
             >
-              <text fg={theme.gold} attributes={1}>{"▸ open benchmark"}</text>
+              <text fg={theme.brand} attributes={1}>{"▸ open benchmark"}</text>
               <text fg={theme.fgFaint}>{"   (shortcut: Shift+B)"}</text>
             </box>
           </Section>
@@ -267,7 +267,7 @@ function Section({
   return (
     <box flexDirection="column" paddingBottom={1}>
       <box flexDirection="row" height={1}>
-        <text fg={theme.gold} attributes={1}>{`${glyph}  ${title}`}</text>
+        <text fg={theme.brand} attributes={1}>{`${glyph}  ${title}`}</text>
         <text fg={theme.fgFaint}>{"   ·   "}</text>
         <text fg={statusFg}>{status}</text>
       </box>

@@ -58,7 +58,7 @@ export function TabStrip({ activeView, inChat, onPickView, onPickChat, onEdit, c
       {TABS.map((tab, i) => {
         const isChatTab = tab.key === "chat";
         const active = isChatTab ? inChat : !inChat && tab.key === activeView;
-        const fg = active ? theme.gold : theme.fgDim;
+        const fg = active ? theme.brand : theme.fgDim;
         const label = active ? `[${tab.label}]` : ` ${tab.label} `;
         // CRITICAL FIX: TABS includes "chat" at index 0 but VIEW_ORDER in
         // app.tsx is [state, quickstart, prompts, skills] — no chat. So
@@ -89,7 +89,7 @@ export function TabStrip({ activeView, inChat, onPickView, onPickChat, onEdit, c
       <box flexGrow={1} />
       {showEdit && (
         <box flexDirection="row" onMouseDown={onEdit}>
-          <text fg={theme.goldDim}>✎ edit</text>
+          <text fg={theme.brandDim}>✎ edit</text>
         </box>
       )}
       {/* Council toggle + ◇ configure used to live here, but they
@@ -116,7 +116,7 @@ function CliChips({
     <>
       {clis.map((c) => {
         const active = c.kind === currentCli;
-        const fg = active ? theme.gold : theme.fgDim;
+        const fg = active ? theme.brand : theme.fgDim;
         // Inline health glyph next to each CLI label — ✓ ready, ⚠ failed
         // probe, · still probing. Replaces the old top-of-screen banner row.
         const h = cliHealth.get(c.kind);

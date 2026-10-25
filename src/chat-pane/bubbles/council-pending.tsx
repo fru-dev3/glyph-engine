@@ -24,7 +24,7 @@ export function CouncilPendingBubble({ msg, tick }: { msg: ChatMsg; tick: number
         paddingRight={1}
         height={3}
       >
-        <text fg={theme.gold}>{spinnerChar(tick)}</text>
+        <text fg={theme.brand}>{spinnerChar(tick)}</text>
         <text fg={theme.fgDim}>  {thinkingWord(tick)}…</text>
       </box>
     </box>

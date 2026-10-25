@@ -61,10 +61,10 @@ describe("Chip", () => {
       label: "⚖ Council:",
       value: "ON",
       active: true,
-      activeFg: theme.gold,
+      activeFg: theme.brand,
     });
     const texts = getTexts(node);
-    expect(texts[1]!.props.fg).toBe(theme.gold);
+    expect(texts[1]!.props.fg).toBe(theme.brand);
   });
 
   test("activeFg override is ignored when inactive — value stays dim", () => {
@@ -72,7 +72,7 @@ describe("Chip", () => {
       label: "⚖ Council:",
       value: "OFF",
       active: false,
-      activeFg: theme.gold,
+      activeFg: theme.brand,
     });
     const texts = getTexts(node);
     expect(texts[1]!.props.fg).toBe(theme.fgDim);
@@ -141,7 +141,7 @@ describe("Chip", () => {
       label: "⚖ Council:",
       value: "ON",
       active: true,
-      activeFg: theme.gold,
+      activeFg: theme.brand,
       paddingLeft: 2,
     });
     expect(node.props.paddingLeft).toBe(2);

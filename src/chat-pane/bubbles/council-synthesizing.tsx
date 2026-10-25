@@ -14,7 +14,7 @@ export function CouncilSynthesizingBubble({ msg, tick }: { msg: ChatMsg; tick: n
       <box
         flexDirection="row"
         border
-        borderColor={theme.goldBright}
+        borderColor={theme.brandBright}
         backgroundColor={theme.bg}
         title=" ⚖ synthesizing verdict "
         titleAlignment="left"
@@ -24,7 +24,7 @@ export function CouncilSynthesizingBubble({ msg, tick }: { msg: ChatMsg; tick: n
         paddingRight={1}
         height={3}
       >
-        <text fg={theme.goldBright}>{spinnerChar(tick)}</text>
+        <text fg={theme.brandBright}>{spinnerChar(tick)}</text>
         <text fg={theme.fgDim}>  {thinkingWord(tick)} the panel responses…</text>
       </box>
     </box>

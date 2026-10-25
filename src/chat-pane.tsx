@@ -242,7 +242,7 @@ export function ChatPane({ session, availableClis, tick, councilMode, onToggleCo
           paddingRight={2}
           backgroundColor={theme.selBg}
         >
-          <text fg={theme.goldBright} attributes={1}>● council mode ON</text>
+          <text fg={theme.brandBright} attributes={1}>● council mode ON</text>
           <text fg={theme.fgDim}>  · your next message fans out to the panel</text>
         </box>
       )}
@@ -474,8 +474,8 @@ function SuggestionChip({
   onPick: (s: Suggestion) => void;
 }) {
   const [hover, setHover] = useState(false);
-  const border = hover ? theme.goldBright : theme.gold;
-  const labelFg = hover ? theme.goldBright : theme.fg;
+  const border = hover ? theme.brandBright : theme.brand;
+  const labelFg = hover ? theme.brandBright : theme.fg;
   const icon = SOURCE_ICON[suggestion.source] ?? "·";
   return (
     <box flexDirection="column" paddingBottom={0}>
@@ -491,7 +491,7 @@ function SuggestionChip({
         onMouseOver={() => setHover(true)}
         onMouseOut={() => setHover(false)}
       >
-        <text fg={theme.gold}>{icon} </text>
+        <text fg={theme.brand}>{icon} </text>
         <text fg={labelFg}>{suggestion.label}</text>
       </box>
     </box>
@@ -618,7 +618,7 @@ function UsageBadge({ usage }: { usage: ChatSession["usage"] }) {
         {fmtK(tokensIn)}↑ {fmtK(tokensOut)}↓
       </span>
       {" tokens · "}
-      <span fg={theme.gold}>{costLabel}</span>
+      <span fg={theme.brand}>{costLabel}</span>
     </text>
   );
 }
@@ -833,7 +833,7 @@ function InputBox({
         paddingRight={1}
         height={3}
       >
-        <text fg={disabled ? theme.fgFaint : theme.gold}>{`› `}</text>
+        <text fg={disabled ? theme.fgFaint : theme.brand}>{`› `}</text>
         <input
           ref={inputRef}
           flexGrow={1}
@@ -875,7 +875,7 @@ function SlashAutocomplete({
     <box
       flexDirection="column"
       border
-      borderColor={theme.gold}
+      borderColor={theme.brand}
       backgroundColor={theme.bgPanel}
       paddingLeft={1}
       paddingRight={1}
@@ -887,7 +887,7 @@ function SlashAutocomplete({
       {matches.map((c, i) => {
         const active = i === selectedIdx;
         const bg = active ? theme.selBg : theme.bgPanel;
-        const cmdFg = active ? theme.goldBright : theme.gold;
+        const cmdFg = active ? theme.brandBright : theme.brand;
         const argFg = active ? theme.selFg : theme.fgDim;
         const descFg = active ? theme.selFg : theme.fg;
         return (
@@ -899,7 +899,7 @@ function SlashAutocomplete({
             onMouseDown={() => onPick(c)}
             onMouseMove={() => onHover(i)}
           >
-            <text fg={active ? theme.gold : theme.fgFaint} bg={bg}>
+            <text fg={active ? theme.brand : theme.fgFaint} bg={bg}>
               {active ? "› " : "  "}
             </text>
             <text fg={cmdFg} bg={bg} attributes={active ? 1 : 0}>

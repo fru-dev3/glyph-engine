@@ -109,10 +109,10 @@ export function Sidebar({
           // Show skill count, not open-loop count — skills are the action
           // surface for each domain, open loops live inside state.md.
           const skillsCount = d.skills.length;
-          const badgeColor = skillsCount > 0 ? theme.gold : theme.fgFaint;
+          const badgeColor = skillsCount > 0 ? theme.brand : theme.fgFaint;
           const badge = skillsCount.toString().padStart(2, " ");
           const icon = domainIcon(d.name);
-          const iconFg = active ? theme.selFg : theme.gold;
+          const iconFg = active ? theme.selFg : theme.brand;
           const namePadded = d.name.padEnd(14, " ").slice(0, 14);
           const status = domainStatus.get(d.name) ?? "idle";
           return (
@@ -164,7 +164,7 @@ export function Sidebar({
             : a.status === "connected" ? theme.ok
             : a.status === "error" || a.status === "expired" ? theme.warn
             : theme.fgDim;
-          const badgeColor = skillsCount > 0 ? theme.gold : theme.fgFaint;
+          const badgeColor = skillsCount > 0 ? theme.brand : theme.fgFaint;
           const badge = skillsCount.toString().padStart(2, " ");
           const namePadded = a.id.padEnd(13, " ").slice(0, 13);
           const status = appStatus.get(a.id) ?? "idle";
@@ -195,7 +195,7 @@ function StatusGlyph({ status, tick, bg }: { status: ChatStatus; tick: number; b
   if (status === "idle") return <text bg={bg}>  </text>;
   if (status === "pending") {
     return (
-      <text fg={theme.gold} bg={bg}> {spinnerChar(tick)}</text>
+      <text fg={theme.brand} bg={bg}> {spinnerChar(tick)}</text>
     );
   }
   return <text fg={theme.ok} bg={bg}> ●</text>;
@@ -220,7 +220,7 @@ function Section({
   footer?: React.ReactNode;
   children: React.ReactNode;
 }) {
-  const accent = focused ? theme.gold : theme.fgDim;
+  const accent = focused ? theme.brand : theme.fgDim;
   const scrollRef = useRef<any>(null);
   useEffect(() => {
     if (!followId) return;
@@ -253,7 +253,7 @@ function Section({
       <box flexDirection="row" height={1}>
         <text fg={accent} attributes={focused ? 1 : 0}>{title}</text>
         <text fg={theme.fgFaint}>  {count}</text>
-        {focused && <text fg={theme.gold}>  ●</text>}
+        {focused && <text fg={theme.brand}>  ●</text>}
       </box>
       {columnHeader && (
         <text fg={theme.fgFaint}>{columnHeader}</text>
@@ -274,7 +274,7 @@ function NewRow({ label, onClick }: { label: string; onClick: () => void }) {
       height={1}
       onMouseDown={onClick}
     >
-      <text fg={theme.goldDim}>  {label}</text>
+      <text fg={theme.brandDim}>  {label}</text>
     </box>
   );
 }

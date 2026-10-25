@@ -146,7 +146,7 @@ export function FirstRunWizard({ onDone }: Props) {
         height={26}
         border
         borderStyle="double"
-        borderColor={theme.gold}
+        borderColor={theme.brand}
         backgroundColor={theme.bg}
         paddingLeft={3}
         paddingRight={3}
@@ -181,7 +181,7 @@ export function FirstRunWizard({ onDone }: Props) {
             : "↑/↓ choose · enter to select · q to quit"}
         </text>
         <text> </text>
-        {status && <text fg={theme.gold}>{status}</text>}
+        {status && <text fg={theme.brand}>{status}</text>}
       </box>
     </box>
   );
@@ -191,14 +191,14 @@ function Header() {
   return (
     <box flexDirection="row">
       <box flexDirection="column" width={11} paddingTop={0}>
-        <text fg={theme.goldDim}> ╲ │ ╱ </text>
-        <text fg={theme.gold} attributes={1}> ─ ◈ ─ </text>
-        <text fg={theme.goldDim}> ╱ │ ╲ </text>
+        <text fg={theme.brandDim}> ╲ │ ╱ </text>
+        <text fg={theme.brand} attributes={1}> ─ ◈ ─ </text>
+        <text fg={theme.brandDim}> ╱ │ ╲ </text>
       </box>
       <box flexDirection="column" paddingLeft={2}>
-        <text fg={theme.gold} attributes={1}>{"█▀▀ █   ▀▄▀ █▀█ █ █"}</text>
-        <text fg={theme.gold} attributes={1}>{"█▄█ █▄▄  █  █▀▀ █▀█"}</text>
-        <text fg={theme.goldDim}>first run · welcome to Glyph Engine</text>
+        <text fg={theme.brand} attributes={1}>{"█▀▀ █   ▀▄▀ █▀█ █ █"}</text>
+        <text fg={theme.brand} attributes={1}>{"█▄█ █▄▄  █  █▀▀ █▀█"}</text>
+        <text fg={theme.brandDim}>first run · welcome to Glyph Engine</text>
       </box>
     </box>
   );
@@ -206,7 +206,7 @@ function Header() {
 
 function Option({ candidate, active }: { candidate: VaultCandidate; active: boolean }) {
   const pointer = active ? "▸ " : "  ";
-  const fg = active ? theme.gold : candidate.exists ? theme.fg : theme.fgDim;
+  const fg = active ? theme.brand : candidate.exists ? theme.fg : theme.fgDim;
   const existsTag = candidate.exists ? "" : " (will create)";
   const isDemoTag = candidate.kind === "demo" ? "  ●● recommended" : "";
   return (
@@ -255,7 +255,7 @@ function CustomPathInput({
         absolute, ~/relative, or relative to your current dir. tilde and ~ both expand.
       </text>
       <box flexDirection="row" backgroundColor={theme.selBg} height={1}>
-        <text fg={theme.gold}>{"vault path › "}</text>
+        <text fg={theme.brand}>{"vault path › "}</text>
         <input
           ref={ref}
           focused

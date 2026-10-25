@@ -149,7 +149,7 @@ export function WorkspaceConfigBar({
 
   // All chip rendering is delegated to the shared <Chip /> component
   // (src/chip.tsx) so the opentui-safe pattern lives in exactly one
-  // place. Council pops gold when ON (its activeFg override); every
+  // place. Council pops green when ON (its activeFg override); every
   // other chip pops aiAccent (the Chip default). Original rendering
   // and spacing rationale (NBSP value prefix, two-text-per-chip,
   // two-tone coloring) moved to chip.tsx as a header comment block.
@@ -160,7 +160,7 @@ export function WorkspaceConfigBar({
         label="⚖ Council:"
         value={councilOn ? "ON" : "OFF"}
         active={councilOn}
-        activeFg={theme.gold}
+        activeFg={theme.brand}
         onMouseDown={onToggleCouncil}
       />
       {sep}
@@ -216,7 +216,7 @@ export function WorkspaceConfigBar({
           paddingRight={1}
           onMouseDown={onEdit}
         >
-          <text fg={theme.goldDim}>✎ edit</text>
+          <text fg={theme.brandDim}>✎ edit</text>
         </box>
       )}
     </box>

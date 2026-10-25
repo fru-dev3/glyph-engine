@@ -28,7 +28,7 @@ export function CommandBar({
   if (mode === "pick-cli" && cliOptions) {
     return (
       <box flexDirection="row" height={1} paddingLeft={2} backgroundColor={theme.selBg}>
-        <text fg={theme.gold}>{prompt} </text>
+        <text fg={theme.brand}>{prompt} </text>
         {cliOptions.map((opt, i) => (
           <text key={opt} fg={i === cliIndex ? theme.selFg : theme.fgDim}>
             {i === cliIndex ? `[${opt}] ` : ` ${opt}  `}
@@ -42,7 +42,7 @@ export function CommandBar({
   if (mode === "new-domain" || mode === "new-app" || mode === "new-skill") {
     return (
       <box flexDirection="row" height={1} paddingLeft={2} backgroundColor={theme.selBg}>
-        <text fg={theme.gold}>{prompt} </text>
+        <text fg={theme.brand}>{prompt} </text>
         <FocusedInput onSubmit={onSubmit} onCancel={onCancel} />
       </box>
     );
@@ -52,7 +52,7 @@ export function CommandBar({
     <box flexDirection="row" height={1} paddingLeft={1} backgroundColor={theme.bgPanel}>
       {message ? (
         <box flexDirection="row" flexGrow={1} paddingLeft={1}>
-          <text fg={theme.gold}>{message}</text>
+          <text fg={theme.brand}>{message}</text>
         </box>
       ) : (
         <Toolbar onAction={onAction} />
@@ -84,7 +84,7 @@ function Button({ label, hint, onClick }: { label: string; hint: string; onClick
       backgroundColor={theme.bgPanel}
       onMouseDown={onClick}
     >
-      <text fg={theme.gold}>{`[${label}] `}</text>
+      <text fg={theme.brand}>{`[${label}] `}</text>
       <text fg={theme.fgFaint}>{hint}</text>
     </box>
   );
