@@ -131,3 +131,31 @@ describe("mcp-server (stdio)", () => {
     expect(names).toContain("council");
   });
 });
+
+// glyph_agents / glyph_agent_run: the tools stay GlyphCore's; the engine passes argv and the vault through.
+describe("glyph app agents over MCP", () => {
+  test("lists and runs through glyphcore-report, argv only", async () => {
+    const { dispatch, mcpTools } = await import("./mcp-server.ts");
+    const dir = mkdtempSync(join(tmpdir(), "glyph-agents-"));
+    const bin = join(dir, "glyphcore-report");
+    writeFileSync(bin, '#!/bin/sh\nprintf "%s|%s|%s|%s @ %s" "$1" "$2" "$3" "$4" "$GLYPH_VAULT"\n', { mode: 0o755 });
+    const vault = makeFakeVault();
+    const prev = process.env.GLYPH_AGENTS_BIN;
+    process.env.GLYPH_AGENTS_BIN = bin;
+    try {
+      const tools = mcpTools();
+      expect(tools.map((t) => t.name)).toContain("glyph_agents");
+      expect(tools.map((t) => t.name)).toContain("glyph_agent_run");
+      const call = async (name: string, args: Record<string, unknown>) =>
+        ((await dispatch({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name, arguments: args } }, tools, vault)) as { content: { text: string }[] }).content[0].text;
+      expect(await call("glyph_agents", {})).toBe(`agents||| @ ${vault}`);
+      const ran = await call("glyph_agent_run", { agent: "well", tool: "log_entry", args: { text: "Tea; rm -rf $HOME", kind: "food", minutesAgo: 0 } });
+      expect(ran).toBe(`run|well|log_entry|{"text":"Tea; rm -rf $HOME","kind":"food","minutesAgo":0} @ ${vault}`);
+      process.env.GLYPH_AGENTS_BIN = join(dir, "missing");
+      expect(JSON.parse(await call("glyph_agents", {})).error).toContain("not installed");
+    } finally {
+      if (prev === undefined) delete process.env.GLYPH_AGENTS_BIN;
+      else process.env.GLYPH_AGENTS_BIN = prev;
+    }
+  });
+});

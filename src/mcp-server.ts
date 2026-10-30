@@ -557,6 +557,10 @@ async function callTool(name: string, args: Record<string, unknown>, vaultPath: 
       return wrapText(await tRunPlaybook(args, vaultPath));
     case "connect_app":
       return wrapText(await tConnectApp(args, vaultPath));
+    case "glyph_agents":
+      return wrapText(glyphAgents(["agents"], vaultPath));
+    case "glyph_agent_run":
+      return wrapText(glyphAgents(["run", String(args.agent ?? ""), String(args.tool ?? ""), JSON.stringify(args.args ?? {})], vaultPath));
     default:
       throw new Error(`unknown tool: ${name}`);
   }
@@ -971,7 +975,43 @@ export function mcpTools(): McpTool[] {
         required: ["name"],
       },
     },
+    {
+      name: "glyph_agents",
+      description: "List the Glyph app agents (Time, Jot, Well, CRM...) and their tools, each with its JSON argument schema. Read this before glyph_agent_run. Needs GlyphCore's glyphcore-report on this machine.",
+      inputSchema: { type: "object", properties: {} },
+    },
+    {
+      name: "glyph_agent_run",
+      description: "Run one Glyph app agent's tool on this machine, writing into the vault what that app writes (a Jot note, a Well entry, a CRM suggestion). Returns JSON cards: status done, waiting (Time requests only queue; they wait for Glyph Time on the phone, nothing is set yet) or failed.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          agent: { type: "string", description: "Agent id from glyph_agents, e.g. \"well\"." },
+          tool: { type: "string", description: "Tool name from glyph_agents, e.g. \"log_entry\"." },
+          args: { type: "object", description: "The tool's arguments, matching its schema from glyph_agents." },
+        },
+        required: ["agent", "tool", "args"],
+      },
+    },
   ];
+}
+
+/**
+ * GlyphCore's door for the app agents (`glyphcore-report agents | run`), so the tools are defined once, in
+ * GlyphCore. GLYPH_AGENTS_BIN names the binary; else ~/.local/bin/glyphcore-report, else PATH. The vault
+ * goes over as GLYPH_VAULT; argv only, never a shell.
+ */
+export function glyphAgents(argv: string[], vaultPath: string): string {
+  const local = join(process.env.HOME ?? "", ".local", "bin", "glyphcore-report");
+  const bin = process.env.GLYPH_AGENTS_BIN || (existsSync(local) ? local : "glyphcore-report");
+  try {
+    const proc = Bun.spawnSync({ cmd: [bin, ...argv], stdout: "pipe", stderr: "pipe", env: { ...process.env, GLYPH_VAULT: vaultPath } });
+    const out = (proc.stdout?.toString() ?? "").trim();
+    if (out) return out;
+    return JSON.stringify({ error: (proc.stderr?.toString() ?? "").trim() || `glyphcore-report exited ${proc.exitCode}` });
+  } catch {
+    return JSON.stringify({ error: "glyphcore-report is not installed on this machine (GlyphCore's glyph app agents)" });
+  }
 }
 
 function wrapText(s: string): McpContent[] {
