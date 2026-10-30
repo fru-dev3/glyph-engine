@@ -131,3 +131,33 @@ describe("mcp-server (stdio)", () => {
     expect(names).toContain("council");
   });
 });
+
+// glyph_agents / glyph_agent_run: the tools stay GlyphCore's; the engine passes argv and the vault through.
+// In a child bun process, so importing the server never shares module state with other test files.
+describe("glyph app agents over MCP", () => {
+  test("lists and runs through glyphcore-report, argv only", () => {
+    const dir = mkdtempSync(join(tmpdir(), "glyph-agents-"));
+    const bin = join(dir, "glyphcore-report");
+    writeFileSync(bin, '#!/bin/sh\nprintf "%s|%s|%s|%s @ %s" "$1" "$2" "$3" "$4" "$GLYPH_VAULT"\n', { mode: 0o755 });
+    const vault = makeFakeVault();
+    const script = join(dir, "probe.ts");
+    writeFileSync(script, `
+      import { dispatch, mcpTools } from ${JSON.stringify(join(import.meta.dir, "mcp-server.ts"))};
+      const tools = mcpTools();
+      const call = async (name: string, args: Record<string, unknown>) =>
+        ((await dispatch({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name, arguments: args } }, tools, ${JSON.stringify(vault)})) as any).content[0].text;
+      const out = { names: tools.map((t) => t.name), list: await call("glyph_agents", {}),
+        run: await call("glyph_agent_run", { agent: "well", tool: "log_entry", args: { text: "Tea; rm -rf $HOME", kind: "food", minutesAgo: 0 } }) };
+      process.env.GLYPH_AGENTS_BIN = ${JSON.stringify(join(dir, "missing"))};
+      console.log(JSON.stringify({ ...out, missing: await call("glyph_agents", {}) }));
+    `);
+    const proc = Bun.spawnSync({ cmd: [process.execPath, script], stdout: "pipe", stderr: "pipe", env: { ...process.env, GLYPH_AGENTS_BIN: bin } });
+    const lines = (proc.stdout?.toString() ?? "").trim().split("\n");
+    const out = JSON.parse(lines[lines.length - 1]);
+    expect(out.names).toContain("glyph_agents");
+    expect(out.names).toContain("glyph_agent_run");
+    expect(out.list).toBe(`agents||| @ ${vault}`);
+    expect(out.run).toBe(`run|well|log_entry|{"text":"Tea; rm -rf $HOME","kind":"food","minutesAgo":0} @ ${vault}`);
+    expect(JSON.parse(out.missing).error).toContain("not installed");
+  });
+});
