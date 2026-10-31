@@ -8,6 +8,12 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## [1.10.14] 2026-10-31 · Busy is not offline
+
+- **A home machine that is slow to answer still gets asked.** The probe before a local duel is there to avoid a long TCP wait on a machine that is not running; a machine deep in a duel took 14 seconds to list its models and was skipped as "offline", which threw away exactly the duels it was busy with. A refused connection is `down` and still skipped; a slow one is `busy` and the duel goes ahead, bounded by its own four-minute clock.
+
+---
+
 ## [1.10.13] 2026-10-31 · A local model out of time has not answered
 
 - **Glyph Arena: a timed-out local answer is an error, not a reply.** A busy Mac returned eleven characters after exactly four minutes and the duel graded them: the model "lost" on a checker it never saw the question for, and that loss would have been written into the routing policy. A side whose own clock ran out now comes back as `timeout`, costs nothing and decides nothing.

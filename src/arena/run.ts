@@ -68,19 +68,28 @@ export function providerError(reply: string): string | null {
 // a short probe called it offline and threw good duels away. So: a long probe, a
 // remembered yes for a minute, and a remembered no for only ten seconds, because a
 // busy neighbour is back long before an unplugged one.
-const endpointSeen = new Map<string, { at: number; up: boolean }>();
+const endpointSeen = new Map<string, { at: number; state: EndpointState }>();
 export const ENDPOINT_PROBE_MS = 12_000;
-export async function endpointUp(baseUrl: string): Promise<boolean> {
+/** "up" answered, "busy" took too long to answer, "down" refused the connection. */
+export type EndpointState = "up" | "busy" | "down";
+
+export async function endpointState(baseUrl: string): Promise<EndpointState> {
   const hit = endpointSeen.get(baseUrl);
-  if (hit && Date.now() - hit.at < (hit.up ? 60_000 : 10_000)) return hit.up;
-  let up = false;
+  if (hit && Date.now() - hit.at < (hit.state === "up" ? 60_000 : 10_000)) return hit.state;
+  let state: EndpointState;
   try {
     const res = await fetch(`${baseUrl.replace(/\/+$/, "")}/api/tags`, { signal: AbortSignal.timeout(ENDPOINT_PROBE_MS) });
-    up = res.ok;
-  } catch { up = false; }
-  endpointSeen.set(baseUrl, { at: Date.now(), up });
-  return up;
+    state = res.ok ? "up" : "busy";
+  } catch (e) {
+    // A machine that is not there refuses at once; one that is busy keeps us waiting.
+    // Only the first is offline - the second is exactly the machine we came to ask.
+    state = (e as Error).name === "TimeoutError" || (e as Error).name === "AbortError" ? "busy" : "down";
+  }
+  endpointSeen.set(baseUrl, { at: Date.now(), state });
+  return state;
 }
+
+export const endpointUp = async (baseUrl: string): Promise<boolean> => (await endpointState(baseUrl)) !== "down";
 
 /** A local model gets this long per answer; a cloud call is bounded by its runtime. */
 export const LOCAL_TIMEOUT_MS = 240_000;
@@ -124,8 +133,8 @@ export async function answerOne(vault: string, task: ArenaTask, r: Recipe, cfg: 
   if (!canSpend(monthSpend(vault), est, cfg.monthly_cap_usd)) {
     return { ...side, status: "budget", error: `skipped: would pass the $${cfg.monthly_cap_usd} monthly cap` };
   }
-  if (r.cli === "ollama" && call === engineCall && !(await endpointUp(r.baseUrl ?? "http://localhost:11434"))) {
-    return { ...side, status: "offline", error: `${r.baseUrl ?? "localhost"} is not answering` };
+  if (r.cli === "ollama" && call === engineCall && (await endpointState(r.baseUrl ?? "http://localhost:11434")) === "down") {
+    return { ...side, status: "offline", error: `${r.baseUrl ?? "localhost"} is not there` };
   }
   const cwd = mkdtempSync(join(tmpdir(), "arena-"));
   const t0 = Date.now();

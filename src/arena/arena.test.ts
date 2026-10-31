@@ -11,7 +11,7 @@ import { classifyKind, classifyWeight, looksHomeOnly } from "./classify.ts";
 import { buildPolicy, lookupRoute, readPolicy, POLICY_SCHEMA } from "./policy.ts";
 import { allowedRecipes, assertRecipeAllowed, HomeOnlyViolation, isHomeEndpoint, isHomeOnlyTask } from "./privacy.ts";
 import { blockedReason, makeRecipe } from "./recipes.ts";
-import { decide, endpointUp, ENDPOINT_PROBE_MS, providerError, runDuel, runReplay, type Caller } from "./run.ts";
+import { decide, endpointState, endpointUp, ENDPOINT_PROBE_MS, providerError, runDuel, runReplay, type Caller } from "./run.ts";
 import { equivalent, similarity, standings, unblinding, wilsonLower } from "./score.ts";
 import { nextPick, rebuildPolicy, submitPick, flagDuel, runSentinels } from "./service.ts";
 import { arenaDir, DEFAULT_CONFIG, looksLikeVault, NoVault, readDuels, writeConfig, writeRecipes } from "./store.ts";
@@ -443,14 +443,34 @@ describe("a busy local endpoint is not an offline one", () => {
     expect(ENDPOINT_PROBE_MS).toBeGreaterThanOrEqual(10_000);
   });
 
-  test("an endpoint that does not answer is re-probed soon, not remembered as down for a minute", async () => {
+  test("a machine that is not there is down, and the answer is remembered only briefly", async () => {
     const dead = "http://127.0.0.1:1";
     const t0 = Date.now();
+    expect(await endpointState(dead)).toBe("down");
     expect(await endpointUp(dead)).toBe(false);
-    // The second call is the remembered no: instant, and it expires in ten seconds.
-    expect(await endpointUp(dead)).toBe(false);
+    // Refused at once, and the remembered no expires in ten seconds, not sixty.
     expect(Date.now() - t0).toBeLessThan(ENDPOINT_PROBE_MS);
   });
+
+  test("a slow answer is busy, not down, so the duel still asks it", async () => {
+    // The home machine took 14 s to list its models while it was answering a duel.
+    // Skipping it then would throw away the very duel it was busy with.
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = (async (_u: string, init?: { signal?: AbortSignal }) =>
+      new Promise((_res, rej) => {
+        init?.signal?.addEventListener("abort", () => {
+          const e = new Error("timed out");
+          e.name = "TimeoutError";
+          rej(e);
+        });
+      })) as typeof fetch;
+    try {
+      expect(await endpointState("http://10.0.0.9:11434")).toBe("busy");
+      expect(await endpointUp("http://10.0.0.9:11434")).toBe(true);
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+  }, 30_000);
 });
 
 describe("everything Arena knows lives in the vault", () => {
