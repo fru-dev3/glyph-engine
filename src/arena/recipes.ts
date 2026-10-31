@@ -47,8 +47,10 @@ export function makeRecipe(r: { cli: string; model: string; baseUrl?: string; pr
   };
 }
 
-/** Ollama models at one endpoint (embedding models left out). Empty when it is down. */
-export async function ollamaModels(baseUrl: string, timeoutMs = 1500): Promise<string[]> {
+/** Ollama models at one endpoint (embedding models left out). Empty when it is down.
+ * The wait is generous on purpose: a box already answering a duel can take seven
+ * seconds to list its models, and a short wait would drop it out of the Runtimes list. */
+export async function ollamaModels(baseUrl: string, timeoutMs = 8000): Promise<string[]> {
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), timeoutMs);
   try {

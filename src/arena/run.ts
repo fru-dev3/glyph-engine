@@ -63,16 +63,19 @@ export function providerError(reply: string): string | null {
   return null;
 }
 
-// Local endpoints answer /api/tags at once when they are up. Checked once per
-// endpoint per minute so an offline home server costs two seconds, not a TCP
-// timeout on every task.
+// Is the local endpoint there? /api/tags answers in milliseconds on an idle box, but
+// a Mac that is already answering a duel can take seven seconds to list its models -
+// a short probe called it offline and threw good duels away. So: a long probe, a
+// remembered yes for a minute, and a remembered no for only ten seconds, because a
+// busy neighbour is back long before an unplugged one.
 const endpointSeen = new Map<string, { at: number; up: boolean }>();
+export const ENDPOINT_PROBE_MS = 12_000;
 export async function endpointUp(baseUrl: string): Promise<boolean> {
   const hit = endpointSeen.get(baseUrl);
-  if (hit && Date.now() - hit.at < 60_000) return hit.up;
+  if (hit && Date.now() - hit.at < (hit.up ? 60_000 : 10_000)) return hit.up;
   let up = false;
   try {
-    const res = await fetch(`${baseUrl.replace(/\/+$/, "")}/api/tags`, { signal: AbortSignal.timeout(2500) });
+    const res = await fetch(`${baseUrl.replace(/\/+$/, "")}/api/tags`, { signal: AbortSignal.timeout(ENDPOINT_PROBE_MS) });
     up = res.ok;
   } catch { up = false; }
   endpointSeen.set(baseUrl, { at: Date.now(), up });

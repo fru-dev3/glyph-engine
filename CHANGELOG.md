@@ -8,6 +8,12 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## [1.10.11] 2026-10-31 · A busy home model is not an offline one
+
+- **Glyph Arena's endpoint probe waits.** `/api/tags` answers in milliseconds on an idle Mac, but a Mac already answering a duel took 7.1 seconds on the home network - and a 2.5-second probe called it offline, so three Home Only duels were thrown away with nothing sent. The probe now waits 12 seconds, a yes is remembered for a minute and a no for only ten seconds, and the model list behind the Runtimes screen waits 8 seconds for the same reason.
+
+---
+
 ## [1.10.10] 2026-10-31 · Glyph Arena: three fixes found by running it for real
 
 - **The sidecar's answer is never cut off.** `arena-engine` exited the moment a command returned, which dropped whatever stdout had not flushed. On a pipe - how the Glyph Arena app reads it - that cut landed at exactly 64 KB, so a long answer (400 replayed prompts is about 230 KB) reached the app as half a JSON document. It now waits for the pipe before it exits.

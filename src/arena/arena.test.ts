@@ -11,7 +11,7 @@ import { classifyKind, classifyWeight, looksHomeOnly } from "./classify.ts";
 import { buildPolicy, lookupRoute, readPolicy, POLICY_SCHEMA } from "./policy.ts";
 import { allowedRecipes, assertRecipeAllowed, HomeOnlyViolation, isHomeEndpoint, isHomeOnlyTask } from "./privacy.ts";
 import { blockedReason, makeRecipe } from "./recipes.ts";
-import { decide, providerError, runDuel, runReplay, type Caller } from "./run.ts";
+import { decide, endpointUp, ENDPOINT_PROBE_MS, providerError, runDuel, runReplay, type Caller } from "./run.ts";
 import { equivalent, similarity, standings, unblinding, wilsonLower } from "./score.ts";
 import { nextPick, rebuildPolicy, submitPick, flagDuel, runSentinels } from "./service.ts";
 import { DEFAULT_CONFIG, readDuels, writeConfig, writeRecipes } from "./store.ts";
@@ -434,6 +434,22 @@ describe("a recipe that cannot run here is refused before anything is spent", ()
     const duels = await runReplay(vault, [task()], cloudA, codex, { call: counting });
     expect(duels.length).toBe(1);
     expect(called).toBe(2);
+  });
+});
+
+describe("a busy local endpoint is not an offline one", () => {
+  test("the probe waits long enough for a Mac that is already answering a duel", () => {
+    // Measured on the home mini while it served a duel: /api/tags took 7.1 s.
+    expect(ENDPOINT_PROBE_MS).toBeGreaterThanOrEqual(10_000);
+  });
+
+  test("an endpoint that does not answer is re-probed soon, not remembered as down for a minute", async () => {
+    const dead = "http://127.0.0.1:1";
+    const t0 = Date.now();
+    expect(await endpointUp(dead)).toBe(false);
+    // The second call is the remembered no: instant, and it expires in ten seconds.
+    expect(await endpointUp(dead)).toBe(false);
+    expect(Date.now() - t0).toBeLessThan(ENDPOINT_PROBE_MS);
   });
 });
 
