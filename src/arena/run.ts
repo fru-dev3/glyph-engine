@@ -12,12 +12,20 @@ import { isSuspended, currentSuspensions } from "./adverse.ts";
 import { canSpend, estimateUsd, monthSpend, recordSpend } from "./budget.ts";
 import { runCheck } from "./checkers.ts";
 import { assertRecipeAllowed, HomeOnlyViolation, isHomeOnlyTask, isLocalRecipe } from "./privacy.ts";
-import { cliFor, PROMPT_STYLES } from "./recipes.ts";
+import { blockedReason, cliFor, PROMPT_STYLES } from "./recipes.ts";
 import { AGREE_AT, similarity } from "./score.ts";
 import { appendDuel, readConfig, readRecipes } from "./store.ts";
 import type { ArenaConfig, ArenaTask, DecidedBy, Duel, Outcome, Recipe, Side } from "./types.ts";
 
 const CONTEXT_CAP = 4000;
+
+/** A recipe in this duel cannot run here at all. Raised before anything is spent. */
+export class ArenaUnavailable extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ArenaUnavailable";
+  }
+}
 
 /** The recipe's own vault context: the domain's ideal and current state, capped. */
 export function domainContext(vault: string, domain: string): string {
@@ -104,6 +112,8 @@ export async function answerOne(vault: string, task: ArenaTask, r: Recipe, cfg: 
     if (e instanceof HomeOnlyViolation) return { ...side, status: "privacy", error: e.message };
     throw e;
   }
+  const blocked = call === engineCall ? blockedReason(r) : null;
+  if (blocked) return { ...side, status: "unavailable", error: blocked };
   const suspended = isSuspended(r.model, task.domain, currentSuspensions(vault));
   if (suspended) return { ...side, status: "suspended", error: `suspended until ${suspended.until}: ${suspended.why}` };
   const prompt = framePrompt(vault, task, r, cfg);
@@ -183,6 +193,17 @@ export interface DuelOpts {
 export async function runDuel(vault: string, task: ArenaTask, ra: Recipe, rb: Recipe, opts: DuelOpts = {}): Promise<Duel> {
   const cfg = readConfig(vault);
   const call = opts.call ?? engineCall;
+  // One side that cannot run makes the duel undecidable, so the other side never
+  // gets asked and never costs anything. A side the Home Only guard refuses is
+  // reported as that refusal instead: it is the more useful answer, and it spends
+  // nothing either way.
+  const refused = (r: Recipe) => {
+    try { assertRecipeAllowed(task, r, cfg, vault); return false; } catch { return true; }
+  };
+  if (call === engineCall && !refused(ra) && !refused(rb)) {
+    const stop = blockedReason(ra) ?? blockedReason(rb);
+    if (stop) throw new ArenaUnavailable(stop);
+  }
   const sameHost = ra.cli === "ollama" && rb.cli === "ollama" && (ra.baseUrl ?? "") === (rb.baseUrl ?? "");
   const [a, b] = sameHost
     ? [await answerOne(vault, task, ra, cfg, call, opts.signal), await answerOne(vault, task, rb, cfg, call, opts.signal)]
@@ -220,6 +241,9 @@ export interface ReplayOpts extends DuelOpts {
 /** Run each task as a duel between two recipes. Sides that may not run a task are skipped, not failed. */
 export async function runReplay(vault: string, tasks: ArenaTask[], ra: Recipe, rb: Recipe, opts: ReplayOpts = {}): Promise<Duel[]> {
   const cfg = readConfig(vault);
+  const call = opts.call ?? engineCall;
+  const blocked = call === engineCall ? (blockedReason(ra) ?? blockedReason(rb)) : null;
+  if (blocked) throw new ArenaUnavailable(blocked);
   const out: Duel[] = [];
   let done = 0;
   for (const t of tasks) {

@@ -69,7 +69,7 @@ export interface CheckResult {
 export interface Side {
   recipe: string;
   ok: boolean;
-  /** "error" | "budget" | "privacy" when ok=false */
+  /** "error" | "budget" | "privacy" | "suspended" | "offline" | "unavailable" when ok=false */
   status?: string;
   error?: string;
   reply: string;

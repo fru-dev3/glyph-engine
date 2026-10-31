@@ -1100,6 +1100,16 @@ export function codexWritableRoot(cwd: string): string {
   return parent === root || parent.startsWith(root + sep) ? parent : resolve(cwd);
 }
 
+/** Can this engine be GUARANTEED not to reach the web? claude (its web tools are
+ * removed with --disallowedTools) and the plain /chat/completions callers (ollama,
+ * openrouter, the single-vendor direct APIs) can; the agentic CLIs that ship their
+ * own uncontrollable web tools (codex, gemini/antigravity) cannot. A caller that
+ * must run with web off uses this to refuse BEFORE it spends anything. */
+export function webDenySafe(kind: string): boolean {
+  const plainCompletion = kind === "ollama" || kind === "openrouter" || !!DIRECT_PROVIDER_BY_ID[kind as DirectProviderKind];
+  return kind === "claude" || plainCompletion;
+}
+
 export function runChatTurn(turn: ChatTurn): Promise<string> {
   const t = turn.threadId?.trim();
   const e = turn.entityId?.trim();
@@ -1172,12 +1182,7 @@ async function runChatTurnInner({ prompt, cwd, cli, model, isFirst, bare, act, s
     // Only the AGENTIC CLIs that ship their own uncontrollable web tools - codex,
     // gemini/antigravity, and the claude/gemini/codex "extra family" CLIs - get
     // refused, so a denied turn never silently calls out.
-    const plainCompletion =
-      cli.kind === "ollama" ||
-      cli.kind === "openrouter" ||
-      !!DIRECT_PROVIDER_BY_ID[cli.kind as DirectProviderKind];
-    const webSafe = cli.kind === "claude" || plainCompletion;
-    if (!webSafe) {
+    if (!webDenySafe(cli.kind)) {
       throw new Error(
         `Web access is OFF, and it can't be guaranteed off for the "${cli.kind}" engine (its web tools can't be disabled headlessly). ` +
         `Switch to Claude, a local model, or an API/OpenRouter model — or turn Web access back on.`,

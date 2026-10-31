@@ -10,7 +10,7 @@ import { runCheck, numbersIn } from "./checkers.ts";
 import { classifyKind, classifyWeight, looksHomeOnly } from "./classify.ts";
 import { buildPolicy, lookupRoute, readPolicy, POLICY_SCHEMA } from "./policy.ts";
 import { allowedRecipes, assertRecipeAllowed, HomeOnlyViolation, isHomeEndpoint, isHomeOnlyTask } from "./privacy.ts";
-import { makeRecipe } from "./recipes.ts";
+import { blockedReason, makeRecipe } from "./recipes.ts";
 import { decide, providerError, runDuel, runReplay, type Caller } from "./run.ts";
 import { equivalent, similarity, standings, unblinding, wilsonLower } from "./score.ts";
 import { nextPick, rebuildPolicy, submitPick, flagDuel, runSentinels } from "./service.ts";
@@ -400,6 +400,40 @@ describe("Studio's Auto router follows the policy", () => {
     const overrides = [1, 2].map((i) => ({ ts: i, domain: "content", band: "light" as const, fromModel: "claude-haiku-4-5", toModel: "claude-opus-5-5" }));
     const d = chooseModel({ ...base, domain: "content", overrides, arena: { cli: "claude", model: "claude-haiku-4-5", why: "x" } });
     expect(d.model).toBe("claude-opus-5-5");
+  });
+});
+
+describe("a recipe that cannot run here is refused before anything is spent", () => {
+  test("codex with web off is blocked, and the same recipe with web on is not", () => {
+    const codex = makeRecipe({ cli: "codex", model: "gpt-6-luna" });
+    expect(blockedReason(codex)).toContain("off the web");
+    expect(blockedReason(makeRecipe({ cli: "codex", model: "gpt-6-luna", tools: "web" }))).toBe(null);
+  });
+
+  test("claude and a local model are never blocked for the web rule", () => {
+    expect(blockedReason(cloudA)).toBe(null);
+    expect(blockedReason(localA)).toBe(null);
+  });
+
+  test("a made-up engine is blocked because it is not on this Mac", () => {
+    expect(blockedReason(makeRecipe({ cli: "no-such-cli", model: "m1" }))).toContain("not available");
+  });
+
+  test("a replay with a blocked recipe runs no task and spends nothing", async () => {
+    writeRecipes(vault, [cloudA, makeRecipe({ cli: "codex", model: "gpt-6-luna" })]);
+    const codex = makeRecipe({ cli: "codex", model: "gpt-6-luna" });
+    let called = 0;
+    const counting: Caller = async () => { called++; return "an answer"; };
+    // The real caller is what the guard protects, so this one asserts the guard
+    // itself: with the engine's own caller the replay throws and nothing runs.
+    await expect(runReplay(vault, [task()], cloudA, codex, {})).rejects.toThrow(/off the web/);
+    expect(called).toBe(0);
+    expect(monthSpend(vault)).toBe(0);
+    expect(readDuels(vault).length).toBe(0);
+    // With a fake caller (the tests' own) the guard stands aside, as the suite needs.
+    const duels = await runReplay(vault, [task()], cloudA, codex, { call: counting });
+    expect(duels.length).toBe(1);
+    expect(called).toBe(2);
   });
 });
 

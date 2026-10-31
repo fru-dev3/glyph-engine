@@ -33,7 +33,17 @@ export function parseFlags(argv: string[]): { pos: string[]; flags: Flags } {
 }
 
 const str = (f: Flags, k: string, d = "") => (typeof f[k] === "string" ? (f[k] as string) : d);
-const out = (v: unknown) => process.stdout.write(`${JSON.stringify(v)}\n`);
+// stdout is a PIPE when the Arena app runs us, and a pipe takes 64 KB before it
+// blocks: a write that large is only partly flushed when it returns, so the entry
+// point has to wait for the rest before it exits (src/arena/main.ts). Every write
+// is recorded here for that wait.
+let lastWrite: Promise<void> = Promise.resolve();
+const out = (v: unknown) => {
+  const line = `${JSON.stringify(v)}\n`;
+  lastWrite = new Promise<void>((res) => { process.stdout.write(line, () => res()); });
+};
+/** Resolves once everything written has left for the other end of the pipe. */
+export const stdoutFlushed = (): Promise<void> => lastWrite;
 
 function leagueFrom(f: Flags): League {
   const kind = str(f, "kind", "*");

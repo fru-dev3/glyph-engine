@@ -1,7 +1,7 @@
 // Recipes = model + prompt style + vault context + tools. Defaults come from what
 // this Mac can actually run: the agent CLIs on PATH, Ollama on the home endpoints,
 // and direct API providers with a key.
-import { DIRECT_PROVIDERS, detectSubprocessClis, type AvailableCli, type CliKind } from "../cli-bridge.ts";
+import { DIRECT_PROVIDERS, detectSubprocessClis, webDenySafe, type AvailableCli, type CliKind } from "../cli-bridge.ts";
 import { isLocalCliKind } from "../model-pricing.ts";
 import { readRecipes, writeRecipes } from "./store.ts";
 import type { ArenaConfig, ContextMode, PromptStyle, Recipe, ToolMode } from "./types.ts";
@@ -84,6 +84,18 @@ export async function detectRuntimes(cfg: ArenaConfig): Promise<Runtime[]> {
   return out;
 }
 
+/** Why this recipe cannot run on this Mac, or null. Checked before a duel spends
+ * anything: an engine that is gone, or one whose web tools cannot be switched off
+ * (codex, antigravity), would otherwise fail every task while the other side paid
+ * for its answer. Such an engine still runs as an explicit "+ web" recipe. */
+export function blockedReason(r: Recipe): string | null {
+  if (!cliFor(r)) return `${r.cli} is not available on this Mac`;
+  if (r.tools !== "web" && !webDenySafe(r.cli)) {
+    return `${r.cli} cannot be held off the web, so it only runs as a "+ web" recipe`;
+  }
+  return null;
+}
+
 /** First run: two cloud recipes and every local model found. Never overwrites. */
 export async function ensureRecipes(vault: string, cfg: ArenaConfig): Promise<Recipe[]> {
   const have = readRecipes(vault);
@@ -92,7 +104,10 @@ export async function ensureRecipes(vault: string, cfg: ArenaConfig): Promise<Re
   const seed: Recipe[] = [];
   for (const rt of rts) {
     const picks = rt.local ? rt.models.slice(0, 4) : rt.models.slice(0, 2);
-    for (const m of picks) seed.push(makeRecipe({ cli: rt.cli, model: m, baseUrl: rt.baseUrl, source: "default" }));
+    // An agentic CLI that cannot be held off the web is seeded as a "+ web" recipe,
+    // the only shape it can run in; Home Only tasks stay on local models either way.
+    const tools = webDenySafe(rt.cli) ? "none" : "web";
+    for (const m of picks) seed.push(makeRecipe({ cli: rt.cli, model: m, baseUrl: rt.baseUrl, tools, source: "default" }));
   }
   const uniq = [...new Map(seed.map((r) => [r.id, r])).values()];
   if (uniq.length) writeRecipes(vault, uniq);

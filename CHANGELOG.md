@@ -8,6 +8,14 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## [1.10.10] 2026-10-31 · Glyph Arena: three fixes found by running it for real
+
+- **The sidecar's answer is never cut off.** `arena-engine` exited the moment a command returned, which dropped whatever stdout had not flushed. On a pipe - how the Glyph Arena app reads it - that cut landed at exactly 64 KB, so a long answer (400 replayed prompts is about 230 KB) reached the app as half a JSON document. It now waits for the pipe before it exits.
+- **A recipe that cannot run is refused before anything is spent.** codex and antigravity cannot be held off the web, so with Arena's web-off rule every one of their answers failed - while the other side of the duel paid for its answer each time. `blockedReason` now names the reason, `runDuel` and `runReplay` refuse up front (`ArenaUnavailable`), `status` carries it per recipe, and the Home Only refusal still comes first because it is the more useful answer.
+- **The seeded recipes all work.** First-run defaults gave codex and antigravity `tools: none`, the one shape they can never run in; they are now seeded as "+ web" recipes. `webDenySafe` in `cli-bridge` is the one place that rule lives.
+
+---
+
 ## [1.10.9] 2026-10-25 · Glyph Arena
 
 - **`src/arena`: all of Glyph Arena's logic**, next to the providers it uses. Recipes (model + prompt + vault context + tools), ghost replays of your own past prompts, canonical questions, weekly sentinels with mechanical checkers, duels decided by checker, agreement, judge or a two-second blind pick, standings with Wilson bounds and "equivalent, use the cheaper", an adverse-event register with per-domain suspensions, a monthly spend cap checked before every call, and the Home Only league (health and money run on local models only, refused before any call).

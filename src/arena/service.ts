@@ -11,7 +11,7 @@ import { currentSuspensions, recordAdverse } from "./adverse.ts";
 import { monthKey, monthSpend } from "./budget.ts";
 import { isLocalRecipe } from "./privacy.ts";
 import { buildPolicy, lookupRoute, policyMarkdown, readPolicy } from "./policy.ts";
-import { makeRecipe, ollamaModels } from "./recipes.ts";
+import { blockedReason, makeRecipe, ollamaModels } from "./recipes.ts";
 import { answerOne, engineCall, type Caller } from "./run.ts";
 import { decided, inLeague, standings } from "./score.ts";
 import { appendDuel, appendLine, file, readAdverse, readConfig, readDuels, readLines, readPicks, readRecipes, readSignals, writeJson } from "./store.ts";
@@ -267,7 +267,7 @@ export function status(vault: string) {
     arena_dir: file(vault, ""),
     generator: ARENA_GENERATOR,
     config: cfg,
-    recipes,
+    recipes: recipes.map((r) => ({ ...r, blocked: blockedReason(r) })),
     home_recipes: recipes.filter((r) => isLocalRecipe(r, cfg)).map((r) => r.id),
     policy,
     budget: { month: monthKey(), cap_usd: cfg.monthly_cap_usd, spent_usd: monthSpend(vault) },
