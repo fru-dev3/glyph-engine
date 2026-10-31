@@ -8,6 +8,12 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## [1.10.13] 2026-10-31 · A local model out of time has not answered
+
+- **Glyph Arena: a timed-out local answer is an error, not a reply.** A busy Mac returned eleven characters after exactly four minutes and the duel graded them: the model "lost" on a checker it never saw the question for, and that loss would have been written into the routing policy. A side whose own clock ran out now comes back as `timeout`, costs nothing and decides nothing.
+
+---
+
 ## [1.10.12] 2026-10-31 · Arena refuses a folder that is not a vault
 
 - **The vault is the only place Arena keeps anything.** Pointed at a path that was not a vault, Arena used to create one there and start with an empty Arena: no recipes, no duels, no policy, and no sign that anything was wrong. `arenaDir` now raises `NoVault` unless the path has a `VAULT.md`, a `build/` or a `data/`, and `status` reports `vault_ok: false` for it. Take the vault away and Arena breaks honestly. (The one thing kept outside it is the light or dark preference, which is configuration.)

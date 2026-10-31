@@ -468,6 +468,26 @@ describe("everything Arena knows lives in the vault", () => {
   });
 });
 
+describe("a local model that runs out of time has not answered", () => {
+  test("the half sentence it returned is an error, never a graded reply", async () => {
+    writeRecipes(vault, [localA, localB]);
+    // A loaded machine: it does answer, but long after the duel's clock gave up.
+    const slow: Caller = async ({ signal }) => {
+      await new Promise((res) => setTimeout(res, 60));
+      return signal?.aborted ? "In short," : "In short, do the thing.";
+    };
+    const d = await runDuel(vault, task({ domain: "health" }), localA, localB, { call: slow, localTimeoutMs: 10 });
+    expect(d.a.status).toBe("timeout");
+    expect(d.a.ok).toBe(false);
+    expect(d.a.cost_usd).toBe(0);
+    expect(d.outcome).toBe("error");
+    // ...and with time to spare the same answer is graded as usual.
+    const ok = await runDuel(vault, task({ domain: "health" }), localA, localB, { call: slow, localTimeoutMs: 5_000 });
+    expect(ok.a.ok).toBe(true);
+    expect(ok.outcome).toBe("tie");
+  });
+});
+
 describe("provider failures are errors, never answers", () => {
   test("engine error replies and quota refusals are recognised", () => {
     expect(providerError("(anthropic: HTTP 401, invalid x-api-key)")).toContain("401");

@@ -107,7 +107,7 @@ export const engineCall: Caller = async ({ recipe, prompt, cwd, signal }) => {
   });
 };
 
-export async function answerOne(vault: string, task: ArenaTask, r: Recipe, cfg: ArenaConfig, call: Caller, signal?: AbortSignal): Promise<Side> {
+export async function answerOne(vault: string, task: ArenaTask, r: Recipe, cfg: ArenaConfig, call: Caller, signal?: AbortSignal, localTimeoutMs = LOCAL_TIMEOUT_MS): Promise<Side> {
   const side: Side = { recipe: r.id, ok: false, reply: "", ms: 0, cost_usd: 0 };
   try {
     assertRecipeAllowed(task, r, cfg, vault);
@@ -132,11 +132,16 @@ export async function answerOne(vault: string, task: ArenaTask, r: Recipe, cfg: 
   const ctl = new AbortController();
   const stop = () => ctl.abort();
   signal?.addEventListener("abort", stop);
-  const timer = r.cli === "ollama" ? setTimeout(stop, LOCAL_TIMEOUT_MS) : null;
+  // A local model that runs out of time has not answered: whatever text came back is
+  // the beginning of a sentence. Grading it would let a loaded machine lose a duel and
+  // write that loss into the policy, so a timed-out side is an error, like any other.
+  let timedOut = false;
+  const timer = r.cli === "ollama" ? setTimeout(() => { timedOut = true; stop(); }, localTimeoutMs) : null;
   try {
     // Reasoning models (qwen3, deepseek-r1) put their scratch work in <think> tags: not the answer.
     const reply = (await call({ recipe: r, prompt, cwd, signal: ctl.signal })).replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
     const ms = Date.now() - t0;
+    if (timedOut) return { ...side, status: "timeout", error: `no answer in ${Math.round(localTimeoutMs / 1000)}s`, ms };
     const failed = providerError(reply);
     if (failed) return { ...side, status: "error", error: failed, ms };
     if (!reply) return { ...side, status: "error", error: "empty reply", ms };
@@ -146,6 +151,7 @@ export async function answerOne(vault: string, task: ArenaTask, r: Recipe, cfg: 
     if (task.check) out.check = runCheck(task.check, reply, { codeTests: cfg.code_tests });
     return out;
   } catch (e) {
+    if (timedOut) return { ...side, status: "timeout", error: `no answer in ${Math.round(localTimeoutMs / 1000)}s`, ms: Date.now() - t0 };
     return { ...side, status: "error", error: (e as Error).message.slice(0, 300), ms: Date.now() - t0 };
   } finally {
     if (timer) clearTimeout(timer);
@@ -191,6 +197,8 @@ export interface DuelOpts {
   call?: Caller;
   signal?: AbortSignal;
   now?: number;
+  /** How long a local model gets per answer. Only the tests set it. */
+  localTimeoutMs?: number;
 }
 
 export async function runDuel(vault: string, task: ArenaTask, ra: Recipe, rb: Recipe, opts: DuelOpts = {}): Promise<Duel> {
@@ -209,8 +217,8 @@ export async function runDuel(vault: string, task: ArenaTask, ra: Recipe, rb: Re
   }
   const sameHost = ra.cli === "ollama" && rb.cli === "ollama" && (ra.baseUrl ?? "") === (rb.baseUrl ?? "");
   const [a, b] = sameHost
-    ? [await answerOne(vault, task, ra, cfg, call, opts.signal), await answerOne(vault, task, rb, cfg, call, opts.signal)]
-    : await Promise.all([answerOne(vault, task, ra, cfg, call, opts.signal), answerOne(vault, task, rb, cfg, call, opts.signal)]);
+    ? [await answerOne(vault, task, ra, cfg, call, opts.signal, opts.localTimeoutMs), await answerOne(vault, task, rb, cfg, call, opts.signal, opts.localTimeoutMs)]
+    : await Promise.all([answerOne(vault, task, ra, cfg, call, opts.signal, opts.localTimeoutMs), answerOne(vault, task, rb, cfg, call, opts.signal, opts.localTimeoutMs)]);
 
   let pre = decide(task, a, b);
   if (pre.outcome === "pending" && task.expected && cfg.judge) {
