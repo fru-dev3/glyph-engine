@@ -7,7 +7,25 @@ import { runtimePath } from "../path-safety.ts";
 import { vappendLine, vreadFile, vwriteFileAtomic } from "../vault-session.ts";
 import type { AdverseEvent, ArenaConfig, Duel, Pick, Recipe, Signal } from "./types.ts";
 
+/** Everything Arena knows is in the vault, so a path that is not one is refused
+ * rather than filled with a fresh, empty Arena. Take the vault away and Arena
+ * breaks honestly instead of starting over somewhere else. */
+export class NoVault extends Error {
+  constructor(path: string) {
+    super(`${path} is not a vault (no VAULT.md, no build/, no data/): Arena keeps everything in the vault`);
+    this.name = "NoVault";
+  }
+}
+
+export function looksLikeVault(vault: string): boolean {
+  return existsSync(join(vault, "VAULT.md"))
+    || existsSync(join(vault, "build"))
+    || existsSync(join(vault, "data", "domains"))
+    || existsSync(join(vault, "data", "apps"));
+}
+
 export function arenaDir(vault: string): string {
+  if (!looksLikeVault(vault)) throw new NoVault(vault);
   const dir = join(runtimePath(vault, "_meta"), "arena");
   mkdirSync(dir, { recursive: true });
   return dir;

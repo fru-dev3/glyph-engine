@@ -14,7 +14,7 @@ import { blockedReason, makeRecipe } from "./recipes.ts";
 import { decide, endpointUp, ENDPOINT_PROBE_MS, providerError, runDuel, runReplay, type Caller } from "./run.ts";
 import { equivalent, similarity, standings, unblinding, wilsonLower } from "./score.ts";
 import { nextPick, rebuildPolicy, submitPick, flagDuel, runSentinels } from "./service.ts";
-import { DEFAULT_CONFIG, readDuels, writeConfig, writeRecipes } from "./store.ts";
+import { arenaDir, DEFAULT_CONFIG, looksLikeVault, NoVault, readDuels, writeConfig, writeRecipes } from "./store.ts";
 import { replayable, SENTINELS } from "./tasks.ts";
 import type { AdverseEvent, ArenaTask, Duel, Recipe, Side } from "./types.ts";
 
@@ -450,6 +450,21 @@ describe("a busy local endpoint is not an offline one", () => {
     // The second call is the remembered no: instant, and it expires in ten seconds.
     expect(await endpointUp(dead)).toBe(false);
     expect(Date.now() - t0).toBeLessThan(ENDPOINT_PROBE_MS);
+  });
+});
+
+describe("everything Arena knows lives in the vault", () => {
+  test("a folder that is not a vault is refused, not filled with a fresh Arena", () => {
+    const notAVault = mkdtempSync(join(tmpdir(), "not-a-vault-"));
+    expect(looksLikeVault(notAVault)).toBe(false);
+    expect(() => arenaDir(notAVault)).toThrow(NoVault);
+    expect(existsSync(join(notAVault, "_meta", "arena"))).toBe(false);
+    rmSync(notAVault, { recursive: true, force: true });
+  });
+
+  test("the vault's own folder is the one Arena writes to", () => {
+    expect(looksLikeVault(vault)).toBe(true);
+    expect(arenaDir(vault)).toBe(join(vault, "build", "_meta", "arena"));
   });
 });
 

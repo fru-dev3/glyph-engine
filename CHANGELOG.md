@@ -8,6 +8,12 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## [1.10.12] 2026-10-31 · Arena refuses a folder that is not a vault
+
+- **The vault is the only place Arena keeps anything.** Pointed at a path that was not a vault, Arena used to create one there and start with an empty Arena: no recipes, no duels, no policy, and no sign that anything was wrong. `arenaDir` now raises `NoVault` unless the path has a `VAULT.md`, a `build/` or a `data/`, and `status` reports `vault_ok: false` for it. Take the vault away and Arena breaks honestly. (The one thing kept outside it is the light or dark preference, which is configuration.)
+
+---
+
 ## [1.10.11] 2026-10-31 · A busy home model is not an offline one
 
 - **Glyph Arena's endpoint probe waits.** `/api/tags` answers in milliseconds on an idle Mac, but a Mac already answering a duel took 7.1 seconds on the home network - and a 2.5-second probe called it offline, so three Home Only duels were thrown away with nothing sent. The probe now waits 12 seconds, a yes is remembered for a minute and a no for only ten seconds, and the model list behind the Runtimes screen waits 8 seconds for the same reason.

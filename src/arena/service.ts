@@ -14,7 +14,7 @@ import { buildPolicy, lookupRoute, policyMarkdown, readPolicy } from "./policy.t
 import { blockedReason, makeRecipe, ollamaModels } from "./recipes.ts";
 import { answerOne, engineCall, type Caller } from "./run.ts";
 import { decided, inLeague, standings } from "./score.ts";
-import { appendDuel, appendLine, file, readAdverse, readConfig, readDuels, readLines, readPicks, readRecipes, readSignals, writeJson } from "./store.ts";
+import { appendDuel, appendLine, file, readAdverse, readConfig, readDuels, readLines, readPicks, readRecipes, readSignals, writeJson, looksLikeVault } from "./store.ts";
 import { SENTINELS } from "./tasks.ts";
 import type { AdverseEvent, Duel, League, Policy, Recipe, Severity, Signal, TaskKind, Weight } from "./types.ts";
 
@@ -263,7 +263,7 @@ export function status(vault: string) {
     leagues.set(k, row);
   }
   return {
-    vault_ok: existsSync(vault),
+    vault_ok: existsSync(vault) && looksLikeVault(vault),
     arena_dir: file(vault, ""),
     generator: ARENA_GENERATOR,
     config: cfg,
