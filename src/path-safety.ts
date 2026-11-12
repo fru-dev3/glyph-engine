@@ -1,6 +1,6 @@
 import { existsSync, realpathSync, statSync, mkdirSync, renameSync } from "node:fs";
 import { isAbsolute, join, normalize, resolve, sep, dirname } from "node:path";
-import { homedir } from "node:os";
+import { glyphHome } from "./glyph-home.ts";
 
 // Belt-and-suspenders defense against vault-path attacks. The vault path is
 // user-controlled (from config.json or --vault flag), and domain/app names
@@ -268,7 +268,7 @@ export function sanitizeConnectorId(id: string): string {
 
 // The machine-local root for all browser profiles: ~/.prevail/browser-profiles.
 export function browserProfilesRoot(): string {
-  return join(homedir(), ".prevail", BROWSER_PROFILES_DIR);
+  return join(glyphHome(), BROWSER_PROFILES_DIR);
 }
 
 // Pure resolver: the machine-local Chrome user-data dir for a connector. No

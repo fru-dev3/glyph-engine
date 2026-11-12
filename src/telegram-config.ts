@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { writeSecretFile } from "./secret-file.ts";
 import { dirname, join } from "node:path";
-import { homedir } from "node:os";
+import { glyphHome } from "./glyph-home.ts";
 
 // Stored alongside the rest of the prevail config in ~/.prevail/. Chmod'd to
 // 0600 because it holds the bot token, which is equivalent to a password for
@@ -24,7 +24,7 @@ export interface TelegramConfig {
 }
 
 export function telegramConfigFile(): string {
-  return join(homedir(), ".prevail", "telegram.json");
+  return join(glyphHome(), "telegram.json");
 }
 
 export function readTelegramConfig(): TelegramConfig | null {

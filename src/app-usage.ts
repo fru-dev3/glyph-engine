@@ -26,6 +26,7 @@ import { basename, join } from "node:path";
 import { dayOf, eventsRoot, hostSlug, type MetricEvent } from "./metrics.ts";
 import { registrableDomain, webDomainAllowed } from "./app-map.ts";
 import { runtimePath } from "./path-safety.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 // Seconds between 1970 and 2001-01-01 (Core Foundation absolute time).
 export const CF_EPOCH = 978_307_200;
@@ -34,7 +35,7 @@ const PLAUSIBLE = (ms: number) => ms > Date.UTC(2015, 0, 1) && ms < Date.UTC(204
 
 export interface UsageRoots { home: string; apps: string[]; cache: string }
 export function defaultUsageRoots(home = homedir()): UsageRoots {
-  return { home, apps: ["/Applications", join(home, "Applications"), "/System/Applications"], cache: join(home, ".prevail", "cache") };
+  return { home, apps: ["/Applications", join(home, "Applications"), "/System/Applications"], cache: join(glyphHome(home), "cache") };
 }
 
 /** Open a SQLite store read-only from a private copy (with its WAL), so the live app is never touched. */

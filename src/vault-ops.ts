@@ -27,6 +27,7 @@ import { basename, dirname, join, resolve } from "node:path";
 import { DATA_DIR, DOMAINS_DIR, resolveDomainDir } from "./path-safety.ts";
 
 import { readManifest, writeManifest } from "./manifest.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 // ─────────────────────────────────────────────────────────────────────────
 // parseDuration — "30d", "12h", "1y", "7d12h" → milliseconds
@@ -254,7 +255,7 @@ export async function backupVault(args: BackupArgs): Promise<BackupResult> {
   const out = resolve(args.outputPath);
   const outDir = resolve(out, "..");
   if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
-  const prevailHome = args.prevailHome ?? join(homedir(), ".prevail");
+  const prevailHome = args.prevailHome ?? glyphHome();
 
   // We assemble the tar in two passes so the archive contains a clean,
   // predictable top-level layout regardless of where the vault sits on

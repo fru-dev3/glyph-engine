@@ -128,7 +128,7 @@ export function contractBlock(c: AgentContract): string {
     `You hand off to: ${c.handsOffTo.join(", ") || "(none)"}.`,
     "",
     "Write only inside this folder. Anything for another domain is a handoff: add a task to that",
-    `domain (Prevail MCP add_task) that starts "From ${c.domain}:" and says the event, the amount,`,
+    `domain (Glyph Bot MCP add_task) that starts "From ${c.domain}:" and says the event, the amount,`,
     "the date and the source file. Never edit another domain's files.",
     ...(c.body ? ["", c.body] : []),
   ].join("\n");

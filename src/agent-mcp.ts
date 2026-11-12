@@ -6,9 +6,9 @@
 
 import { writeSecretFile } from "./secret-file.ts";
 import { join } from "node:path";
-import { homedir } from "node:os";
 import { scanCommunityApps } from "./vault.ts";
 import { resolveGwsBinary } from "./calendar-sync.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 // The machine-local agent MCP config. Lives under ~/.prevail (always writable,
 // machine-scoped) NOT the vault, because it names machine-local binaries and the
@@ -29,7 +29,7 @@ function shortHash(s: string): string {
 // file but write identical content, so that's safe. Absent vaultPath keeps the
 // legacy shared name.
 export function agentMcpConfigPath(vaultPath?: string): string {
-  const base = process.env.PREVAIL_HOME || join(homedir(), ".prevail");
+  const base = process.env.PREVAIL_HOME || glyphHome();
   const suffix = vaultPath && vaultPath.trim() ? `-${shortHash(vaultPath.trim())}` : "";
   return join(base, `agent-mcp${suffix}.json`);
 }

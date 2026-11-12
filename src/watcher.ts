@@ -1,9 +1,9 @@
 import { appendFileSync, existsSync, readFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import type { AppSkill, Domain } from "./vault.ts";
 import { buildDomainHeatmap } from "./heatmap.ts";
 import { computeContextScore } from "./score.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 // Domain.path is "<vault>/<domain>"; the vault root the score engine wants is
 // its parent directory.
@@ -11,7 +11,7 @@ function vaultRootFor(domainPath: string): string {
   return dirname(domainPath);
 }
 
-const DATA_DIR = join(homedir(), ".prevail");
+const DATA_DIR = glyphHome();
 const WATCHER_LOG = join(DATA_DIR, "watcher.jsonl");
 
 export type ObservationKind =

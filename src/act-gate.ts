@@ -32,6 +32,7 @@ import { isTrustedFetch, isTrustedReadTool } from "./trusted-sources.ts";
 import { missionScopeSlug } from "./path-safety.ts";
 import { readMission } from "./missions.ts";
 import { ceilingRank } from "./specialists.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 export interface PendingAct {
   id: string;
@@ -571,7 +572,7 @@ export function missionGate(vault: string, domain: string): { readOnly: boolean;
 // Dev caveat (same as gws-mcp): under `bun run` process.execPath is bun, so
 // the hook only binds in compiled builds - matching the rest of the MCP stack.
 export function actGateSettingsPath(vault: string, domain: string, vaultLockOn = true): string {
-  const dir = join(homedirSafe(), ".prevail", "act-gate");
+  const dir = join(glyphHome(homedirSafe()), "act-gate");
   mkdirSync(dir, { recursive: true });
   const key = createHash("sha256").update(`${vault}\n${domain}\n${vaultLockOn}`).digest("hex").slice(0, 12);
   const path = join(dir, `${key}.json`);

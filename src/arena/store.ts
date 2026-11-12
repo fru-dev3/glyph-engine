@@ -1,11 +1,11 @@
 // Arena's plain files: <vault>/build/_meta/arena/*. Encryption-aware through the
 // engine's vault-session helpers, so an encrypted vault stays encrypted.
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
 import { runtimePath } from "../path-safety.ts";
 import { vappendLine, vreadFile, vwriteFileAtomic } from "../vault-session.ts";
 import type { AdverseEvent, ArenaConfig, Duel, Pick, Recipe, Signal } from "./types.ts";
+import { glyphHome } from "../glyph-home.ts";
 
 /** Everything Arena knows is in the vault, so a path that is not one is refused
  * rather than filled with a fresh, empty Arena. Take the vault away and Arena
@@ -38,7 +38,7 @@ export function resolveArenaVault(flag?: string | null): string | null {
   if (flag) return flag;
   if (process.env.PREVAIL_VAULT) return process.env.PREVAIL_VAULT;
   try {
-    const cfg = JSON.parse(readFileSync(join(homedir(), ".prevail", "config.json"), "utf8")) as { vaultPath?: string };
+    const cfg = JSON.parse(readFileSync(join(glyphHome(), "config.json"), "utf8")) as { vaultPath?: string };
     if (cfg.vaultPath && existsSync(cfg.vaultPath)) return cfg.vaultPath;
   } catch { /* no config */ }
   return null;

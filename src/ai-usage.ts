@@ -52,6 +52,7 @@ import { hostSlug } from "./capture.ts";
 import { appsContainer, runtimePath } from "./path-safety.ts";
 import PRICES from "./ai-prices.json" with { type: "json" };
 import { redactSecrets } from "./secret-redact.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 // ── Prices ──────────────────────────────────────────────────────────────────
 
@@ -121,7 +122,7 @@ export function defaultRoots(): Roots {
   return {
     home,
     appSupport: join(home, "Library", "Application Support"),
-    cacheDir: join(process.env.PREVAIL_CONFIG_DIR || join(homedir(), ".prevail"), "cache", "ai-usage"),
+    cacheDir: join(process.env.PREVAIL_CONFIG_DIR || glyphHome(), "cache", "ai-usage"),
   };
 }
 

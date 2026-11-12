@@ -4,6 +4,7 @@
 // the top level, so EVERY headless command (score, recommendations, connectors,
 // daemon, chat-json…) paid ~400ms loading the whole terminal UI it never renders.
 // They're now dynamically imported inside runWizard()/launchCockpit() only.
+import "./glyph-home.ts"; // first: aliases GLYPH_* env onto PREVAIL_* before anything reads it
 import { resolve, join, basename, dirname } from "node:path";
 import { resolveDomainDir, buildRoot, dataRoot, DOMAINS_DIR, appScopeId, browserProfileDir } from "./path-safety.ts";
 import { v4DirPath } from "./vault-layout-v4.ts";
@@ -11,6 +12,7 @@ import { existsSync, readdirSync, readFileSync, renameSync, mkdirSync, rmdirSync
 import { homedir } from "node:os";
 import { bundledDemoVaultPath, readConfig, writeConfig, readMachineRole, setMachineRole, type MachineRole } from "./config.ts";
 import type { ChatEvent } from "./chat-json.ts";
+import { glyphHome, commandName } from "./glyph-home.ts";
 // Top-level commands whose module parses its own arguments (module-commands.ts).
 const MODULE_COMMANDS = ["chief", "fold", "compass", "metrics", "specialists", "job", "review", "today", "decide", "missions", "mission", "sources", "commitments", "radar", "whereis", "time", "tell", "forgetting", "agents", "spaces", "aidev", "hub"];
 
@@ -768,123 +770,123 @@ function parseArgs(argv: string[]): Args {
 }
 
 function printHelp() {
-  console.log(`Glyph Engine: a terminal cockpit for your life domains. The command is prevail.
+  console.log(`Glyph Bot (the Glyph Engine): a terminal cockpit for your life domains. The command is glyph-bot; prevail is the same program under its old name.
 
 USAGE
-  prevail                     boot the cockpit (uses your saved vault)
-  prevail init                run the first-run wizard
-  prevail demo                ignore config, boot the synthetic vault
-  prevail doctor              check installed AI clis + vault shape
-  prevail doctor --debug      also print the last 50 entries from ~/.prevail/debug.log
-  prevail schedule [...]      manage embedded cron-style schedules
-  prevail telegram [...]      configure the Telegram bot bridge
-  prevail briefing [...]      schedule per-domain prompts (e.g. daily 7am wealth digest)
-  prevail connectors [...]    list connectors / run OAuth flows / test connections
-  prevail apps [...]          mirror of your AI runtimes' MCP connectors + read-only sync recipes
+  glyph-bot                   boot the cockpit (uses your saved vault)
+  glyph-bot init              run the first-run wizard
+  glyph-bot demo              ignore config, boot the synthetic vault
+  glyph-bot doctor            check installed AI clis + vault shape
+  glyph-bot doctor --debug    also print the last 50 entries from ~/.prevail/debug.log
+  glyph-bot schedule [...]    manage embedded cron-style schedules
+  glyph-bot telegram [...]    configure the Telegram bot bridge
+  glyph-bot briefing [...]    schedule per-domain prompts (e.g. daily 7am wealth digest)
+  glyph-bot connectors [...]  list connectors / run OAuth flows / test connections
+  glyph-bot apps [...]        mirror of your AI runtimes' MCP connectors + read-only sync recipes
                               (apps access-log [--account A] / apps threads <id> / apps accounts <id> --json: app access, chats, Google accounts)
                               (apps add-source / remove-source: trusted sources, read-only)
                               (connectors list --json for the machine list)
                               connectors scopes <id> — show what an OAuth grant requests
                               connectors disconnect <id> — revoke + delete a stored token
                               connectors draft-ideal <id> - AI-draft the app's ideal state
-  prevail calendar [...]      calendar sync (read-only)
+  glyph-bot calendar [...]    calendar sync (read-only)
                               calendar pull-google --json — pull Google Calendar events
                               into <vault>/calendar-external.json for the desktop view
-  prevail mcp                 run as an MCP server (stdio) — exposes council + vault to other agents
+  glyph-bot mcp               run as an MCP server (stdio) — exposes council + vault to other agents
                               auth: clients must send Authorization: prevail-<token> from ~/.prevail/mcp.json
                               parent-check: refuses non-TTY / unknown parents — bypass with --unsafe-detach
-  prevail gws-mcp --vault <v> [--domain <d>] [--account <label>]
+  glyph-bot gws-mcp --vault <v> [--domain <d>] [--account <label>]
                               run the gated Google Workspace MCP server (stdio) —
                               exposes the authenticated gws CLI to the agent as one
                               tool: reads run live, writes are queued for approval
-  prevail gws pending-list --json
+  glyph-bot gws pending-list --json
                               list Google Workspace writes awaiting your approval
-  prevail gws run --id <id> --json
+  glyph-bot gws run --id <id> --json
                               execute one approved Google Workspace write
-  prevail bench [...]         run the public council benchmark suite
-  prevail arena [...]         Glyph Arena: duels, blind picks, the routing policy (JSON out)
+  glyph-bot bench [...]       run the public council benchmark suite
+  glyph-bot arena [...]       Glyph Arena: duels, blind picks, the routing policy (JSON out)
                               (bench list --json for the machine question list)
-  prevail vault [...]         prune old logs, snapshot/restore the vault
+  glyph-bot vault [...]       prune old logs, snapshot/restore the vault
                               archive/restore/list-archived domains (--json)
-  prevail chief show|set-name <name> --json
+  glyph-bot chief show|set-name <name> --json
                               the user's chief of staff (build/chief-of-staff.md)
-  prevail fold plan|apply [--routes F] --json
+  glyph-bot fold plan|apply [--routes F] --json
                               fold the coordinator domains (chief, vision, intel)
                               into General, the chief of staff's home
-  prevail compass show|block|bootstrap|confirm <id>|--all|drop <id>|versions|ledger --json
+  glyph-bot compass show|block|bootstrap|confirm <id>|--all|drop <id>|versions|ledger --json
                               the Compass (build/compass.md): mission, values, roles,
                               goals, rules, every line in your words; bootstrap
                               drafts proposed lines from the vault, quote per line
-  prevail metrics scan [--backfill]|compute|sources|list|series <id>|rhythm|glance --json
+  glyph-bot metrics scan [--backfill]|compute|sources|list|series <id>|rhythm|glance --json
                               metrics from what you already do: AI tools, git, task
                               boards, loops, decisions, prompts, trips, watch history,
                               card statements; each with a tier, coverage and sources
-  prevail manifest get|set <domain> --json
+  glyph-bot manifest get|set <domain> --json
                               read/merge a domain's manifest (engine JSON API)
-  prevail chat --domain <d> --json
+  glyph-bot chat --domain <d> --json
                               stream one chat turn as NDJSON (engine JSON API)
                               (--entity <kind/slug> scopes it to an entity; repeatable)
                               (--app <id> references an app, repeatable; --scope-app <id>
                                keeps the thread in the app's own space; --ref-domain <d>
                                references another domain, repeatable)
-  prevail score <domain> [--audit] --json
+  glyph-bot score <domain> [--audit] --json
                               compute a domain's context-readiness score
-  prevail score --all --json  score every domain + life-readiness roll-up
-  prevail score history <domain> --json
+  glyph-bot score --all --json  score every domain + life-readiness roll-up
+  glyph-bot score history <domain> --json
                               append-only score history ([{ts,score}])
-  prevail onboard recommend --json
+  glyph-bot onboard recommend --json
                               propose a starter domain set (answers JSON on stdin)
-  prevail onboard apply --json
+  glyph-bot onboard apply --json
                               scaffold the picked domains (picks JSON on stdin)
-  prevail heartbeat install --json
+  glyph-bot heartbeat install --json
                               install OS scheduler hooks for domain heartbeats
-  prevail heartbeat status --json
+  glyph-bot heartbeat status --json
                               report heartbeat install + routine state
-  prevail gateway status --json
+  glyph-bot gateway status --json
                               report channel adapters + deterministic per-domain routing
-  prevail domains --json      list life domains in the vault (engine JSON API)
-  prevail council run --domain <d> --json
+  glyph-bot domains --json    list life domains in the vault (engine JSON API)
+  glyph-bot council run --domain <d> --json
                               fan a prompt across the panel + chair; stream NDJSON;
                               flags: --quorum N --lens <id|all|off> --framework <id|off>
                                      --cli claude,codex,… --local-only --message "…"
                               the verdict is persisted to <domain>/_decisions.jsonl
-  prevail council feedback --id <decisionId> --rating up|down|clear [--note "…"] --json
+  glyph-bot council feedback --id <decisionId> --rating up|down|clear [--note "…"] --json
                               rate a recorded verdict (feeds the learning loop)
-  prevail decisions [list] [<domain>] --json [--limit N]
+  glyph-bot decisions [list] [<domain>] --json [--limit N]
                               read the domain's decision log, newest-first
-  prevail memory read [<domain>] --json
+  glyph-bot memory read [<domain>] --json
                               distilled long-term memory (_memory.md) for a domain
-  prevail surface [<domain>] --json [--force]
+  glyph-bot surface [<domain>] --json [--force]
                               proactive questions + next actions (cached 6h)
-  prevail frameworks list --json / prevail lenses list --json
+  glyph-bot frameworks list --json / prevail lenses list --json
                               the response-framework / cognitive-lens catalogs
-  prevail modes get|set [<domain>] --json
+  glyph-bot modes get|set [<domain>] --json
                               per-domain turn dials: --web --save --serendipity
                                                      --auto --framework --lens
-  prevail privacy get|set --json [--bunker on|off] [--vault-lock on|off]
+  glyph-bot privacy get|set --json [--bunker on|off] [--vault-lock on|off]
                               read/set Bunker Mode (global local-only switch)
-  prevail decision-layer status|check|report|set [--json] [--since 7d]
+  glyph-bot decision-layer status|check|report|set [--json] [--since 7d]
                               fast decision layer in front of council/model
                               calls; report compares what it WOULD have
                               chosen against what actually happened
-  prevail route --text <msg|-> [--thread <id>] --json
+  glyph-bot route --text <msg|-> [--thread <id>] --json
                               which vault domains a General message is about
                               (decision layer, else a small model)
-  prevail route correct --thread <id> --domains a,b [--from x] [--text -]
+  glyph-bot route correct --thread <id> --domains a,b [--from x] [--text -]
                               record the user's correction; learned from
-  prevail search <query> --json [--limit N]
+  glyph-bot search <query> --json [--limit N]
                               full-text search across indexed chat history
-  prevail reset [--json] [--dry-run] [--include-vault] [--yes]
+  glyph-bot reset [--json] [--dry-run] [--include-vault] [--yes]
                               factory reset: purge local app secrets (OAuth/MCP/
                               Telegram tokens, config, passcode, session caches).
                               Vault is kept unless --include-vault; never deletes
                               without --yes (otherwise prints the dry-run plan).
-  prevail daemon --telegram   run the headless Telegram bot + briefing ticker
-  prevail role                print this machine's role (hub | client)
-  prevail role set hub|client set the role (hub owns automation; client captures only)
-  prevail upgrade [...]       self-update from the latest GitHub release
+  glyph-bot daemon --telegram run the headless Telegram bot + briefing ticker
+  glyph-bot role              print this machine's role (hub | client)
+  glyph-bot role set hub|client set the role (hub owns automation; client captures only)
+  glyph-bot upgrade [...]     self-update from the latest GitHub release
                               flags: --check (no prompt) --force (no confirm) --pre (include prereleases)
-  prevail --vault <path>      override vault path for one session
+  glyph-bot --vault <path>    override vault path for one session
 
 OPTIONS
   -d, --vault <path>           use this vault root for this run
@@ -3799,7 +3801,6 @@ async function connectorsCommand(args: string[]): Promise<void> {
     const app = pickConnector(id);
     const { appsContainer } = await import("./path-safety.ts");
     const { rmSync } = await import("node:fs");
-    const { homedir } = await import("node:os");
     const { resolve, sep } = await import("node:path");
     const fail = (msg: string) => {
       if (args.includes("--json")) { process.stdout.write(`${JSON.stringify({ ok: false, error: msg })}\n`); process.exit(0); }
@@ -3811,7 +3812,7 @@ async function connectorsCommand(args: string[]): Promise<void> {
     // the user's own and is removable. The ONLY thing we refuse is a connector
     // that ships read-only inside the app bundle (apps/community), which isn't
     // in any of these roots.
-    const userRoots = [resolve(appsContainer(connectorsVault)), resolve(homedir(), ".prevail", "apps")];
+    const userRoots = [resolve(appsContainer(connectorsVault)), resolve(glyphHome(), "apps")];
     if (process.env.PREVAIL_APPS_DIR) userRoots.push(resolve(process.env.PREVAIL_APPS_DIR));
     const resolved = resolve(app.path);
     const underUser = userRoots.some((root) => resolved === root || resolved.startsWith(root + sep));
@@ -6556,7 +6557,7 @@ async function main() {
   }
   if (args.version) {
     const { VERSION } = await import("./version.ts");
-    console.log(`prevail ${VERSION} (Glyph Engine)`);
+    console.log(`${commandName()} ${VERSION} (Glyph Bot)`);
     return;
   }
   if (args.doctor) {

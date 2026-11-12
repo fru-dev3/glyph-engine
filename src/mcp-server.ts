@@ -66,7 +66,7 @@ export interface McpTool {
 }
 
 const SERVER_INFO = {
-  name: "prevail",
+  name: "glyph-bot",
   version: VERSION,
 };
 
@@ -182,7 +182,7 @@ export async function runMcpServer(
           error: {
             code: -32001,
             message:
-              "unauthorized - prevail MCP requires a valid token; see ~/.prevail/mcp.json",
+              "unauthorized - Glyph Bot MCP requires a valid token; see ~/.prevail/mcp.json",
           },
         });
       }
@@ -278,7 +278,7 @@ function verifyParentProcess(): ParentVerdict {
     return {
       ok: false,
       message:
-        "prevail mcp refuses to run from detached / unknown parent (no ppid available). " +
+        "glyph-bot mcp refuses to run from detached / unknown parent (no ppid available). " +
         "If you're sure this is intentional, pass --unsafe-detach.",
     };
   }
@@ -304,7 +304,7 @@ function verifyParentProcess(): ParentVerdict {
   return {
     ok: false,
     message:
-      `prevail mcp refuses to run from detached / unknown parent ` +
+      `glyph-bot mcp refuses to run from detached / unknown parent ` +
       `(PID ${ppid}, command ${cmd || "<unknown>"}). ` +
       `If you're sure this is intentional, pass --unsafe-detach.`,
   };

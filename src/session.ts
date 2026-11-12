@@ -1,5 +1,4 @@
 import { Database } from "bun:sqlite";
-import { homedir } from "node:os";
 import { join } from "node:path";
 import { randomBytes } from "node:crypto";
 import { resolveDomainDir } from "./path-safety.ts";
@@ -13,8 +12,9 @@ import {
   readFileSync,
 } from "node:fs";
 import { maskDeep } from "./secret-redact.ts";
+import { glyphHome } from "./glyph-home.ts";
 
-const DATA_DIR = join(homedir(), ".prevail");
+const DATA_DIR = glyphHome();
 const SESSIONS_DIR = join(DATA_DIR, "sessions");
 const PROMPTS_DIR = join(DATA_DIR, "prompts");
 const DB_PATH = join(DATA_DIR, "sessions.db");

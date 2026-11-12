@@ -8,6 +8,12 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## [Unreleased] Glyph Bot names beside the old ones
+
+- **Glyph Bot is the new name of this engine; nothing was removed.** The package installs `glyph-bot` and `prevail` (the same program). The config folder is `GLYPH_HOME`, then `~/.glyph` if it exists, then `~/.prevail`; the engine never creates or moves it. Wherever `PREVAIL_X` is read, `GLYPH_X` is accepted too (the new one wins). The MCP server answers as `glyph-bot` with the same tools; clients configured for `prevail` keep working because they launch the same command. Help, the version banner and the agent prompts say Glyph Bot.
+
+---
+
 ## [1.10.14] 2026-10-31 · Busy is not offline
 
 - **A home machine that is slow to answer still gets asked.** The probe before a local duel is there to avoid a long TCP wait on a machine that is not running; a machine deep in a duel took 14 seconds to list its models and was skipped as "offline", which threw away exactly the duels it was busy with. A refused connection is `down` and still skipped; a slow one is `busy` and the duel goes ahead, bounded by its own four-minute clock.
