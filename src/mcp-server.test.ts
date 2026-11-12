@@ -81,7 +81,7 @@ describe("mcp-server (stdio)", () => {
     await new Promise((r) => child.on("close", r));
     expect(out.length).toBeGreaterThanOrEqual(2);
     const init = JSON.parse(out[0]!);
-    expect(init.result?.serverInfo?.name).toBe("prevail");
+    expect(init.result?.serverInfo?.name).toBe("glyph-bot");
     expect(init.result?.protocolVersion).toBeDefined();
     const tools = JSON.parse(out[1]!);
     const names = tools.result?.tools?.map((t: { name: string }) => t.name) ?? [];

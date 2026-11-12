@@ -485,7 +485,7 @@ function buildPrompt(doc: LoopsDoc, loop: Loop, domainLabel: string, state: stri
     "",
     autonomous
       ? [
-          `AUTONOMY IS ON (guardrail "auto"): you have REAL tools and connectors in this run - file operations in this domain, web search, the google_workspace connector, and Prevail's own action tools. For every next action that is NOT consequential (does not spend money, does not contact anyone other than the user, is not irreversible), DO IT NOW in this run instead of only proposing it: create or update the files, run the search, organize the data, produce the document.`,
+          `AUTONOMY IS ON (guardrail "auto"): you have REAL tools and connectors in this run - file operations in this domain, web search, the google_workspace connector, and Glyph Bot's own action tools. For every next action that is NOT consequential (does not spend money, does not contact anyone other than the user, is not irreversible), DO IT NOW in this run instead of only proposing it: create or update the files, run the search, organize the data, produce the document.`,
           `If a step needs something you don't have (data, a file, a lookup), FIGURE IT OUT: gather it with the tools you have and continue. Do not stop at "the user should provide X" when a tool could get X.`,
           `The google_workspace connector executes reads immediately and QUEUES writes (like sending email) for the user's one-tap approval under Needs you - queuing a write there counts as completing your part of the action.`,
           opCliNote(),

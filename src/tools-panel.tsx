@@ -1,10 +1,10 @@
 import { existsSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
 import { useKeyboard } from "@opentui/react";
 import { theme } from "./theme.ts";
 import { readTelegramConfig, telegramConfigFile } from "./telegram-config.ts";
 import { openInFinder } from "./system.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 interface Props {
   onClose: () => void;
@@ -240,11 +240,11 @@ export function ToolsPanel({ onClose, onOpenBenchmark }: Props) {
           status="filesystem"
           statusFg={theme.fgDim}
         >
-          <Link path={join(homedir(), ".prevail")} label="~/.prevail/" />
-          <Link path={join(homedir(), ".prevail", "config.json")} label="~/.prevail/config.json — vault path + framework + council default" />
+          <Link path={glyphHome()} label="~/.prevail/" />
+          <Link path={join(glyphHome(), "config.json")} label="~/.prevail/config.json — vault path + framework + council default" />
           <Link path={tgConfigPath} label="~/.prevail/telegram.json — bot token + allow-list (chmod 0600)" />
-          <Link path={join(homedir(), ".prevail", "connectors")} label="~/.prevail/connectors/ — per-app auth + data" />
-          <Link path={join(homedir(), ".prevail", "bench-results")} label="~/.prevail/bench-results/ — bench output" />
+          <Link path={join(glyphHome(), "connectors")} label="~/.prevail/connectors/ — per-app auth + data" />
+          <Link path={join(glyphHome(), "bench-results")} label="~/.prevail/bench-results/ — bench output" />
         </Section>
       </scrollbox>
     </box>

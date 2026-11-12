@@ -32,7 +32,7 @@ const expandHome = (p: string) => (p === "~" ? homedir() : p.startsWith("~/") ? 
 function forbiddenFolder(real: string): string | null {
   const home = (() => { try { return realpathSync(homedir()); } catch { return homedir(); } })();
   if (real === "/" || real === home) return "that folder is too broad; add the folder that holds the documents";
-  for (const s of [".ssh", ".gnupg", ".aws", ".prevail", ".config/gcloud", "Library/Keychains", "Library/Cookies"]) {
+  for (const s of [".ssh", ".gnupg", ".aws", ".prevail", ".glyph", ".config/gcloud", "Library/Keychains", "Library/Cookies"]) {
     const p = join(home, s);
     if (real === p || real.startsWith(p + sep)) return "that folder holds secrets and can never be a source";
   }

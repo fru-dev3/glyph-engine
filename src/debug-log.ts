@@ -21,8 +21,8 @@ import {
   statSync,
   unlinkSync,
 } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
+import { glyphHome } from "./glyph-home.ts";
 
 const MAX_BYTES = 5 * 1024 * 1024; // 5MB
 const ROTATIONS = 3; // keep debug.log.1, .2, .3
@@ -37,7 +37,7 @@ export interface DebugEntry {
 function dataDir(): string {
   const override = process.env.PREVAIL_DATA_DIR;
   if (override && override.trim() !== "") return override;
-  return join(homedir(), ".prevail");
+  return glyphHome();
 }
 
 export function debugLogPath(): string {

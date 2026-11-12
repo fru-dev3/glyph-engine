@@ -14,6 +14,7 @@ import { chmodSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync,
 import { homedir } from "node:os";
 import { join, relative, resolve, sep } from "node:path";
 import { maskDeep, redactSecrets } from "./secret-redact.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 export type ScrubKind =
   | "prompt-streams" | "entity-caches" | "entity-pages" | "threads" | "project-prompts"
@@ -131,7 +132,7 @@ if (import.meta.main) {
   const tilde = (p: string) => p.replace(/^~(?=\/|$)/, homedir());
   let vault = arg("--vault");
   if (process.argv.includes("--config")) {
-    const cfg = JSON.parse(readFileSync(join(homedir(), ".prevail", "config.json"), "utf8")) as { vaultPath?: string };
+    const cfg = JSON.parse(readFileSync(join(glyphHome(), "config.json"), "utf8")) as { vaultPath?: string };
     vault = cfg.vaultPath;
   }
   const expect = arg("--expect");

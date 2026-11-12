@@ -3,9 +3,9 @@ import { join, resolve, dirname } from "node:path";
 import { DOMAINS_DIR, appsContainer, dataRoot, resolveDomainDir } from "./path-safety.ts";
 import { vreadFile } from "./vault-session.ts";
 import { fileURLToPath } from "node:url";
-import { homedir } from "node:os";
 import { isDomainFolderName, isSafeEntryName, resolveSafeChild, validateVaultPath } from "./path-safety.ts";
 import { readManifest } from "./manifest.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 export type ViewKey = "state" | "loops" | "quickstart" | "prompts" | "skills";
 
@@ -670,7 +670,7 @@ function communityAppsDirs(vaultPath?: string): string[] {
   if (vaultPath) {
     dirs.push(appsContainer(vaultPath));
   } else {
-    dirs.push(join(homedir(), ".prevail", "apps"));
+    dirs.push(join(glyphHome(), "apps"));
   }
   // Also accept the explicit PREVAIL_APPS_DIR override (useful for
   // development and CI). Keeps the connector discovery hermetic when set.
@@ -996,7 +996,7 @@ function coerceCommunityManifest(raw: unknown, fallbackId: string): CoercedManif
 // throws and the toggle silently no-ops. The override file lives in the
 // always-writable ~/.prevail and is folded into scanCommunityApps below.
 export function appOverridesPath(): string {
-  const base = process.env.PREVAIL_HOME || join(homedir(), ".prevail");
+  const base = process.env.PREVAIL_HOME || glyphHome();
   return join(base, "app-overrides.json");
 }
 export function readAppOverrides(): Record<string, { enabled?: boolean }> {
@@ -1340,7 +1340,7 @@ export function migrateLegacyAppsIntoVault(vaultPath: string): { moved: string[]
   const moved: string[] = [];
   try {
     if (!vaultPath) return { moved };
-    const legacy = join(homedir(), ".prevail", "apps");
+    const legacy = join(glyphHome(), "apps");
     if (!existsSync(legacy)) return { moved };
     const dest = appsContainer(vaultPath); // <vault>/data/apps (v4)
     mkdirSync(dest, { recursive: true });
@@ -1442,7 +1442,7 @@ export function scaffoldCommunityApp(opts: {
   // ~/.prevail/apps last-resort fallback only when no vault is known at all.
   const vaultRoot = opts.vaultRoot || process.env.PREVAIL_VAULT_ROOT;
   const base = process.env.PREVAIL_APPS_DIR
-    || (vaultRoot ? appsContainer(vaultRoot) : join(homedir(), ".prevail", "apps"));
+    || (vaultRoot ? appsContainer(vaultRoot) : join(glyphHome(), "apps"));
   const root = join(base, id);
   // Map a connector pattern to the manifest integration vocabulary.
   const integ = opts.integration === "cli" ? "manual" : opts.integration; // cli runs as a skill, not an auth integration
@@ -1807,7 +1807,7 @@ function appSoulPaths(id: string, vaultPath?: string): { primary: string | null;
   const app = scanCommunityApps(vaultPath).find((a) => a.id === cleanId);
   const vaultRoot = vaultPath || process.env.PREVAIL_VAULT_ROOT;
   const base = process.env.PREVAIL_APPS_DIR
-    || (vaultRoot ? appsContainer(vaultRoot) : join(homedir(), ".prevail", "apps"));
+    || (vaultRoot ? appsContainer(vaultRoot) : join(glyphHome(), "apps"));
   const mirror = join(base, cleanId, "soul.md");
   return { primary: app?.path ? join(app.path, "soul.md") : null, mirror, name: app?.title || cleanId };
 }

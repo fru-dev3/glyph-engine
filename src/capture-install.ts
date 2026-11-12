@@ -8,6 +8,7 @@ import { validateVaultPath } from "./path-safety.ts";
 // prevailInvocation: the prevail binary this process IS, so installed hooks and
 // agents re-invoke the same code.
 import { escapeXml, prevailInvocation } from "./heartbeat.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 // =============================================================================
 // `prevail capture install` - wire prompt capture into every harness, in one
@@ -205,7 +206,7 @@ export function captureSourcePath(slug: string, transcript?: string): string | u
     case "opencode":
       return join(home, ".local", "share", "opencode", "opencode.db");
     case "prevail":
-      return join(home, ".prevail", "sessions.db");
+      return join(glyphHome(home), "sessions.db");
     case "hermes":
       return join(home, ".hermes", "state.db");
     default:
@@ -356,7 +357,7 @@ function syncHarness(t: KnownTool): HookWireResult {
     return {
       tool: "prevail",
       method: "sync",
-      present: existsSync(join(homedir(), ".prevail")),
+      present: existsSync(glyphHome()),
       wired: false,
       source: captureSourcePath("prevail"),
       detail: "cockpit prompts exported from sessions.db by `capture sync`",

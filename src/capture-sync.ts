@@ -6,6 +6,7 @@ import { dirname, join } from "node:path";
 import { type BatchItem, hostSlug, ingestBatch } from "./capture.ts";
 import { runtimePath } from "./path-safety.ts";
 import { getAllUserPromptsSince } from "./session.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 // The per-machine host identity lives in capture.ts (it keys both the per-host
 // capture files and these per-host checkpoints, so a machine maps to one name
@@ -286,7 +287,7 @@ function scanCodex(cp: CaptureCheckpoint): ScanResult {
 
 // ── prevail (sessions.db) ─────────────────────────────────────────────────────
 function scanPrevail(cp: CaptureCheckpoint): { res: ScanResult; newLastTs: number } {
-  const dbPath = join(homedir(), ".prevail", "sessions.db");
+  const dbPath = join(glyphHome(), "sessions.db");
   const present = existsSync(dbPath);
   const res: ScanResult = { present, items: [], filesScanned: present ? 1 : 0, touched: {} };
   if (!present) return { res, newLastTs: cp.prevailLastTs };

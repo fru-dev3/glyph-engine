@@ -2,10 +2,10 @@ import { readdirSync, existsSync, mkdirSync, } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { vreadFile, vwriteFile } from "./vault-session.ts";
 import { fileURLToPath } from "node:url";
-import { homedir } from "node:os";
 import { detectClis } from "./cli-bridge.ts";
 import { buildCouncilPanel, runCouncilOneShot } from "./council-runner.ts";
 import { parseVerdict } from "./verdict-parser.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 // prevail-bench runner. Walks the bundled question suite, fires /council
 // against each one, records the panel responses + verdict + timing to
@@ -216,5 +216,5 @@ export function writeBenchSummary(results: BenchResult[], outputDir: string, run
 export function defaultResultsDir(): string {
   // ~/.prevail/bench-results/ keeps user runs out of the repo. Contributors
   // who want to share results can copy/commit them into bench/results/.
-  return join(homedir(), ".prevail", "bench-results");
+  return join(glyphHome(), "bench-results");
 }

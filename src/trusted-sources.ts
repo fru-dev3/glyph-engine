@@ -26,7 +26,6 @@
 
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, renameSync, appendFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
 import { writeSecretFile } from "./secret-file.ts";
 import {
@@ -44,6 +43,7 @@ import { appsContainer } from "./path-safety.ts";
 import { vreadFile, vwriteFileAtomic } from "./vault-session.ts";
 import { readAppSecret } from "./app-secrets.ts";
 import { dbTables, parseDbLocation, probeFolder, probePage, realFolder, type DbEngine } from "./source-readers.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 export type SourceKind = "mcp-remote" | "web" | "links" | "folder" | "database";
 export const SOURCE_KINDS: readonly SourceKind[] = ["mcp-remote", "web", "links", "folder", "database"];
@@ -667,7 +667,7 @@ export function remoteMcpConfig(remote: Record<string, string>, tokens: Record<s
   const servers = Object.fromEntries(ids.map((id) => [id, { type: "http", url: remote[id], ...(tokens[id] ? { headers: { Authorization: `Bearer ${tokens[id]}` } } : {}) }]));
   const body = JSON.stringify({ mcpServers: servers });
   if (!ids.some((id) => tokens[id])) return body;
-  const p = join(process.env.PREVAIL_HOME || join(homedir(), ".prevail"), "source-mcp.json");
+  const p = join(process.env.PREVAIL_HOME || glyphHome(), "source-mcp.json");
   writeSecretFile(p, body);
   return p;
 }

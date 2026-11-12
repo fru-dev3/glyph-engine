@@ -57,7 +57,7 @@ describe("scoped MCP endpoints", () => {
   test("initialize and a scoped tools/list", async () => {
     const t = domainToken(SECRET, "orchard");
     const init = (await (await rpc("orchard", t, { jsonrpc: "2.0", id: 1, method: "initialize", params: {} })).json()) as { result: { serverInfo: { name: string } } };
-    expect(init.result.serverInfo.name).toBe("prevail");
+    expect(init.result.serverInfo.name).toBe("glyph-bot");
     const list = (await (await rpc("orchard", t, { jsonrpc: "2.0", id: 2, method: "tools/list" })).json()) as { result: { tools: { name: string }[] } };
     const names = list.result.tools.map((x) => x.name);
     expect(names).toContain("read_memory");

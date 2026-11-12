@@ -1,9 +1,9 @@
 import { Database } from "bun:sqlite";
-import { homedir } from "node:os";
 import { join } from "node:path";
+import { glyphHome } from "./glyph-home.ts";
 
 // Reuse the existing SQLite store written by session.ts. Open read-only.
-const DB_PATH = join(homedir(), ".prevail", "sessions.db");
+const DB_PATH = join(glyphHome(), "sessions.db");
 
 let dbInstance: Database | null = null;
 function db(): Database | null {

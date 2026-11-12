@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
 import { runChatTurn, type AvailableCli } from "./cli-bridge.ts";
 import { slugify } from "./suggestions.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 export interface LlmSuggestion {
   id: string;
@@ -18,7 +18,7 @@ export interface LlmCacheEntry {
   suggestions: LlmSuggestion[];
 }
 
-const DATA_DIR = join(homedir(), ".prevail");
+const DATA_DIR = glyphHome();
 const CACHE_FILE = join(DATA_DIR, "suggestions-cache.json");
 const DEFAULT_MAX_AGE_MS = 60 * 60 * 1000; // 1 hour
 const LABEL_MAX = 50;

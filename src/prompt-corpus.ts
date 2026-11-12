@@ -45,6 +45,7 @@ const INTERNAL_STARTS = [
   "You are scoring a model's answer",
   "You are the chair of an AI council",
   "You are Prevail's",
+  "You are Glyph Bot's",
   "You are a self-learning assistant",
   "You are a proactive task-planning AI",
   "(This is a general advisory question",

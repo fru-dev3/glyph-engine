@@ -19,13 +19,13 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { homedir } from "node:os";
 import { createHash } from "node:crypto";
 import { readDomainGoalsText } from "./goals.ts";
 import { scanVault } from "./vault.ts";
 import { computeContextScore } from "./score.ts";
 import { vreadFile, vappendLine } from "./vault-session.ts";
 import { buildRoot, runtimePath } from "./path-safety.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 export interface PillarScore {
   pillar: string;
@@ -59,7 +59,7 @@ const STATE_CHARS = 700;
 const MAX_DOMAINS = 30;
 
 function readIdealState(vaultPath: string): string | null {
-  for (const p of [join(buildRoot(vaultPath), "ideal-state.md"), join(vaultPath, "ideal-state.md"), join(homedir(), ".prevail", "ideal-state.md")]) {
+  for (const p of [join(buildRoot(vaultPath), "ideal-state.md"), join(vaultPath, "ideal-state.md"), join(glyphHome(), "ideal-state.md")]) {
     if (!existsSync(p)) continue;
     try { return vreadFile(p); } catch { try { return readFileSync(p, "utf8"); } catch { /* skip */ } }
   }

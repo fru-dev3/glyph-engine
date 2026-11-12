@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
+import { glyphHome } from "./glyph-home.ts";
 
 export type SuggestionSource =
   | "stale-state"
@@ -37,7 +37,7 @@ interface ClickStore {
   clicks: Record<string, ClickRecord>;
 }
 
-const DATA_DIR = join(homedir(), ".prevail");
+const DATA_DIR = glyphHome();
 const CLICK_FILE = join(DATA_DIR, "suggestions.json");
 const DAY_MS = 24 * 60 * 60 * 1000;
 const STALE_THRESHOLD_MS = 14 * DAY_MS;

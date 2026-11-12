@@ -216,8 +216,8 @@ export function runtimeSigninHint(runtime: RuntimeId): string {
 
 // Prevail's own MCP server is never mirrored as an app.
 export function isPrevailServer(name: string, command?: string): boolean {
-  if (displayName(name).toLowerCase() === "prevail") return true;
-  return !!command && /(^|[\s/])prevail(\s|$)/.test(command) && /\bmcp\b/.test(command);
+  if (["prevail", "glyph-bot"].includes(displayName(name).toLowerCase())) return true;
+  return !!command && /(^|[\s/])(prevail|glyph-bot)(\s|$)/.test(command) && /\bmcp\b/.test(command);
 }
 
 // ── Status parsing ────────────────────────────────────────────────────────────
@@ -1072,7 +1072,7 @@ export function buildSyncArgs(app: MirrorApp, recipe: Recipe, otherServers: stri
   const allowSet = new Set(recipe.read_tools);
   const allowed = tools.filter((t) => t.sync_allowed && allowSet.has(t.name)).map((t) => t.full_name);
   const denied = tools.filter((t) => !allowed.includes(t.full_name)).map((t) => t.full_name);
-  const serverDenies = [...new Set([...otherServers, "prevail"])]
+  const serverDenies = [...new Set([...otherServers, "prevail", "glyph-bot"])]
     .filter((s) => s !== app.server)
     .map((s) => `mcp__${claudeServerKey(s)}`);
   const model = recipe.model && MODEL_RE.test(recipe.model) ? recipe.model : SYNC_MODEL;

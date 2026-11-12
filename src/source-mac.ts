@@ -19,6 +19,7 @@ import { join } from "node:path";
 import { accessOf, CF_EPOCH, withCopy } from "./app-usage.ts";
 import { dayOf, hostSlug, readMachineEvents, type MetricEvent } from "./metrics.ts";
 import { EventBag, hashWho, registerReaders, writeSourceEvents, type SyncOpts, type SyncResult } from "./source-sync.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 const cfDay = (s: number) => dayOf((s + CF_EPOCH) * 1000);
 
@@ -127,7 +128,7 @@ export function isLocalUrl(u: string): boolean {
 /** The configured local model (~/.prevail/config.json localModel, or PREVAIL_LOCAL_MODEL_URL / _MODEL), if it answers. */
 export async function findLocalModel(opts: { fetch?: typeof fetch; home?: string } = {}): Promise<LocalModel | null> {
   let cfg: { url?: string; model?: string } = {};
-  try { cfg = (JSON.parse(readFileSync(join(opts.home ?? homedir(), ".prevail", "config.json"), "utf8")) as { localModel?: typeof cfg }).localModel ?? {}; } catch { /* none */ }
+  try { cfg = (JSON.parse(readFileSync(join(glyphHome(opts.home ?? homedir()), "config.json"), "utf8")) as { localModel?: typeof cfg }).localModel ?? {}; } catch { /* none */ }
   const url = (process.env.PREVAIL_LOCAL_MODEL_URL ?? cfg.url ?? "http://127.0.0.1:11434").replace(/\/$/, "");
   if (!isLocalUrl(url)) return null;
   const f = opts.fetch ?? fetch;

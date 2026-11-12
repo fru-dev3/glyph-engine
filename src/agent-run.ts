@@ -174,15 +174,15 @@ export async function runAgentJson(opts: AgentRunOptions): Promise<number> {
   }
 
   const actNote = act
-    ? "You may use your Prevail tools to take the actions this goal requires."
-    : "Propose only: do not perform consequential actions (spending, sending, deleting, external messages) yourself. If the goal needs one, use the Prevail tool that QUEUES it for approval (for example google_workspace queues sends), or describe exactly what you would do and stop.";
+    ? "You may use your Glyph Bot tools to take the actions this goal requires."
+    : "Propose only: do not perform consequential actions (spending, sending, deleting, external messages) yourself. If the goal needs one, use the Glyph Bot tool that QUEUES it for approval (for example google_workspace queues sends), or describe exactly what you would do and stop.";
   // The agent frame is deliberately MODEL-AGNOSTIC: it names Prevail's own
   // vault-scoped tools and forbids host-native skill/cron/sandbox features, so
   // the same goal executes the same way on Claude, Codex, or Gemini. The
   // HONESTY CONTRACT closes the trust gap — the run may only claim an action a
   // Prevail tool actually performed (verified via the action ledger).
   const prompt = [
-    "You are Prevail's agent, completing a single task on the user's behalf inside their private Prevail vault.",
+    "You are Glyph Bot's agent, completing a single task on the user's behalf inside their private Glyph Bot vault.",
     "",
     `Goal: ${goal}`,
     "",
@@ -190,7 +190,7 @@ export async function runAgentJson(opts: AgentRunOptions): Promise<number> {
     "",
     "PREVAIL ENVIRONMENT. Use these tools, never your host runtime's native features:",
     "- To save a reusable skill or procedure: call the create_skill tool. It writes a SKILL.md into THIS vault. Never write to a host skill folder (for example ~/.claude/skills) or use a host skill system.",
-    "- To set up recurring or scheduled work (daily / weekly / monthly, briefings, 'every Sunday morning'): call the create_loop tool. It creates a durable Prevail loop in this vault. Never use cron, a host scheduler, or any CronCreate-style feature; those do not belong to Prevail and will not persist here.",
+    "- To set up recurring or scheduled work (daily / weekly / monthly, briefings, 'every Sunday morning'): call the create_loop tool. It creates a durable Glyph Bot loop in this vault. Never use cron, a host scheduler, or any CronCreate-style feature; those do not belong to Prevail and will not persist here.",
     "- To remember a durable fact: call the remember tool (it writes to this domain's memory). Never use a host memory or sandbox store.",
     "- For Google, email, calendar, or drive: call the google_workspace tool. Reads run live. Writes (send, draft, delete) are QUEUED for the user's explicit approval and are NOT performed by you; report them as 'queued for your approval', never as done or sent.",
     "",
@@ -202,12 +202,12 @@ export async function runAgentJson(opts: AgentRunOptions): Promise<number> {
     `- A skill -> ${domain.path}/skills/<slug>/SKILL.md, starting with frontmatter (---\\nname: <name>\\ndescription: <one line>\\n---) then the instructions.`,
     `- A loop -> append a loop object to ${domain.path}/_loops.json (JSON: { schema: 1, desiredState: "", loops: [ { id, name, purpose, type: "open", cadence: "weekly", autonomy: "suggest", actions: ["..."], status: "active", enabled: true, lastRunTs: null, createdTs: <ms> } ] }); create the file if absent.`,
     `- A memory -> append a bullet line to ${domain.path}/_memory.md.`,
-    "Use your host runtime's OWN connectors (e.g. Google, Drive) for live app data when you have them. Still never use a host-native skill folder or cron for Prevail's skills/loops; they live in this vault only.",
+    "Use your host runtime's OWN connectors (e.g. Google, Drive) for live app data when you have them. Still never use a host-native skill folder or cron for Glyph Bot's skills/loops; they live in this vault only.",
     "",
     "HONESTY CONTRACT (critical):",
-    "- You have NOT performed an action unless a Prevail tool returned success for it in this run. Never say you created a skill, created a loop, saved memory, drafted an email, or sent an email unless the matching tool call actually returned success.",
+    "- You have NOT performed an action unless a Glyph Bot tool returned success for it in this run. Never say you created a skill, created a loop, saved memory, drafted an email, or sent an email unless the matching tool call actually returned success.",
     "- If a capability is unavailable or a tool fails, say so plainly. Never invent a result, an id, or an outcome like 'it is in your drafts now'.",
-    "- After you finish, Prevail shows the user a verified list of exactly which tool actions ran. Your words must match that list.",
+    "- After you finish, Glyph Bot shows the user a verified list of exactly which tool actions ran. Your words must match that list.",
     "",
     `Stay strictly within this goal; do not go beyond what was asked. ${actNote}`,
   ].join("\n");

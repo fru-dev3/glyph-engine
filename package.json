@@ -24,6 +24,7 @@
     "opentui"
   ],
   "bin": {
+    "glyph-bot": "./src/index.tsx",
     "prevail": "./src/index.tsx"
   },
   "files": [

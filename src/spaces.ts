@@ -21,6 +21,7 @@ import { spawnSync } from "node:child_process";
 import { listDomainDirs } from "./vault-layout-v4.ts";
 import { readManifest } from "./manifest.ts";
 import { resolveDomainDir } from "./path-safety.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 export const DERIVED_SOURCE = "prevail domains";
 
@@ -276,7 +277,7 @@ export function freeGb(): number {
 }
 
 function idleStatePath(): string {
-  return join(process.env.PREVAIL_CONFIG_DIR || join(homedir(), ".prevail"), "spaces-idle.json");
+  return join(process.env.PREVAIL_CONFIG_DIR || glyphHome(), "spaces-idle.json");
 }
 
 export interface TidyDeps {

@@ -6,6 +6,7 @@ import { homedir } from "node:os";
 
 import type { FrameworkId } from "./framework.ts";
 import type { LensSelection } from "./lens.ts";
+import { glyphHome } from "./glyph-home.ts";
 
 // CliKind is defined in src/cli-bridge.ts so the engine list and the
 // config layer can't drift. Re-exported here so callers that read
@@ -672,7 +673,7 @@ export function configDir(): string {
   // here so the whole config layer (readConfig/writeConfig/setAppMode) is
   // redirectable — matching how mcp-config already treats this env var.
   const override = process.env.PREVAIL_CONFIG_DIR;
-  return override && override.length > 0 ? override : join(homedir(), ".prevail");
+  return override && override.length > 0 ? override : glyphHome();
 }
 
 export function configFile(): string {
@@ -711,7 +712,7 @@ export function bundledDemoVaultPath(): string {
   // 5. relative to import.meta.url (source run via bun)
   // 6. cwd
   const candidates: string[] = [];
-  candidates.push(join(homedir(), ".prevail", "vault-demo"));
+  candidates.push(join(glyphHome(), "vault-demo"));
   if (process.env.PREVAIL_DATA_DIR) {
     candidates.push(join(process.env.PREVAIL_DATA_DIR, "vault-demo"));
   }
@@ -760,7 +761,7 @@ export function detectVaultCandidates(): VaultCandidate[] {
   const home = homedir();
   const cwdVault = join(cwd, "vault");
   const aiVault = join(home, ".ai", "vault");
-  const prevailVault = join(home, ".prevail", "vault");
+  const prevailVault = join(glyphHome(home), "vault");
   const demo = bundledDemoVaultPath();
   return [
     {
