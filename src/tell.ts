@@ -29,7 +29,22 @@ import { parseModArgs } from "./cli-args.ts";
 
 export type Surface = "chat" | "cli" | "mcp" | "telegram" | "phone" | "desktop" | "email";
 export type ToldKind = "commitment" | "waiting" | "decision" | "task" | "candidate" | "metric" | "practice" | "spend" | "note";
-export interface Told { id: string; ts: number; surface: Surface; kind: ToldKind; text: string; domain: string; mission?: string; due?: string; where: string; file?: string; lines?: string[]; ref?: string; undone?: number }
+export interface Told { id: string; ts: number; surface: Surface; kind: ToldKind; text: string; domain: string; mission?: string; due?: string; where: string; file?: string; lines?: string[]; ref?: string; undone?: number; device?: string; place?: string; lat?: number; lon?: number }
+/** Where and on what it was said, as the Glyph apps write it on every line: device, place, lat, lon (6 decimals). */
+export interface SaidAt { device?: string; place?: string; lat?: number; lon?: number }
+
+/** Only what is well formed: short text, coordinates in range and both present. */
+export function saidAt(a: SaidAt = {}): SaidAt {
+  const out: SaidAt = {};
+  const device = a.device?.replace(/\s+/g, " ").trim().slice(0, 60);
+  const place = a.place?.replace(/\s+/g, " ").trim().slice(0, 120);
+  if (device) out.device = device;
+  if (place) out.place = place;
+  if (Number.isFinite(a.lat) && Number.isFinite(a.lon) && Math.abs(a.lat!) <= 90 && Math.abs(a.lon!) <= 180) {
+    out.lat = Math.round(a.lat! * 1e6) / 1e6; out.lon = Math.round(a.lon! * 1e6) / 1e6;
+  }
+  return out;
+}
 
 const DAY = 86_400_000;
 const captureDir = (vault: string) => join(runtimePath(vault, "_meta"), "capture");
@@ -105,7 +120,7 @@ function appendedLines(files: string[], fn: () => void): { file: string; lines: 
   return files.map((f) => ({ file: f, lines: read(f).slice(before.get(f)!.length).split("\n").filter((l) => l.trim()) })).filter((x) => x.lines.length);
 }
 
-export async function tell(vault: string, raw: string, o: { surface: Surface; domain?: string; mission?: string; thread?: string; now?: number } = { surface: "cli" }): Promise<Told> {
+export async function tell(vault: string, raw: string, o: { surface: Surface; domain?: string; mission?: string; thread?: string; now?: number; at?: SaidAt } = { surface: "cli" }): Promise<Told> {
   const now = o.now ?? Date.now();
   const text = clean(raw).slice(0, 600);
   if (text.length < 2) throw new Error("tell me something to file");
@@ -115,7 +130,8 @@ export async function tell(vault: string, raw: string, o: { surface: Surface; do
   const domain = o.domain ?? (ms ? missions.ownerOf(missions.readMission(vault, ms.slug)!) ?? "general" : domainForText(vault, text));
   const home = ms ? `_mission-${ms.slug}` : domain;
   const src = `tell:${o.surface}:${now.toString(36)}`;
-  const base = { surface: o.surface, text, domain, ...(ms ? { mission: ms.slug } : {}) };
+  const at = saidAt(o.at);
+  const base = { surface: o.surface, text, domain, ...(ms ? { mission: ms.slug } : {}), ...at };
   const where = ms ? `the project ${ms.name}` : `${label(domain)}`;
 
   // Practice or a spend said for a mission: its ledger or its metric events.
@@ -187,7 +203,7 @@ export async function tell(vault: string, raw: string, o: { surface: Surface; do
     return receipt(vault, { ...base, kind: "note", text: fact, where: `${where}'s log`, file: rel(join(missions.missionDir(vault, ms.slug), "memory", "log.md")), lines: [line] }, now);
   }
   const { appendJsonl, domainUpdatesPath } = await import("./linking.ts");
-  const row = { ts: now, from_domain: "you", thread: src, fact, entities: [] as string[] };
+  const row = { ts: now, from_domain: "you", thread: src, fact, entities: [] as string[], ...at };
   appendJsonl(domainUpdatesPath(vault, domain), row);
   return receipt(vault, { ...base, kind: "note", text: fact, where: `${where}'s notes`, file: rel(domainUpdatesPath(vault, domain)), lines: [JSON.stringify(row)] }, now);
 }
@@ -309,9 +325,11 @@ export async function tellCommand(argv: string[], vault: string, sub0?: string):
     if (first === "list") { const l = readTold(vault, Number(args.get("limit") ?? 20) || 20); if (args.json) out(l); else for (const r of l) console.log(`${r.undone ? "undone " : ""}${r.kind.padEnd(10)} ${r.where}: ${r.text}`); return 0; }
     if (first === "mail") { const r = await tellFromMail(vault); if (args.json) out(r); else console.log(`${r.length} filed from mail to yourself`); return 0; }
     const text = args.pos.join(" ") || args.get("text") || "";
-    if (!text.trim()) return fail("usage: prevail tell <anything> [--domain d] [--mission m] [--surface s] | tell undo <id> | tell list | tell mail | forgetting");
+    if (!text.trim()) return fail("usage: prevail tell <anything> [--domain d] [--mission m] [--surface s] [--device d] [--place p] [--lat n --lon n] | tell undo <id> | tell list | tell mail | forgetting");
     const surface = (["chat", "cli", "mcp", "telegram", "phone", "desktop", "email"].includes(args.get("surface") ?? "") ? args.get("surface") : "cli") as Surface;
-    const r = await tell(vault, text, { surface, ...(args.get("domain") ? { domain: args.get("domain") } : {}), ...(args.get("mission") ? { mission: args.get("mission") } : {}) });
+    const num = (k: string) => (args.get(k) == null ? undefined : Number(args.get(k)));
+    const at: SaidAt = { device: args.get("device") ?? undefined, place: args.get("place") ?? undefined, lat: num("lat"), lon: num("lon") };
+    const r = await tell(vault, text, { surface, at, ...(args.get("domain") ? { domain: args.get("domain") } : {}), ...(args.get("mission") ? { mission: args.get("mission") } : {}) });
     if (args.json) out({ ok: true, told: r, reply: toldReply(r) }); else console.log(toldReply(r));
     return 0;
   } catch (e) { return fail((e as Error).message); }

@@ -8,6 +8,10 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## [1.10.15] Where and on what it was said
+
+- `tell` takes `--device`, `--place`, `--lat` and `--lon` (and the same as `at` from code). They ride on the receipt in `told.jsonl` and on a filed note, named as the Glyph apps name them. Coordinates are kept only when both are given and in range, to 6 decimals; nothing is filled in when they are absent.
+
 ## [Unreleased] Glyph Bot names beside the old ones
 
 - **Glyph Bot is the new name of this engine; nothing was removed.** The package installs `glyph-bot` and `prevail` (the same program). The config folder is `GLYPH_HOME`, then `~/.glyph` if it exists, then `~/.prevail`; the engine never creates or moves it. Wherever `PREVAIL_X` is read, `GLYPH_X` is accepted too (the new one wins). The MCP server answers as `glyph-bot` with the same tools; clients configured for `prevail` keep working because they launch the same command. Help, the version banner and the agent prompts say Glyph Bot.

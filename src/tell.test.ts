@@ -130,3 +130,17 @@ describe("what am I forgetting, chat, mail", () => {
     expect(await tellFromMail(V, NOW)).toEqual([]);
   });
 });
+
+describe("where and on what it was said", () => {
+  beforeEach(seed);
+  test("device, place and coordinates ride on the receipt and the note, as the Glyph apps write them", async () => {
+    const r = await tell(V, "note the boiler was serviced", { surface: "phone", now: NOW, at: { device: "iPhone 15 Pro", place: "Foo Street", lat: 44.123456789, lon: -93.5 } });
+    expect(r).toMatchObject({ device: "iPhone 15 Pro", place: "Foo Street", lat: 44.123457, lon: -93.5 });
+    expect(readTold(V)[0]).toMatchObject({ device: "iPhone 15 Pro", place: "Foo Street" });
+    expect(JSON.parse(r.lines![0]!)).toMatchObject({ device: "iPhone 15 Pro", lat: 44.123457 });
+  });
+  test("bad coordinates and empty words are left out, never invented", async () => {
+    const r = await tell(V, "note the roof looks fine", { surface: "desktop", now: NOW, at: { device: " ", lat: 120, lon: 10 } });
+    expect(r.device).toBeUndefined(); expect(r.lat).toBeUndefined(); expect(r.place).toBeUndefined();
+  });
+});
