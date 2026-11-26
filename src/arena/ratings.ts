@@ -98,7 +98,9 @@ export function fitArea(models: string[], games: Pair[], boots = 300, seed = 7):
   const rand = rng(seed);
   const samples: Record<string, number[]> = Object.fromEntries(models.map((m) => [m, []]));
   const leads: number[] = [];
-  for (let b = 0; b < boots && keys.length; b++) {
+  // Resampling needs two tests at least: from one, every resample is the same games, the range shrinks to a
+  // point and three games read as a "clear" winner. With fewer, the range stays 0..1 (not known yet).
+  for (let b = 0; b < boots && keys.length >= 2; b++) {
     const g: Pair[] = [];
     for (let k = 0; k < keys.length; k++) g.push(...clusters.get(keys[Math.floor(rand() * keys.length)]!)!);
     const pb = btFit(models, g, 60);
@@ -107,7 +109,7 @@ export function fitArea(models: string[], games: Pair[], boots = 300, seed = 7):
     if (R) leads.push(Math.log(pb[L]! / pb[R]!));
   }
   const lo: Record<string, number> = {}, hi: Record<string, number> = {};
-  for (const m of models) { lo[m] = samples[m]!.length ? pct(samples[m]!, 0.025) : rate[m]!; hi[m] = samples[m]!.length ? pct(samples[m]!, 0.975) : rate[m]!; }
+  for (const m of models) { lo[m] = samples[m]!.length ? pct(samples[m]!, 0.025) : 0; hi[m] = samples[m]!.length ? pct(samples[m]!, 0.975) : 1; }
   return {
     rate, lo, hi, leader: L,
     p_lead: leads.length ? leads.filter((x) => x > 0).length / leads.length : 0,

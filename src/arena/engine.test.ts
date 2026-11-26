@@ -250,6 +250,12 @@ describe("ratings", () => {
     const close = fitArea(["x", "y"], games(10, 5), 200);
     expect(close.lead_lo).toBeLessThanOrEqual(0);
   });
+  test("games from one test alone are never a clear winner", () => {
+    const one = games(3, 3).map((g) => ({ ...g, cluster: "only-test" }));
+    const f = fitArea(["x", "y"], one, 200);
+    expect(f.lead_lo).toBeLessThanOrEqual(0);
+    expect([f.lo.x, f.hi.x]).toEqual([0, 1]);
+  });
   test("pickModel takes the cheaper when it is too close", () => {
     const r: RatingsFile = { updated: "", overall: { leader: "a", areas_led: 1, areas: 1 }, areas: [{ area: "Writing", suite: "w", verdict: "close", models: [
       { model: "big", label: "Big", rate: 0.55, lo: 0.4, hi: 0.7, games: 10, cost_usd: 0.5, latency_ms: 1, allowed: true },
