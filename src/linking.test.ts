@@ -374,6 +374,8 @@ describe("touches come only from the user's words and the model's links", () => 
   test("regression: injected context blocks never produce touches", () => {
     const message = "# APP CONTEXT: Foo Mail\nApp id foo-mail. Foo Herd, Foo Town, Qux Quxson and Bar are mentioned here.\n\n---\n\n# REFERENCED DOMAIN: foo\nFoo Herd again.\n\n---\n\ncheck my unread email";
     expect(userText(message)).toBe("check my unread email");
+    // What Glyph Bot appends after the words is context, so "Hello" names no domain it quotes.
+    expect(userText("Hello\n\n---\nGlyph Bot gave you these to read (Time, Dev):\n[1] Time: 3h on dev")).toBe("Hello");
     expect(touchedEntities(yours, message, "")).toEqual([]);
   });
 

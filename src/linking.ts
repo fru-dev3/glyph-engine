@@ -192,7 +192,12 @@ export function userText(message: string): string {
   const parts = message.split(/\n\s*---\s*\n/);
   let i = 0;
   while (i < parts.length - 1 && /^\s*# [A-Z][A-Z ]+/.test(parts[i]!)) i++;
-  return parts.slice(i).join("\n---\n");
+  // Glyph Bot puts what it gave the agent to read AFTER the words, behind the same rule
+  // ("Glyph Bot gave you these to read ..."); that is context too, never something the user said.
+  let j = parts.length;
+  const tail = parts.findIndex((p, k) => k >= i && /^\s*Glyph (Bot|Studio) gave you these to read/.test(p));
+  if (tail > i) j = tail;
+  return parts.slice(i, j).join("\n---\n");
 }
 
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
