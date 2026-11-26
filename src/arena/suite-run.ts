@@ -262,7 +262,12 @@ async function scoreText(vault: string, suite: Suite, items: SuiteItem[], models
         if (c.limited.has(j.cli)) throw new Error(`${j.cli} is rate limited`);
         const est = j.local ? 0 : estimate(j, prompt.length);
         if (!c.afford(est)) throw new Error("budget");
-        const rec = await callModel(vault, { cli: j.cli, model: j.model, prompt, baseUrl: j.base_url }, o.deps);
+        let rec: CallRecord;
+        try { rec = await callModel(vault, { cli: j.cli, model: j.model, prompt, baseUrl: j.base_url }, o.deps); } catch (e) {
+          // Only this judge's provider is limited: the rest of the jury carries on without it.
+          if (e instanceof LimitError) { c.limited.add(j.cli); run.notes!.push(`judge limit: ${j.cli}: ${e.message.slice(0, 100)}`); throw new Error(`${j.cli} is rate limited`); }
+          throw e;
+        }
         const usd = rec.cached ? 0 : rec.cost_estimate;
         c.charge(usd, j);
         spent += usd;
@@ -272,7 +277,7 @@ async function scoreText(vault: string, suite: Suite, items: SuiteItem[], models
       if (r.game.judges?.length) game({ ...r.game, cost_usd: Math.round(spent * 1e6) / 1e6 });
       else { run.notes!.push(`${item.id} ${a.id} vs ${b.id}: the jury could not judge (${r.failed.join("; ").slice(0, 200)})`); c.tick(); }
     } catch (e) {
-      if (e instanceof LimitError) { for (const j of jury) c.limited.add(j.cli); run.notes!.push(`judge limit: ${e.message.slice(0, 120)}`); }
+      run.notes!.push(`${item.id} ${a.id} vs ${b.id}: ${(e as Error).message.slice(0, 120)}`);
       c.tick();
     }
   }

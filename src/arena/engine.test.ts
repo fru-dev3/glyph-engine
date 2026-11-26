@@ -199,6 +199,12 @@ describe("jury", () => {
     expect(parseVerdict('sure {"first":{"met":["c1"]},"second":{"met":[]},"better":"first"}')!.better).toBe("first");
     expect(parseVerdict("no json")).toBeNull();
     expect(parseVerdict('{"better":"maybe"}')).toBeNull();
+    // shapes qwen3:8b really wrote
+    const nested = parseVerdict('{"first":{"met":["c2","c3"]},"second":{"met":[],"better":"first"}}')!;
+    expect([nested.better, [...nested.first], [...nested.second]]).toEqual(["first", ["c2", "c3"], []]);
+    const flat = parseVerdict('{"first":{"met":[],"second":["c2","c3"],"better":"second"}')!;
+    expect([flat.better, [...flat.second]]).toEqual(["second", ["c2", "c3"]]);
+    expect(parseVerdict('{"first":{"met":[],"second":[],"better":"tie"}')!.better).toBe("tie");
     expect(judgePrompt(item, "AAA", "BBB")).toContain("ANSWER 2:\nBBB");
   });
   const judge = (verdicts: Record<string, "first" | "second" | "tie">) => async (_j: ModelDef, prompt: string) => {
@@ -305,6 +311,17 @@ describe("runSuite", () => {
     expect(run.games.length).toBe(3);
     expect(new Set(run.games.flatMap((g) => g.judges!))).toEqual(new Set([gem().id]));
     writeConfig(vault, { judges: [] });
+  });
+
+  test("one judge's provider at its limit leaves the rest of the jury judging", async () => {
+    const s = stub();
+    const exec = s.exec;
+    s.exec = async (bin, args) => (bin === "gemini" && args[0] !== "--version" ? { code: 1, stdout: "", stderr: "Error: 429 quota exceeded" } : exec(bin, args));
+    setup([haiku(), qwen(), luna(), gem()]);
+    const run = await runSuite(vault, { suite: "notes", models: [haiku().id, qwen().id], deps: { ...s, backoff: [1] } });
+    expect(run.games.length).toBe(3);
+    expect(new Set(run.games.flatMap((g) => g.judges!))).toEqual(new Set([luna().id]));
+    expect(run.notes!.some((n) => n.startsWith("judge limit: gemini"))).toBe(true);
   });
 
   test("two runs in one minute get separate folders", async () => {

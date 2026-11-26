@@ -68,12 +68,24 @@ export function parseVerdict(text: string): Verdict | null {
   try {
     const j = JSON.parse(m[0]) as { first?: { met?: unknown[] }; second?: { met?: unknown[] }; better?: string };
     const better = String(j.better ?? "").toLowerCase();
-    if (!["first", "second", "tie"].includes(better)) return null;
+    if (!["first", "second", "tie"].includes(better)) return looseVerdict(m[0]);
     const set = (x?: { met?: unknown[] }) => new Set((Array.isArray(x?.met) ? x!.met : []).map(String));
     return { first: set(j.first), second: set(j.second), better: better as Verdict["better"] };
   } catch {
-    return null;
+    return looseVerdict(m[0]);
   }
+}
+
+/** A small local judge sometimes nests `better` inside a side, or drops a side's "met" key, which breaks
+ * JSON.parse. Read the three fields by pattern instead; still null when "better" is not there. */
+function looseVerdict(t: string): Verdict | null {
+  const better = t.match(/"better"\s*:\s*"(first|second|tie)"/i)?.[1]?.toLowerCase();
+  if (!better) return null;
+  const side = (k: string) => {
+    const list = t.match(new RegExp(`"${k}"\\s*:\\s*(?:\\{\\s*"met"\\s*:\\s*)?\\[([^\\]]*)\\]`))?.[1] ?? "";
+    return new Set([...list.matchAll(/"([^"]+)"/g)].map((x) => x[1]!));
+  };
+  return { first: side("first"), second: side("second"), better: better as Verdict["better"] };
 }
 
 /** Two judges, from two families when there are two to be had, neither from a contestant's family.
