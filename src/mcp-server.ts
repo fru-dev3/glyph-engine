@@ -451,7 +451,7 @@ async function callTool(name: string, args: Record<string, unknown>, vaultPath: 
       const jc = ca.jobCompass(vaultPath, { ask: action, domains: { owner: domain, consulted: [] } });
       const open = ca.openConflicts(vaultPath).slice(0, 5);
       const lines = [
-        gate ? `Non-negotiable: ${gate.decision === "block" ? "BLOCKED" : "asks first"}, ${gate.reason}.` : "Touches no non-negotiable that code can check.",
+        gate ? `Rule (${gate.enforcement}): ${gate.decision === "block" ? "BLOCKED" : "asks first"}, ${gate.reason}.` : "Touches no rule that code can check.",
         jc.serves.length ? `Serves: ${jc.serves.map((x) => x.title).join(", ")}.` : "Serves no Compass goal in this domain (unlinked).",
         ...(jc.costs.length ? [`Watch: ${jc.costs.map((x) => `${x.title} (${x.why})`).join("; ")}.`] : []),
         ...(open.length ? ["Open conflicts:", ...open.map((c) => `- ${c.question} Evidence: ${c.evidence.join("; ")}`)] : []),

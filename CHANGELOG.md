@@ -8,6 +8,10 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## [Unreleased] Rules hold as firmly as they say
+
+- **A rule's enforcement level decides what `check_alignment` and the broker do.** A Compass rule may carry `~enforcement:` with one of OMG BMM 1.3's levels: `strictly-enforced`, `deferred-enforcement`, `pre-authorized-override`, `post-justified-override`, `override-with-explanation`, `guideline`. Without it a non-negotiable is strictly enforced and a negotiable is `override-with-explanation` (Glyph Omega reads the same token the same way). A strictly enforced or deferred rule that would be broken blocks; an override level asks and says which kind of override; a guideline never gates. Negotiables with a `~check:` are now gated too. `ruleGate` returns the level, `check_alignment` names it, and the Compass summary given to agents names any softer level beside the rule.
+
 ## [1.10.15] Where and on what it was said
 
 - `tell` takes `--device`, `--place`, `--lat` and `--lon` (and the same as `at` from code). They ride on the receipt in `told.jsonl` and on a filed note, named as the Glyph apps name them. Coordinates are kept only when both are given and in range, to 6 decimals; nothing is filled in when they are absent.

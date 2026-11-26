@@ -163,20 +163,47 @@ export function varsTouched(action: string): string[] {
  * already broken is blocked; any other action touching a rule's variable asks.
  * Unconfirmed lines never gate anything.
  */
-export function ruleGate(vault: string, action: string): { decision: "block" | "ask"; reason: string; rule: string } | null {
+/** OMG BMM 1.3's enforcement levels for a rule (table 8.7), firmest first, as written in a ~enforcement: token. */
+export const ENFORCEMENT = ["strictly-enforced", "deferred-enforcement", "pre-authorized-override", "post-justified-override", "override-with-explanation", "guideline"] as const;
+export type Enforcement = (typeof ENFORCEMENT)[number];
+
+/** How firmly a rule holds: its ~enforcement: token, else its section's default (a non-negotiable is
+ *  strictly enforced, a negotiable bends with an explanation). Glyph Omega reads the same token the same way. */
+export function enforcementOf(r: { kind?: string; tokens: Record<string, string> }, kind: "rule" | "negotiable"): Enforcement {
+  const e = r.tokens.enforcement as Enforcement | undefined;
+  if (e && (ENFORCEMENT as readonly string[]).includes(e)) return e;
+  return kind === "rule" ? "strictly-enforced" : "override-with-explanation";
+}
+
+const OVERRIDE: Record<string, string> = {
+  "pre-authorized-override": "it needs your yes first",
+  "post-justified-override": "it may go ahead, and you say why after",
+  "override-with-explanation": "it may go ahead with a reason",
+};
+
+/** The firmest rule an action touches, by its check and its enforcement level: a strictly enforced rule (or a
+ *  deferred one) that would be broken blocks; an override level asks; a guideline never gates. */
+export function ruleGate(vault: string, action: string): { decision: "block" | "ask"; reason: string; rule: string; enforcement: Enforcement } | null {
   if (!existsSync(compassPath(vault))) return null;
   const touched = varsTouched(action);
   if (!touched.length) return null;
   const doc = readCompass(vault);
   const state = evaluateRules(doc, readSignals(vault));
-  let ask: { decision: "ask"; reason: string; rule: string } | null = null;
-  for (const r of items(doc, "rule").filter(live)) {
-    const c = parseCheck(r.tokens.check);
-    if (!c || !touched.includes(c.variable)) continue;
-    const hard = (c.op === "==" || c.op === "<=" || c.op === "<") && c.n <= 0;
-    const st = state.find((x) => x.id === r.id);
-    if (hard || st?.state === "broken") return { decision: "block", reason: `it would break your non-negotiable "${r.title}"${st?.state === "broken" ? ` (already broken: ${st.detail})` : ""}`, rule: r.id };
-    ask ??= { decision: "ask", reason: `it touches your non-negotiable "${r.title}"${st && st.value != null ? ` (${st.detail})` : ""}`, rule: r.id };
+  let ask: { decision: "ask"; reason: string; rule: string; enforcement: Enforcement } | null = null;
+  for (const kind of ["rule", "negotiable"] as const) {
+    for (const r of items(doc, kind).filter(live)) {
+      const c = parseCheck(r.tokens.check);
+      if (!c || !touched.includes(c.variable)) continue;
+      const level = enforcementOf(r, kind);
+      if (level === "guideline") continue;
+      const name = kind === "rule" ? "non-negotiable" : "negotiable";
+      const hard = (c.op === "==" || c.op === "<=" || c.op === "<") && c.n <= 0;
+      const st = state.find((x) => x.id === r.id);
+      if ((hard || st?.state === "broken") && (level === "strictly-enforced" || level === "deferred-enforcement")) {
+        return { decision: "block", reason: `it would break your ${name} "${r.title}"${st?.state === "broken" ? ` (already broken: ${st.detail})` : ""}`, rule: r.id, enforcement: level };
+      }
+      ask ??= { decision: "ask", reason: `it touches your ${name} "${r.title}"${st && st.value != null ? ` (${st.detail})` : ""}${OVERRIDE[level] ? `; ${OVERRIDE[level]}` : ""}`, rule: r.id, enforcement: level };
+    }
   }
   return ask;
 }

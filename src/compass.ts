@@ -476,7 +476,11 @@ export function compassBlock(vault: string, opts: { local?: boolean } = {}): str
     for (const o of objectives.slice(0, 6)) parts.push(`- ${o.title}${o.tokens.target ? ` (target ${o.tokens.target}${o.tokens.metric ? ` ${o.tokens.metric}` : ""})` : ""}${o.tokens.due ? ` by ${o.tokens.due}` : ""}`);
   }
   const rules = items(doc, "rule").filter(ok);
-  if (rules.length) { parts.push("Non-negotiables (never trade these away):"); for (const r of rules.slice(0, 8)) parts.push(`- ${r.title}`); }
+  if (rules.length) {
+    parts.push("Non-negotiables (never trade these away, unless the rule names a softer level):");
+    // A rule's ~enforcement: (OMG BMM 1.3, as Glyph Omega writes it) is named when it is softer than strict.
+    for (const r of rules.slice(0, 8)) parts.push(`- ${r.title}${r.tokens.enforcement && r.tokens.enforcement !== "strictly-enforced" ? ` (${r.tokens.enforcement.replace(/-/g, " ")})` : ""}`);
+  }
   const byId = new Map(values.map((v) => [v.id, v.title]));
   const objectiveTitle = new Map(items(doc, "objective").filter(ok).map((o) => [o.id, o.title]));
   const goals = items(doc, "goal").filter((g) => ok(g) && (g.tokens.status ?? "active") === "active");

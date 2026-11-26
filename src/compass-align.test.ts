@@ -8,7 +8,7 @@ import { join } from "node:path";
 import { parseCompass } from "./compass.ts";
 import {
   activePaths, alignmentRollup, answerConflict, computeGraph, conflictLine, detect, evaluateRules, jobCompass, openConflicts, opposed,
-  parseCheck, quotedInFile, ruleGate, stateFromPoints, type StateValue,
+  enforcementOf, parseCheck, quotedInFile, ruleGate, stateFromPoints, type StateValue,
 } from "./compass-align.ts";
 import { gateAction } from "./broker.ts";
 import { dispatch } from "./jobs.ts";
@@ -19,7 +19,7 @@ afterAll(() => rmSync(ROOT, { recursive: true, force: true }));
 
 interface P { title: string; status?: string; f?: Record<string, string> }
 interface G { title: string; id: string; serves?: string; status?: string; domain?: string; paths?: P[] }
-function compass(o: { values?: [string, string][]; goals?: G[]; rules?: [string, string, string?][]; capacity?: Record<string, number> }): string {
+function compass(o: { values?: [string, string][]; goals?: G[]; rules?: [string, string, string?, string?][]; capacity?: Record<string, number> }): string {
   const out = ["# Compass", "", "## Values"];
   (o.values ?? [["Calm", "v-calm"], ["Family presence", "v-family"], ["Freedom", "v-free"]]).forEach(([t, id], i) => out.push(`- ${t} ~id:${id} ~rank:${i + 1}`));
   out.push("", "## Goals");
@@ -31,7 +31,7 @@ function compass(o: { values?: [string, string][]; goals?: G[]; rules?: [string,
     });
   }
   out.push("", "## Non-negotiables");
-  for (const [t, id, check] of o.rules ?? []) out.push(`- ${t} ~id:${id}${check ? ` ~check:${check}` : ""}`);
+  for (const [t, id, check, level] of o.rules ?? []) out.push(`- ${t} ~id:${id}${check ? ` ~check:${check}` : ""}${level ? ` ~enforcement:${level}` : ""}`);
   out.push("", "## Capacity");
   for (const [k, v] of Object.entries(o.capacity ?? {})) out.push(`- ${k}: ${v}`);
   return `${out.join("\n")}\n`;
@@ -140,6 +140,22 @@ describe("the vault: the broker, jobs, the model pass, the roll-up", () => {
     expect(gateAction("take out a loan for the foo cabin", { vault: V, autonomousActs: true }).reason).toContain("No new debt");
     expect(ruleGate(V, "order the foo boots for $80")).toMatchObject({ decision: "ask", rule: "nn-spend" });
     expect(ruleGate(V, "summarise the foo notes")).toBeNull();
+  });
+  test("a rule's BMM enforcement level decides: strict blocks, an override asks and says how, a guideline never gates", () => {
+    const at = (level?: string) => {
+      writeFileSync(C(), compass({ rules: [["No new debt", "nn-debt", "new_debt_usd==0", level]] }));
+      return ruleGate(V, "take out a loan for the foo cabin");
+    };
+    expect(at()).toMatchObject({ decision: "block", enforcement: "strictly-enforced" });
+    expect(at("deferred-enforcement")).toMatchObject({ decision: "block", enforcement: "deferred-enforcement" });
+    expect(at("pre-authorized-override")).toMatchObject({ decision: "ask", enforcement: "pre-authorized-override" });
+    expect(at("pre-authorized-override")!.reason).toContain("needs your yes first");
+    expect(at("override-with-explanation")!.reason).toContain("with a reason");
+    expect(at("guideline")).toBeNull();
+    expect(at("whatever")).toMatchObject({ decision: "block", enforcement: "strictly-enforced" });
+    writeFileSync(C(), compass({}) + "\n## Negotiables\n- Little new debt ~id:ng-debt ~check:new_debt_usd==0\n");
+    expect(ruleGate(V, "take out a loan for the foo cabin")).toMatchObject({ decision: "ask", rule: "ng-debt", enforcement: "override-with-explanation" });
+    expect(enforcementOf({ tokens: {} }, "negotiable")).toBe("override-with-explanation");
   });
   test("a job carries serves, costs and rules; a rule it would break means it asks", async () => {
     await computeGraph(V, { vars: [] });
