@@ -3,7 +3,7 @@
 // directly through ./main.ts. Every command prints one JSON object on stdout.
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { file, readJson, resolveArenaVault, writeJson } from "../store.ts";
+import { file, readConfig, readJson, resolveArenaVault, writeJson } from "../store.ts";
 import { ollamaLlm, ollamaUp, type Llm } from "./llm.ts";
 import { buildItem, itemText, leakCheck } from "./pipeline.ts";
 import { loadScanner, type Scanner } from "./scan.ts";
@@ -37,8 +37,12 @@ export function readSource(vault: string, seed: Pick<SynthSeed, "pointers" | "so
 }
 
 function loadSuite(vault: string, id: string, area: string): Suite {
-  const s = readJson<Suite | null>(suitePath(vault, id), null);
-  return s ?? { id, title: id.replace(/(^|-)(\w)/g, (_m, a, c) => (a ? " " : "") + c.toUpperCase()), kind: "text", area, schedule: "weekly", items: [], created: new Date().toISOString(), version: 1 };
+  const s = readJson<Suite | null>(suitePath(vault, id), null)
+    ?? { id, title: id.replace(/(^|-)(\w)/g, (_m, a, c) => (a ? " " : "") + c.toUpperCase()), kind: "text", area, schedule: "weekly", items: [], created: new Date().toISOString(), version: 1 };
+  // A Home Only area (health, money...) carries its domain, so every item in it stays on local models,
+  // whatever its words; the word check alone let an item without a telltale word reach the cloud.
+  if (!s.domain && readConfig(vault).home_only.includes(id)) s.domain = id;
+  return s;
 }
 
 const words = (s: string) => new Set((s.toLowerCase().match(/[a-z]{5,}/g) ?? []));

@@ -27,6 +27,8 @@ export interface Suite {
   title: string;
   kind: "text" | "image" | "voice-tts" | "transcribe" | "video" | "app";
   area: string;
+  /** a Home Only domain (health, money...): every item stays on local models */
+  domain?: string;
   schedule: "nightly" | "weekly" | "manual";
   items: Array<TextItem | Record<string, unknown>>;
   created: string;

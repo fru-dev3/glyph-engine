@@ -164,7 +164,9 @@ export function computeRatings(vault: string, now = new Date().toISOString()): R
     const refused = new Set<string>();
     for (const s of suites) {
       games.push(...suiteGames(runs, picks, s.id));
-      const home = isHomeOnlyTask({ domain: s.domain ?? "", prompt: s.items.map((i) => i.prompt ?? "").join(" ") }, cfg);
+      // By the suite's domain only: an item that is Home Only by its words was refused to cloud models by the
+      // runner ("privacy" below), so joining every prompt (reserve ones too) only blocked whole cloud areas.
+      const home = isHomeOnlyTask({ domain: s.domain ?? "", prompt: "" }, cfg);
       for (const r of runs.filter((x) => x.suite === s.id)) {
         for (const cells of Object.values(r.by_item)) for (const [m, c] of Object.entries(cells)) {
           if (c.status === "privacy") { refused.add(m); continue; }

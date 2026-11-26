@@ -374,6 +374,17 @@ describe("runSuite", () => {
     expect(computeRatings(vault).areas[0]!.models.find((m) => m.model === haiku().id)!.allowed).toBe(false);
   });
 
+  test("a reserve item's word does not block a cloud area the runner played", async () => {
+    const s = stub();
+    const suite = textSuite();
+    suite.items.push({ id: "r1", prompt: "What is my insurance deductible?", split: "reserve", rubric: [] } as never);
+    setup([haiku(), qwen(), luna(), gem()], suite);
+    const run = await runSuite(vault, { suite: "notes", models: [haiku().id, qwen().id], deps: s });
+    expect(run.games.length).toBe(3);
+    const area = computeRatings(vault).areas[0]!;
+    expect(area.models.every((m) => m.allowed && m.games > 0)).toBe(true);
+  });
+
   test("the monthly cap stops a cloud call before it is made", async () => {
     const s = stub();
     setup([haiku(), qwen(), luna()]);
