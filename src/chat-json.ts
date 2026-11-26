@@ -318,7 +318,9 @@ function pickCli(
   if (wanted) {
     const hit = pool.find((c) => c.kind === wanted);
     if (hit) return hit;
-    return null; // requested engine not available (or not local under local-only)
+    // The chosen engine is not on this machine: answer with the next one rather
+    // than fail the turn (the start event names the engine that answered).
+    return pool[0]!;
   }
   return pool[0]!;
 }
@@ -386,6 +388,8 @@ export async function runChatJson(opts: ChatJsonOptions): Promise<number> {
   const persist = opts.deps?.persistMessage ?? persistMessage;
   const available = await (opts.deps?.detectClis ?? detectClis)();
   let cli = pickCli(available, wantedCli, (opts.localOnly ?? false) || scope.privacy.localOnly);
+  // A model id belongs to the engine it was picked for; a fallback engine starts on its own default.
+  if (cli && wantedCli && cli.kind !== wantedCli) opts = { ...opts, model: "" };
   // Privacy + cost guard for every turn on this path. runChatTurn's guard was
   // opt-in and NO caller passed it, so a domain whose manifest says
   // privacy.localOnly still ran on a cloud CLI, and budget caps never fired.
