@@ -296,6 +296,16 @@ describe("runSuite", () => {
     expect(JSON.parse(readFileSync(join(arenaDir(vault), "ratings.json"), "utf8")).areas[0].suite).toBe("notes");
   });
 
+  test("named judges in config are the whole jury, even when the CLI passes an empty list", async () => {
+    const s = stub();
+    setup([haiku(), qwen(), luna(), gem()]);
+    writeConfig(vault, { judges: [gem().id] });
+    const run = await runSuite(vault, { suite: "notes", models: [haiku().id, qwen().id], judges: [], deps: s });
+    expect(run.games.length).toBe(3);
+    expect(new Set(run.games.flatMap((g) => g.judges!))).toEqual(new Set([gem().id]));
+    writeConfig(vault, { judges: [] });
+  });
+
   test("two runs in one minute get separate folders", async () => {
     const s = stub();
     setup([haiku(), qwen()], textSuite({ items: [{ id: "a", prompt: "hi" }] }));

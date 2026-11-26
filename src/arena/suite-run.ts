@@ -235,8 +235,10 @@ async function scoreText(vault: string, suite: Suite, items: SuiteItem[], models
     const ref = run.by_item[itemId]?.[m.id]?.output_ref;
     return ref ? readFileSync(join(c.dir, ref), "utf8") : null;
   };
-  const judgePool = pool0.filter((m) => m.kind === "text" && m.active !== false || (o.judges ?? []).includes(m.id));
-  const preferred = o.judges ?? readConfig(vault).judges ?? [];
+  // Named judges (the --judges flag, else config.judges) are the whole jury pool, so a tiny
+  // model never fills a seat; with none named, any active text model may judge.
+  const preferred = o.judges?.length ? o.judges : readConfig(vault).judges ?? [];
+  const judgePool = pool0.filter((m) => m.kind === "text" && (preferred.length ? preferred.includes(m.id) : m.active !== false));
   const todo: { item: SuiteItem; a: ModelDef; b: ModelDef }[] = [];
   for (const item of items) for (const [a, b] of pairsOf(models)) todo.push({ item, a, b });
   for (const { item, a, b } of todo) {
