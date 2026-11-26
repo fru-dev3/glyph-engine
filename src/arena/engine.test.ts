@@ -301,6 +301,10 @@ describe("runSuite", () => {
     expect(r.areas[0]!.models[0]!.rate).toBeGreaterThan(0.5);
     expect(r.overall.leader).toBe(haiku().id);
     expect(JSON.parse(readFileSync(join(arenaDir(vault), "ratings.json"), "utf8")).areas[0].suite).toBe("notes");
+    // the phone's copy, where the vault syncs: names and numbers, never an answer
+    const phone = readFileSync(join(vault, "data", "apps", "arena", "summary.json"), "utf8");
+    expect(JSON.parse(phone)).toMatchObject({ overall: { leader: haiku().id }, latest_run: { suite: "notes", games: 3 } });
+    expect(phone).not.toContain(readFileSync(join(dir, `i1.${haiku().id}.txt`), "utf8").trim());
   });
 
   test("named judges in config are the whole jury, even when the CLI passes an empty list", async () => {
@@ -316,7 +320,7 @@ describe("runSuite", () => {
   test("one judge's provider at its limit leaves the rest of the jury judging", async () => {
     const s = stub();
     const exec = s.exec;
-    s.exec = async (bin, args) => (bin === "gemini" && args[0] !== "--version" ? { code: 1, stdout: "", stderr: "Error: 429 quota exceeded" } : exec(bin, args));
+    s.exec = async (bin, args, opts) => (bin === "gemini" && args[0] !== "--version" ? { code: 1, stdout: "", stderr: "Error: 429 quota exceeded" } : exec(bin, args, opts));
     setup([haiku(), qwen(), luna(), gem()]);
     const run = await runSuite(vault, { suite: "notes", models: [haiku().id, qwen().id], deps: { ...s, backoff: [1] } });
     expect(run.games.length).toBe(3);

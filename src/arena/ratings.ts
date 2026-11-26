@@ -2,12 +2,13 @@
 // bootstrap 95% interval (items resampled, since the games of one item are not
 // independent). A verdict is "clear" only when the interval on the leader's lead
 // excludes a tie; otherwise "close" and the pick is the cheaper model.
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { Game } from "./jury.ts";
 import { isLocalModel, readModels, type ModelDef } from "./models.ts";
 import { isHomeOnlyTask } from "./privacy.ts";
 import { arenaDir, file, readConfig, readJson, readLines, writeJson } from "./store.ts";
+import { monthSpend } from "./budget.ts";
 import { listSuites, type Suite } from "./suites.ts";
 
 export interface RunCell {
@@ -207,7 +208,25 @@ export function computeRatings(vault: string, now = new Date().toISOString()): R
   const leader = [...sum.keys()].sort((x, y) => (led.get(y) ?? 0) - (led.get(x) ?? 0) || avg(y) - avg(x))[0] ?? "";
   const out: RatingsFile = { updated: now, overall: { leader, areas_led: led.get(leader) ?? 0, areas: areas.length }, areas };
   writeJson(file(vault, "ratings.json"), out);
+  writePhoneSummary(vault, out, runs);
   return out;
+}
+
+/** What the iPhone's Arena page shows, written where the vault syncs (data/, unlike build/_meta) so the
+ * hub on another Mac can serve it: names and numbers only, never a prompt or an answer. */
+export function writePhoneSummary(vault: string, r: RatingsFile, runs: RunFile[]): void {
+  const pilot = readJson<Record<string, unknown>>(file(vault, "autopilot.json"), {});
+  const last = runs[runs.length - 1];
+  const keep = (m: RatedModel) => ({ model: m.model, label: m.label, rate: m.rate, lo: m.lo, hi: m.hi, games: m.games, cost_usd: m.cost_usd, latency_ms: m.latency_ms });
+  mkdirSync(join(vault, "data", "apps", "arena"), { recursive: true });
+  writeJson(join(vault, "data", "apps", "arena", "summary.json"), {
+    updated: r.updated, overall: r.overall,
+    areas: r.areas.map((a) => ({ area: a.area, suite: a.suite, verdict: a.verdict, note: a.note, models: a.models.filter((m) => m.allowed).slice(0, 3).map(keep) })),
+    spent_usd: Math.round(monthSpend(vault) * 100) / 100, cap_usd: pilot.budget_monthly_usd ?? readConfig(vault).monthly_cap_usd,
+    autopilot: { on: pilot.on ?? false, check_at: pilot.check_at, last_check: pilot.last_check, running: pilot.running ?? null },
+    latest_run: last ? { id: last.id, suite: last.suite, status: last.status, cost_usd: last.cost_usd, games: last.games.length, models: last.models } : null,
+    runs: runs.length, leaks: readJson(file(vault, "leak-report.json"), null),
+  });
 }
 
 export interface PickAnswer { area: string; model: string | null; label?: string; verdict: string; why: string; alternatives: string[] }
