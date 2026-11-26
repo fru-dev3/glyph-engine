@@ -463,6 +463,14 @@ async function callTool(name: string, args: Record<string, unknown>, vaultPath: 
       const c = t.composeToday(vaultPath);
       return wrapText(args.format === "json" ? JSON.stringify(c, null, 2) : t.todayText(c));
     }
+    case "search_meetings":
+      return wrapText((await import("./jot-meetings.ts")).tSearchMeetings(args, vaultPath));
+    case "get_meeting_transcript":
+      return wrapText((await import("./jot-meetings.ts")).tMeetingTranscript(args, vaultPath));
+    case "get_meeting_summary":
+      return wrapText((await import("./jot-meetings.ts")).tMeetingSummary(args, vaultPath));
+    case "list_meeting_actions":
+      return wrapText((await import("./jot-meetings.ts")).tMeetingActions(args, vaultPath));
     case "tell": {
       const t = await import("./tell.ts");
       const text = String(args.text ?? "").trim();
@@ -757,6 +765,26 @@ export function mcpTools(): McpTool[] {
       name: "read_today",
       description: "The user's Today card: at most three things that matter today (each with its thread to a Compass value, or 'unlinked'), one thing falling behind, the nearest open decision, and what else is due. Computed by code from task boards, commitments, decisions and the Compass.",
       inputSchema: { type: "object", properties: { format: { type: "string", enum: ["text", "json"] } } },
+    },
+    {
+      name: "search_meetings",
+      description: "Search the user's Glyph Jot meeting recordings (title, people, tags, summary notes and transcript; every word must match). Empty query lists the newest. Returns one line per meeting with its id, date, length and title, and where the words were found. Read-only.",
+      inputSchema: { type: "object", properties: { query: { type: "string", description: "Words to find (all must match). Empty lists recent meetings." }, since: { type: "string", description: "Only meetings on or after this date (YYYY-MM-DD)." }, limit: { type: "number", description: "At most this many (default 20, max 100)." }, format: { type: "string", enum: ["text", "json"] } } },
+    },
+    {
+      name: "get_meeting_transcript",
+      description: "The full transcript of one Glyph Jot meeting, one line per turn as [mm:ss] Speaker: words. id comes from search_meetings. Read-only.",
+      inputSchema: { type: "object", properties: { id: { type: "string", description: "The meeting id from search_meetings (or its last part)." }, max_chars: { type: "number", description: "Cut the transcript at this many characters (default 200000)." } }, required: ["id"] },
+    },
+    {
+      name: "get_meeting_summary",
+      description: "One Glyph Jot meeting's summary, decisions and action items (with owners), as Jot wrote them in the meeting's notes. Read-only.",
+      inputSchema: { type: "object", properties: { id: { type: "string", description: "The meeting id from search_meetings (or its last part)." }, format: { type: "string", enum: ["text", "json"] } }, required: ["id"] },
+    },
+    {
+      name: "list_meeting_actions",
+      description: "Action items from the user's Glyph Jot meetings: open ones across every meeting by default, or one meeting's with id. Each line names the owner and the meeting it came from. Read-only.",
+      inputSchema: { type: "object", properties: { id: { type: "string", description: "Only this meeting." }, since: { type: "string", description: "Only meetings on or after this date (YYYY-MM-DD)." }, owner: { type: "string", description: "Only items whose owner contains this." }, include_done: { type: "boolean", description: "Also list ticked items." }, format: { type: "string", enum: ["text", "json"] } } },
     },
     {
       name: "tell",
