@@ -9,7 +9,7 @@ import { canaryHits, nameHits, piiHits, type Scanner } from "./scan.ts";
 import type { Leak, RubricLine, SynthSeed, TextItem } from "./types.ts";
 
 export const MAX_NGRAM = 12; // "under 13 tokens"
-export const MAX_SIMILARITY = 0.55;
+export const MAX_SIMILARITY = 0.5;
 
 export const DEFAULT_RUBRIC: RubricLine[] = [
   { criterion: "States a number, date or name that the prompt does not give", points: -10, type: "hard_fail" },
@@ -36,13 +36,16 @@ export async function makeTemplate(seed: SynthSeed, llm?: Llm): Promise<string> 
   return autoSlot(src);
 }
 
-/** Step 3: a rewrite in new words that must keep every filled value verbatim, else the unrewritten text stands. */
+/** Step 3: a rewrite in new words that must keep every filled value verbatim; chatter, preambles or a length change keep the unrewritten text. */
 export async function rewrite(text: string, mapping: Record<string, string>, llm?: Llm): Promise<string> {
   if (!llm) return text;
   try {
-    const out = (await llm(text, { system: "Rewrite this message in different words and a casual first-person voice. Keep every name, number, date and amount exactly as written. Output only the message.", temperature: 0.5 })).trim();
+    const raw = (await llm(text, { system: "Rewrite this message in different words, same meaning, same person speaking. Keep every name, number, date and amount exactly as written. Output only the message, with no introduction and no quotation marks.", temperature: 0.5 })).trim();
+    const out = raw.replace(/^["\u201c]+|["\u201d]+$/g, "").trim();
+    const chatter = /^(okay|ok|sure|here|certainly|rewritten)\b|rewrit|\n\n/i.test(out);
     const kept = Object.values(mapping).every((v) => out.includes(v));
-    return kept && out.length > 20 && out.length < text.length * 2.5 ? out : text;
+    const ratio = out.length / text.length;
+    return !chatter && kept && ratio > 0.6 && ratio < 1.6 ? out : text;
   } catch { return text; }
 }
 

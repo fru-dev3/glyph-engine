@@ -1,5 +1,5 @@
 // Overlap with the real source: longest shared run of tokens (must stay under 13) and
-// a similarity score (cosine of character trigrams, no model needed).
+// a similarity score (cosine of content words and word pairs, no model needed).
 export const tokens = (s: string): string[] => s.toLowerCase().match(/[a-z0-9$%']+/g) ?? [];
 
 /** Longest common contiguous token run between two texts. */
@@ -18,10 +18,13 @@ export function longestShared(a: string, b: string): number {
   return best;
 }
 
+const STOP = new Set("that this with from have your about what when which would could should there their been into than then them they will just like also some more most only over such each very much many where while does did doing being those these because before after again once here both other same make made need want give take tell show please".split(" "));
+/** content words and their neighbours: topic overlap, not letter overlap */
 function grams(s: string): Map<string, number> {
-  const t = ` ${tokens(s).join(" ")} `;
+  const t = tokens(s).filter((w) => w.length >= 4 && !STOP.has(w) && !/^[0-9$%,.]+$/.test(w));
   const m = new Map<string, number>();
-  for (let i = 0; i + 3 <= t.length; i++) { const g = t.slice(i, i + 3); m.set(g, (m.get(g) ?? 0) + 1); }
+  const add = (g: string) => m.set(g, (m.get(g) ?? 0) + 1);
+  t.forEach((w, i) => { add(w); if (i > 0) add(`${t[i - 1]} ${w}`); });
   return m;
 }
 
