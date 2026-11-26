@@ -196,7 +196,9 @@ async function viaOllama(model: string, prompt: string, baseUrl: string | undefi
   const res = await d.fetch(`${(baseUrl ?? "http://localhost:11434").replace(/\/+$/, "")}/api/generate`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ model, prompt, stream: false, options: { temperature: 0, num_predict: 2048 } }),
+    // think:false: a thinking model (qwen3) otherwise spends all 2048 tokens inside <think> and
+    // never writes the answer; models without thinking ignore it.
+    body: JSON.stringify({ model, prompt, stream: false, think: false, options: { temperature: 0, num_predict: 2048 } }),
     signal: AbortSignal.timeout(d.timeoutMs),
   });
   const body = await res.text();

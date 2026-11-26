@@ -56,7 +56,8 @@ function stub(): Stub {
     const u = String(url);
     if (u.endsWith("/api/version")) return new Response(JSON.stringify({ version: "0.9.9" }));
     if (u.endsWith("/api/generate")) {
-      const b = JSON.parse(init!.body!) as { model: string; prompt: string };
+      const b = JSON.parse(init!.body!) as { model: string; prompt: string; think?: boolean };
+      if (b.think !== false) throw new Error("ollama called without think:false (qwen3 would think through its whole budget)");
       s.calls.push({ bin: "ollama", args: [b.model] });
       return new Response(JSON.stringify({ response: `<think>hmm</think>${reply(b.model, b.prompt)}`, prompt_eval_count: 12, eval_count: 7 }));
     }
