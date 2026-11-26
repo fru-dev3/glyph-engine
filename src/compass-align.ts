@@ -157,12 +157,6 @@ export function varsTouched(action: string): string[] {
   return ACTION_VARS.filter(([, re]) => re.test(action)).map(([v]) => v);
 }
 
-/**
- * The non-negotiables, as a gate. An action that would break a hard limit
- * (a rule of the form x==0 or x<=0, like no new debt) or push a rule that is
- * already broken is blocked; any other action touching a rule's variable asks.
- * Unconfirmed lines never gate anything.
- */
 /** OMG BMM 1.3's enforcement levels for a rule (table 8.7), firmest first, as written in a ~enforcement: token. */
 export const ENFORCEMENT = ["strictly-enforced", "deferred-enforcement", "pre-authorized-override", "post-justified-override", "override-with-explanation", "guideline"] as const;
 export type Enforcement = (typeof ENFORCEMENT)[number];
@@ -181,8 +175,12 @@ const OVERRIDE: Record<string, string> = {
   "override-with-explanation": "it may go ahead with a reason",
 };
 
-/** The firmest rule an action touches, by its check and its enforcement level: a strictly enforced rule (or a
- *  deferred one) that would be broken blocks; an override level asks; a guideline never gates. */
+/**
+ * The rules, as a gate. An action that would break a hard limit (a rule of the form x==0 or x<=0, like no
+ * new debt) or push a rule that is already broken is blocked when the rule is strictly enforced (or
+ * deferred); at an override level it asks and says which kind; a guideline never gates. Any other action
+ * touching a rule's variable asks. Negotiables with a ~check: count too. Unconfirmed lines never gate anything.
+ */
 export function ruleGate(vault: string, action: string): { decision: "block" | "ask"; reason: string; rule: string; enforcement: Enforcement } | null {
   if (!existsSync(compassPath(vault))) return null;
   const touched = varsTouched(action);
