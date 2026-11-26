@@ -1,5 +1,5 @@
 import { Database } from "bun:sqlite";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { randomBytes } from "node:crypto";
 import { resolveDomainDir } from "./path-safety.ts";
 import { isV4Domain } from "./vault-layout-v4.ts";
@@ -10,6 +10,7 @@ import {
   mkdirSync,
   readdirSync,
   readFileSync,
+  writeFileSync,
 } from "node:fs";
 import { maskDeep } from "./secret-redact.ts";
 import { glyphHome } from "./glyph-home.ts";
@@ -643,4 +644,38 @@ export function importDesktopThreads(
     }
   }
   return result;
+}
+
+// Chat names the user gives (glyph-bot thread-title): one small file per agent,
+// memory/thread-titles.json ({ "<session>": "<title>" }), beside the threads and
+// never inside them, so nothing that scans thread files ever reads it.
+function titlesPath(vaultPath: string, domain: string): string {
+  return join(resolveDomainDir(vaultPath, domain), "memory", "thread-titles.json");
+}
+
+export function threadTitles(vaultPath: string, domain: string): Record<string, string> {
+  try { const t = JSON.parse(readFileSync(titlesPath(vaultPath, domain), "utf8")); return t && typeof t === "object" ? t : {}; } catch { return {}; }
+}
+
+/** Names a chat, or clears its name when the title is empty. */
+export function setThreadTitle(vaultPath: string, domain: string, sessionId: string, title: string): Record<string, string> {
+  if (!/^[A-Za-z0-9._-]{1,120}$/.test(sessionId)) throw new Error("bad session id");
+  const all = threadTitles(vaultPath, domain);
+  const t = title.replace(/\s+/g, " ").trim().slice(0, 120);
+  if (t) all[sessionId] = t; else delete all[sessionId];
+  const file = titlesPath(vaultPath, domain);
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, `${JSON.stringify(all, null, 2)}\n`);
+  return all;
+}
+
+export function threadTitleCommand(args: string[], vaultPath: string): number {
+  const [domain, session] = args.filter((a) => !a.startsWith("--"));
+  const i = args.indexOf("--text");
+  if (!domain) { console.error("usage: glyph-bot thread-title <domain|mission/slug> [<session> --text T] --json"); return 1; }
+  try {
+    const out = session && i >= 0 ? setThreadTitle(vaultPath, domain, session, args[i + 1] ?? "") : threadTitles(vaultPath, domain);
+    process.stdout.write(`${JSON.stringify(out)}\n`);
+    return 0;
+  } catch (e) { console.error(String((e as Error).message ?? e)); return 1; }
 }

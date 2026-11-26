@@ -14,7 +14,7 @@ import { bundledDemoVaultPath, readConfig, writeConfig, readMachineRole, setMach
 import type { ChatEvent } from "./chat-json.ts";
 import { glyphHome, commandName } from "./glyph-home.ts";
 // Top-level commands whose module parses its own arguments (module-commands.ts).
-const MODULE_COMMANDS = ["chief", "fold", "compass", "metrics", "specialists", "job", "review", "today", "decide", "missions", "mission", "sources", "commitments", "radar", "whereis", "time", "tell", "forgetting", "agents", "spaces", "aidev", "hub"];
+const MODULE_COMMANDS = ["chief", "fold", "compass", "metrics", "specialists", "job", "review", "today", "decide", "missions", "mission", "sources", "commitments", "radar", "whereis", "time", "tell", "forgetting", "agents", "spaces", "aidev", "hub", "thread-title"];
 
 interface Args {
   vaultPath: string | null;

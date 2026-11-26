@@ -23,6 +23,7 @@ export async function runModuleCommand(name: string, args: string[], vault: stri
   if (name === "radar") return (await import("./radar.ts")).radarCommand(args, vault);
   if (name === "agents") return (await import("./agent-contract.ts")).agentsCommand(args, vault);
   if (name === "spaces" || name === "aidev") return (await import("./spaces.ts")).spacesCommand(args, vault);
+  if (name === "thread-title") return (await import("./session.ts")).threadTitleCommand(args, vault);
   if (name === "hub") return (await import("./hub.ts")).hubCommand(args, vault);
   console.error(`unknown command: ${name}`);
   return 1;
