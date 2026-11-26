@@ -1,6 +1,6 @@
 // The local model. Synthetic generation reads real notes, so it only ever talks to
 // Ollama on this machine: any other host is refused before a byte is sent.
-export type Llm = (prompt: string, opts?: { system?: string; temperature?: number }) => Promise<string>;
+export type Llm = (prompt: string, opts?: { system?: string; temperature?: number; maxTokens?: number }) => Promise<string>;
 
 export function ollamaLlm(model: string, baseUrl = "http://localhost:11434"): Llm {
   const host = new URL(baseUrl).hostname;
@@ -8,7 +8,7 @@ export function ollamaLlm(model: string, baseUrl = "http://localhost:11434"): Ll
   return async (prompt, opts = {}) => {
     const res = await fetch(`${baseUrl}/api/generate`, {
       method: "POST",
-      body: JSON.stringify({ model, prompt, system: opts.system, stream: false, think: false, options: { temperature: opts.temperature ?? 0.4, num_predict: 400 } }),
+      body: JSON.stringify({ model, prompt, system: opts.system, stream: false, think: false, options: { temperature: opts.temperature ?? 0.4, num_predict: opts.maxTokens ?? 400 } }),
       signal: AbortSignal.timeout(120_000),
     });
     if (!res.ok) throw new Error(`ollama ${res.status}`);

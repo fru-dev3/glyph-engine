@@ -49,10 +49,12 @@ export async function rewrite(text: string, mapping: Record<string, string>, llm
   } catch { return text; }
 }
 
-/** Step 5: a local model guesses who this is. Any guess that matches a real value from the source is above chance. */
+/** Step 5: a local model guesses who this is. A guessed city or employer that matches a real value from the source is above chance. */
 export async function reidProbe(llm: Llm, text: string, truths: string[]): Promise<"chance" | "above"> {
-  const guess = (await llm(text, { system: "Read this message and guess the writer's city, employer and age. Answer in one line.", temperature: 0 })).toLowerCase();
-  return truths.some((t) => t.length >= 3 && guess.includes(t.toLowerCase())) ? "above" : "chance";
+  const raw = await llm(text, { system: 'Read this message. Do not answer it. Guess where the writer lives and who employs them. Reply with only JSON: {"city":"","employer":"","age":""}', temperature: 0, maxTokens: 60 });
+  const guesses = ["city", "employer"].map((k) => new RegExp(`"${k}"\\s*:\\s*"([^"]*)"`, "i").exec(raw)?.[1]?.toLowerCase().trim() ?? "").filter(Boolean);
+  const real = truths.filter((t) => t.length >= 3).map((t) => t.toLowerCase());
+  return guesses.some((g) => real.some((t) => g === t || g.includes(t) || t.includes(g))) ? "above" : "chance";
 }
 
 /** Real values in the source that an attacker would want: names/places from the register, exact amounts. */

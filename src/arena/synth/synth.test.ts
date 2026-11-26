@@ -78,9 +78,15 @@ describe("pipeline", () => {
     expect(r.reasons.join(" ")).toMatch(/canary/);
   });
   test("a re-identification guess that hits a real value is above chance", async () => {
-    const leaky: Llm = async () => "Probably Harlow Bend";
+    const leaky: Llm = async () => '{"city":"Harlow Bend","employer":"","age":"40"}';
     const r = await leakCheck("I live somewhere cold and pay rent.", "lives in Harlow Bend", loadScanner(vault), leaky);
     expect(r.leak.reid).toBe("above");
+  });
+  test("a long answer to the question, or an unrelated guess, is chance", async () => {
+    const talky: Llm = async () => "Here is a long answer that mentions Harlow Bend in passing.";
+    const wrong: Llm = async () => '{"city":"Nowhere","employer":"Acme","age":"30"}';
+    expect((await leakCheck("Plain text.", "lives in Harlow Bend", loadScanner(vault), talky)).leak.reid).toBe("chance");
+    expect((await leakCheck("Plain text.", "lives in Harlow Bend", loadScanner(vault), wrong)).leak.reid).toBe("chance");
   });
   test("no local model means the item cannot pass", async () => {
     const r = await leakCheck("Plain text.", SRC, loadScanner(vault), undefined);
