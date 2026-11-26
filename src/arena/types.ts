@@ -35,6 +35,8 @@ export interface Recipe {
   added_at?: string;
   /** Where it came from: default, user, scout. */
   source?: string;
+  /** Not text: what this recipe makes (image, voice-tts, transcribe, video). Text recipes leave it out. */
+  media?: "image" | "voice-tts" | "transcribe" | "video";
 }
 
 /** A mechanical checker: decides a duel with no human and no judge. */
@@ -152,6 +154,12 @@ export interface ArenaConfig {
   judge: string;
   /** Run checker code tests (in a temp dir, no secrets in env, 10 s limit). */
   code_tests: boolean;
+  /** Env files to read provider keys from (OPENAI_API_KEY, GEMINI_API_KEY, REPLICATE_API_KEY). Names only matter; values are never printed. */
+  env_files?: string[];
+  /** Preferred judge model ids for the jury (the jury still excludes the contestants' families). */
+  judges?: string[];
+  /** whisper.cpp model file for transcription and the speech read-back. */
+  whisper_model?: string;
 }
 
 export type Verdict = "best" | "equivalent_cheaper" | "home_only" | "provisional";
