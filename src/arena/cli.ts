@@ -336,7 +336,7 @@ export async function arenaCommand(argv: string[]): Promise<number> {
       case "models": {
         if (sub === "refresh") { done({ added: (await refreshModels(vault)).map((m) => m.id), models: readModels(vault).length }); return 0; }
         if (sub === "add") {
-          const m = makeModel({ cli: str(flags, "cli"), model: str(flags, "model"), kind: (str(flags, "kind", "text") as SuiteKind), baseUrl: str(flags, "base-url") || undefined });
+          const m = makeModel({ cli: str(flags, "cli"), model: str(flags, "model"), kind: (str(flags, "kind", "text") as SuiteKind), baseUrl: str(flags, "base-url") || undefined, effort: str(flags, "effort") || undefined });
           if (!m.cli || !m.model) throw new Error("models add needs --cli and --model");
           addModel(vault, m);
           done(m);

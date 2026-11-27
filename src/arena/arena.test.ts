@@ -531,3 +531,13 @@ describe("provider failures are errors, never answers", () => {
     expect(d.outcome).toBe("tie");
   });
 });
+
+test("effort: the same model at two efforts is two contestants, passed to the CLI", async () => {
+  const { makeModel } = await import("./models.ts");
+  const hi = makeModel({ cli: "claude", model: "claude-opus-5-5", effort: "High" });
+  const plain = makeModel({ cli: "claude", model: "claude-opus-5-5" });
+  expect(hi.id).toBe(`${plain.id}-high`);
+  expect(hi.effort).toBe("high");
+  expect(plain.effort).toBeUndefined();
+  expect(hi.label.endsWith("(high)")).toBe(true);
+});

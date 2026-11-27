@@ -43,6 +43,8 @@ export interface CallInput {
   model: string;
   prompt: string;
   baseUrl?: string;
+  /** reasoning effort for the claude and codex CLIs; joins the cache key */
+  effort?: string;
   /** anything that changes the answer (temperature...) joins the cache key */
   settings?: Record<string, unknown>;
   cache?: boolean;
@@ -163,14 +165,14 @@ export function parseGemini(stdout: string): Parsed {
   return { text: String(j.response ?? "").trim(), tokens_in: tin, tokens_out: tout };
 }
 
-async function viaCli(cli: string, model: string, prompt: string, d: Required<Pick<AdapterDeps, "exec" | "timeoutMs">>): Promise<Parsed> {
+async function viaCli(cli: string, model: string, prompt: string, effort: string | undefined, d: Required<Pick<AdapterDeps, "exec" | "timeoutMs">>): Promise<Parsed> {
   const cwd = mkdtempSync(join(tmpdir(), "arena-call-"));
   try {
     // Tools off, model explicit, an empty working folder, no session kept.
     const args = cli === "claude"
-      ? ["-p", prompt, "--output-format", "json", "--model", model, "--tools", "", "--no-session-persistence", "--disable-slash-commands", "--strict-mcp-config", "--setting-sources", "", "--system-prompt", "You are a helpful assistant. Answer the user directly."]
+      ? ["-p", prompt, "--output-format", "json", "--model", model, "--tools", "", "--no-session-persistence", "--disable-slash-commands", "--strict-mcp-config", "--setting-sources", "", "--system-prompt", "You are a helpful assistant. Answer the user directly.", ...(effort ? ["--effort", effort] : [])]
       : cli === "codex"
-        ? ["exec", "--json", "--skip-git-repo-check", "--ephemeral", "-s", "read-only", "-m", model, "-C", cwd, prompt]
+        ? ["exec", "--json", "--skip-git-repo-check", "--ephemeral", "-s", "read-only", "-m", model, ...(effort ? ["-c", `model_reasoning_effort="${effort}"`] : []), "-C", cwd, prompt]
         : ["-p", prompt, "--output-format", "json", "-m", model];
     const r = await d.exec(binFor(cli), args, { cwd, timeoutMs: d.timeoutMs });
     if (r.code === 127) throw new Error(`${cli} is not installed here`);
@@ -240,7 +242,7 @@ export async function callModel(vault: string, input: CallInput, deps: AdapterDe
   };
   const { cli, model, prompt } = input;
   const version = await cliVersion(cli, input.baseUrl, d);
-  const key = cacheKey(cli, version, model, prompt, input.settings);
+  const key = cacheKey(cli, version, model, prompt, input.effort ? { ...input.settings, effort: input.effort } : input.settings);
   const cdir = join(arenaDir(vault), "cache");
   const cpath = join(cdir, `${key}.json`);
   if (input.cache !== false && existsSync(cpath)) {
@@ -253,7 +255,7 @@ export async function callModel(vault: string, input: CallInput, deps: AdapterDe
       try {
         const p = cli === "ollama" ? await viaOllama(model, prompt, input.baseUrl, d)
           : cli === "google" ? await viaGoogle(model, prompt, d)
-          : ["claude", "codex", "gemini"].includes(cli) ? await viaCli(cli, model, prompt, d)
+          : ["claude", "codex", "gemini"].includes(cli) ? await viaCli(cli, model, prompt, input.effort, d)
           : (() => { throw new Error(`no adapter for ${cli}`); })();
         if (!p.text) throw new Error("empty reply");
         const rec: CallRecord = {

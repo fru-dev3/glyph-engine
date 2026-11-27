@@ -176,7 +176,7 @@ async function generate(vault: string, suite: Suite, item: SuiteItem, m: ModelDe
   const head = { cli: m.cli, model: m.model };
   const file = (p: string) => p.split("/").pop()!;
   if (suite.kind === "text") {
-    const rec: CallRecord = await callModel(vault, { cli: m.cli, model: m.model, prompt: text, baseUrl: m.base_url }, deps);
+    const rec: CallRecord = await callModel(vault, { cli: m.cli, model: m.model, prompt: text, baseUrl: m.base_url, effort: m.effort }, deps);
     writeFileSync(`${base}.txt`, rec.text);
     return { output_ref: file(`${base}.txt`), tokens: rec.tokens, cost: rec.cached ? 0 : rec.cost_estimate, latency_ms: rec.latency_ms, cli: m.cli, cli_version: rec.cli_version, model: m.model, ...(rec.cached ? { cached: true } : {}) };
   }
@@ -263,7 +263,7 @@ async function scoreText(vault: string, suite: Suite, items: SuiteItem[], models
         const est = j.local ? 0 : estimate(j, prompt.length);
         if (!c.afford(est)) throw new Error("budget");
         let rec: CallRecord;
-        try { rec = await callModel(vault, { cli: j.cli, model: j.model, prompt, baseUrl: j.base_url }, o.deps); } catch (e) {
+        try { rec = await callModel(vault, { cli: j.cli, model: j.model, prompt, baseUrl: j.base_url, effort: j.effort }, o.deps); } catch (e) {
           // Only this judge's provider is limited: the rest of the jury carries on without it.
           if (e instanceof LimitError) { c.limited.add(j.cli); run.notes!.push(`judge limit: ${j.cli}: ${e.message.slice(0, 100)}`); throw new Error(`${j.cli} is rate limited`); }
           throw e;

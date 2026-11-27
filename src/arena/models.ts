@@ -24,6 +24,8 @@ export interface ModelDef {
   base_url?: string;
   /** false = kept, not run by autopilot or `run` without --models */
   active?: boolean;
+  /** reasoning effort the CLI is told (claude --effort, codex model_reasoning_effort): the same model at two efforts is two contestants */
+  effort?: string;
 }
 
 export const PROVIDER_OF: Record<string, string> = { claude: "anthropic", codex: "openai", gemini: "google", google: "google", openai: "openai", ollama: "ollama", replicate: "replicate", whisper: "local" };
@@ -56,12 +58,13 @@ export function familyOf(d: Pick<ModelDef, "cli" | "model">): string {
 export const readModels = (vault: string): ModelDef[] => readJson<{ models: ModelDef[] }>(file(vault, "models.json"), { models: [] }).models;
 export const writeModels = (vault: string, models: ModelDef[]) => writeJson(file(vault, "models.json"), { models });
 
-export function makeModel(o: { cli: string; model: string; kind?: SuiteKind; baseUrl?: string; active?: boolean; now?: string }): ModelDef {
+export function makeModel(o: { cli: string; model: string; kind?: SuiteKind; baseUrl?: string; active?: boolean; now?: string; effort?: string }): ModelDef {
   const kind = o.kind ?? "text";
-  const base = modelId(o.model);
+  const effort = o.effort?.trim().toLowerCase() || undefined;
+  const base = modelId(o.model) + (effort ? `-${effort}` : "");
   return {
     id: kind === "text" ? (o.cli === "google" ? `${base}-api` : base) : `${base}-${kind === "voice-tts" ? "tts" : kind}`,
-    label: prettyModel(o.model),
+    label: prettyModel(o.model) + (effort ? ` (${effort})` : ""),
     cli: o.cli,
     model: o.model,
     provider: PROVIDER_OF[o.cli] ?? o.cli,
@@ -71,6 +74,7 @@ export function makeModel(o: { cli: string; model: string; kind?: SuiteKind; bas
     kind,
     ...(o.baseUrl ? { base_url: o.baseUrl } : {}),
     active: o.active ?? true,
+    ...(effort ? { effort } : {}),
   };
 }
 
