@@ -12,6 +12,7 @@ The release page on GitHub mirrors the same notes for each tag:
 
 - Background jobs start again. `daemon install` wrote a bare `prevail` into each launch agent once the binary was renamed glyph-bot, so launchd could not start them (exit 78) and scheduled routines stopped running. It now matches either name.
 - Launch agents carry the installing shell's PATH, so the routine runner finds the agent CLIs instead of logging "no CLI available to run loops".
+- Output through a pipe arrives whole. A command that wrote more than 64 KB and then exited lost the rest two runs in three, so `playbook rows --json` (every routine, 66 KB) failed to parse and the routine list came up empty. Stdout is written synchronously when it is not a terminal.
 
 ## [1.10.17] Memory goes where chat reads it
 

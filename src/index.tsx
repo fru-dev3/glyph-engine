@@ -13,6 +13,25 @@ import { homedir } from "node:os";
 import { bundledDemoVaultPath, readConfig, writeConfig, readMachineRole, setMachineRole, type MachineRole } from "./config.ts";
 import type { ChatEvent } from "./chat-json.ts";
 import { glyphHome, commandName } from "./glyph-home.ts";
+
+// process.exit right after a large write to a pipe dropped the tail: Bot reads
+// every command through a pipe, and `playbook rows --json` (66 KB) came back cut
+// at 64 KB two runs in three, so the routines list failed to decode. When stdout
+// is not a terminal, write it synchronously so nothing is left queued at exit.
+if (!process.stdout.isTTY) {
+  const { writeSync } = await import("node:fs");
+  process.stdout.write = ((chunk: string | Uint8Array, enc?: unknown, cb?: unknown) => {
+    const done = typeof enc === "function" ? enc : cb;
+    try {
+      const buf = typeof chunk === "string" ? Buffer.from(chunk, typeof enc === "string" ? (enc as BufferEncoding) : "utf8") : chunk;
+      for (let off = 0; off < buf.length;) {
+        try { off += writeSync(1, buf, off); } catch (e) { if ((e as NodeJS.ErrnoException).code !== "EAGAIN") throw e; }
+      }
+    } catch { /* reader went away (EPIPE): nothing to do */ }
+    if (typeof done === "function") done();
+    return true;
+  }) as typeof process.stdout.write;
+}
 // Top-level commands whose module parses its own arguments (module-commands.ts).
 const MODULE_COMMANDS = ["chief", "fold", "compass", "metrics", "specialists", "job", "review", "today", "decide", "missions", "mission", "sources", "commitments", "radar", "whereis", "time", "tell", "forgetting", "agents", "spaces", "aidev", "hub", "thread-title"];
 
