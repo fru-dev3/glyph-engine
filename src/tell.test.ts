@@ -74,8 +74,14 @@ describe("what it is, with Undo", () => {
     expect([n.kind, n.domain, n.text]).toEqual(["note", "home", "The boiler is twelve years old"]);
     const up = readFileSync(join(D("home"), "memory", "updates.jsonl"), "utf8");
     expect(up).toContain('"fact":"The boiler is twelve years old"');
+    // and in the memory every home chat reads, dated, so it comes back next time
+    const { memoryPath } = await import("./domain-touch.ts");
+    const mem = () => readFileSync(memoryPath(V, "home"), "utf8");
+    expect(mem()).toContain("- 2026-10-01: The boiler is twelve years old (from You");
+    expect(n.where).toBe("Home's memory");
     await undoTold(V, n.id, NOW);
     expect(readFileSync(join(D("home"), "memory", "updates.jsonl"), "utf8")).toBe("");
+    expect(mem()).not.toContain("twelve years old");
     expect(readTold(V).filter((r) => r.undone).length).toBe(4);
     expect(toldReply(p)).toBe("Filed a promise in General's board, as a promise.");
   });
@@ -142,5 +148,20 @@ describe("where and on what it was said", () => {
   test("bad coordinates and empty words are left out, never invented", async () => {
     const r = await tell(V, "note the roof looks fine", { surface: "desktop", now: NOW, at: { device: " ", lat: 120, lon: 10 } });
     expect(r.device).toBeUndefined(); expect(r.lat).toBeUndefined(); expect(r.place).toBeUndefined();
+  });
+});
+
+describe("what a chat gets of a long memory", () => {
+  test("the newest remembered lines survive the cut", async () => {
+    const { fitMemory, memoryBlock } = await import("./goals.ts");
+    const md = `# Memory\n\n${"- an old durable fact about foo\n".repeat(400)}\n## Noted from conversations\n- 2026-10-01: The boiler is twelve years old (from You, thread t)\n`;
+    const out = fitMemory(md, 4000);
+    expect(out.length).toBeLessThanOrEqual(4000);
+    expect(out.startsWith("# Memory")).toBe(true);
+    expect(out).toContain("The boiler is twelve years old");
+    expect(fitMemory("short", 4000)).toBe("short");
+    seed();
+    writeFileSync(join(D("home"), "memory", "memory.md"), md);
+    expect(memoryBlock(D("home"), "home", "hi")).toContain("The boiler is twelve years old");
   });
 });

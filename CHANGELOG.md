@@ -8,6 +8,16 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## [1.10.16] Memory that comes back
+
+- "Remember that..." (typed or said, on any surface) now also writes a dated line under "Noted from
+  conversations" in the domain's `memory/memory.md`, which every chat in that domain reads. It went only to
+  `memory/updates.jsonl`, which no chat prompt includes. Undo takes both back.
+- A long memory keeps its newest lines in the chat prompt: the 4000-character cap took only the head, and on a
+  real vault (memory files of 11k to 31k characters) that dropped exactly the facts told most recently.
+- The `remember` MCP tool writes `memory/memory.md` on a v4 domain, the file chats read, not a `_memory.md` beside it.
+- `memory read` reads `memory/memory.md` first, so it no longer comes back empty on a v4 vault.
+
 ## [Unreleased] Rules hold as firmly as they say
 
 - **Glyph Jot's meetings over MCP, read-only.** Four tools read the recordings Jot keeps in the vault (`data/apps/jot/recordings/<folder>/<id>/`: meta.json, transcript.json or transcript.txt, notes.md): `search_meetings` (every word across title, people, tags, notes and transcript; `since`, `limit`), `get_meeting_transcript` (`[mm:ss] Speaker: words`, built from transcript.json when there is no .txt), `get_meeting_summary` (summary, decisions, action items with owners) and `list_meeting_actions` (open items across meetings, by owner or one meeting). They reach every MCP client the server already serves, stdio and the hub's General endpoint; nothing is written.

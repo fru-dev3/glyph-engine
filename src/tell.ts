@@ -29,7 +29,7 @@ import { parseModArgs } from "./cli-args.ts";
 
 export type Surface = "chat" | "cli" | "mcp" | "telegram" | "phone" | "desktop" | "email";
 export type ToldKind = "commitment" | "waiting" | "decision" | "task" | "candidate" | "metric" | "practice" | "spend" | "note";
-export interface Told { id: string; ts: number; surface: Surface; kind: ToldKind; text: string; domain: string; mission?: string; due?: string; where: string; file?: string; lines?: string[]; ref?: string; undone?: number; device?: string; place?: string; lat?: number; lon?: number }
+export interface Told { id: string; ts: number; surface: Surface; kind: ToldKind; text: string; domain: string; mission?: string; due?: string; where: string; file?: string; lines?: string[]; memory?: string; ref?: string; undone?: number; device?: string; place?: string; lat?: number; lon?: number }
 /** Where and on what it was said, as the Glyph apps write it on every line: device, place, lat, lon (6 decimals). */
 export interface SaidAt { device?: string; place?: string; lat?: number; lon?: number }
 
@@ -205,7 +205,10 @@ export async function tell(vault: string, raw: string, o: { surface: Surface; do
   const { appendJsonl, domainUpdatesPath } = await import("./linking.ts");
   const row = { ts: now, from_domain: "you", thread: src, fact, entities: [] as string[], ...at };
   appendJsonl(domainUpdatesPath(vault, domain), row);
-  return receipt(vault, { ...base, kind: "note", text: fact, where: `${where}'s notes`, file: rel(domainUpdatesPath(vault, domain)), lines: [JSON.stringify(row)] }, now);
+  // "Remember that..." is long-term memory too: a dated line in the domain's memory.md, which every chat in
+  // that domain reads (the row above reached no chat prompt). Undo takes both back.
+  const memory = nm ? (await import("./domain-touch.ts")).noteInMemory(vault, domain, { ts: now, from: "you", thread: src, fact }) : undefined;
+  return receipt(vault, { ...base, kind: "note", text: fact, where: memory ? `${where}'s memory` : `${where}'s notes`, file: rel(domainUpdatesPath(vault, domain)), lines: [JSON.stringify(row)], ...(memory ? { memory } : {}) }, now);
 }
 
 export function readTold(vault: string, limit = 50): Told[] {
@@ -230,6 +233,7 @@ export async function undoTold(vault: string, id: string, now = Date.now()): Pro
     for (const l of r.lines) { const i = next.lastIndexOf(`${l}\n`); next = i >= 0 ? next.slice(0, i) + next.slice(i + l.length + 1) : next.replace(l, ""); }
     if (next !== cur) writeFileSync(abs, next);
   }
+  if (r.memory) (await import("./domain-touch.ts")).unnote(vault, r.domain, { ts: r.ts, thread: "", line: r.memory });
   mkdirSync(captureDir(vault), { recursive: true });
   appendFileSync(toldPath(vault), `${JSON.stringify({ ts: now, undo: id })}\n`);
   return { ...r, undone: now };

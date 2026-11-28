@@ -1,6 +1,6 @@
 {
   "name": "prevail-cli",
-  "version": "1.10.15",
+  "version": "1.10.16",
   "description": "Glyph Engine, formerly the Prevail CLI: a terminal cockpit for your life domains.",
   "type": "module",
   "private": false,

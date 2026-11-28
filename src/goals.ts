@@ -292,11 +292,23 @@ const DESKTOP_MEMORY_HEADER = "--- Long-term memory (";
  * Empty for a project or app space (their scope brings its own memory), when
  * the prompt already carries the block, or when nothing is recorded.
  */
+/**
+ * A long memory cut to `cap` without losing its newest lines. What "remember that..." files is appended at the
+ * end (the dated "Noted from conversations" lines), and a plain head cut dropped exactly those: a memory.md of
+ * 12-31k characters gave the chat only its first 4000, so a fact told yesterday never came back.
+ */
+export function fitMemory(text: string, cap = 4000, tail = 1500): string {
+  if (text.length <= cap) return text;
+  let end = text.slice(-tail);
+  end = end.slice(end.indexOf("\n") + 1);
+  return `${text.slice(0, cap - end.length - 3).replace(/\n[^\n]*$/, "")}\n…\n${end}`;
+}
+
 export function memoryBlock(cwd: string, domain: string, prompt: string, cap = 4000): string {
   if (!domain || domain.startsWith("_") || prompt.includes(MEMORY_HEADER) || prompt.includes(DESKTOP_MEMORY_HEADER)) return "";
   const text = (readText(join(cwd, "memory", "memory.md")) || readText(join(cwd, "_memory.md"))).trim();
   if (!text) return "";
-  return `${MEMORY_HEADER} (${domain}): what this space has learned across sessions. Use it as background; the user's words in this turn win.\n${text.slice(0, cap)}`;
+  return `${MEMORY_HEADER} (${domain}): what this space has learned across sessions. Use it as background; the user's words in this turn win.\n${fitMemory(text, cap)}`;
 }
 
 export function readProfile(vault: string): string {

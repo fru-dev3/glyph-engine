@@ -24,6 +24,7 @@ import { vreadFile, vwriteFile } from "./vault-session.ts";
 import { writeDistilledSkill } from "./distill.ts";
 import { scanVault, type Domain } from "./vault.ts";
 import { generalDir } from "./decisions.ts";
+import { v4ContentPath } from "./vault-layout-v4.ts";
 
 interface JsonRpcReq {
   jsonrpc: "2.0";
@@ -284,7 +285,8 @@ function doRemember(rawArgs: Record<string, unknown>, vaultPath: string, default
   const text = typeof rawArgs.text === "string" ? rawArgs.text.trim() : "";
   if (!text) return wrapText("Error: remember needs `text`.");
   const domain = resolveDomain(vaultPath, (typeof rawArgs.domain === "string" && rawArgs.domain.trim()) ? rawArgs.domain : defaultDomain);
-  const memPath = join(domain.path, "_memory.md");
+  // memory/memory.md on a v4 domain, the file every chat reads (it wrote a _memory.md beside it that no chat saw).
+  const memPath = v4ContentPath(domain.path, "memory/memory.md", "_memory.md");
   let cur = "";
   try { cur = vreadFile(memPath); } catch { /* new file */ }
   if (!cur.trim()) cur = `# Long-term memory (${domain.name})\n\n`;
