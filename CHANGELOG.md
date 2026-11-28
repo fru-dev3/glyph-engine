@@ -8,6 +8,10 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## 1.10.19 (2026-11-27)
+
+- Output through a pipe arrives whole (see below; split out of 1.10.18 so the two builds have different versions).
+
 ## 1.10.18 (2026-11-27)
 
 - Background jobs start again. `daemon install` wrote a bare `prevail` into each launch agent once the binary was renamed glyph-bot, so launchd could not start them (exit 78) and scheduled routines stopped running. It now matches either name.
