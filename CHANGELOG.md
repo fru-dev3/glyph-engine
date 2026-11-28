@@ -8,6 +8,10 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## 1.10.20 (2026-11-28)
+
+- Routines survive a restart. The loops agent waited for a manual start after every login, so a restart stopped every routine until someone noticed. It now starts at login with learn and sync; each playbook's autonomy and the egress guard still limit what it does.
+
 ## 1.10.19 (2026-11-27)
 
 - Output through a pipe arrives whole (see below; split out of 1.10.18 so the two builds have different versions).

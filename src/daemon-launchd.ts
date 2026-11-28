@@ -17,10 +17,12 @@ const LABEL = "sh.prevail.learn";
 type AgentDef = { label: string; flag: string; env?: Record<string, string>; runAtLoad?: boolean };
 const AGENTS: AgentDef[] = [
   { label: LABEL, flag: "--learn", env: { PREVAIL_HEADLESS_LEARN: "1" } },
-  // Decision: the acting loops daemon does NOT auto-start at login (RunAtLoad
-  // false) — consequential autonomy is opt-in, started explicitly. learn/sync
-  // are background-safe and keep RunAtLoad true.
-  { label: "sh.prevail.loops", flag: "--loops", runAtLoad: false },
+  // The loops daemon starts at login like the others. It used to wait for a
+  // manual start (consequential autonomy as opt-in), but then every restart
+  // silently stopped all routines until someone noticed. Installing the agents
+  // on a hub is the opt-in now; each playbook's autonomy and the egress guard
+  // still decide what a routine may do on its own.
+  { label: "sh.prevail.loops", flag: "--loops" },
   { label: "sh.prevail.sync", flag: "--sync" },
 ];
 
