@@ -35,13 +35,18 @@ function enginePath(): string {
   // `prevail` binary that IS the engine. argv[1] is the script when run via a
   // runtime. Prefer execPath when it looks like a prevail binary, else argv.
   const exec = process.execPath;
-  if (exec && /prevail/i.test(exec)) return exec;
+  // The binary is glyph-bot since the rename; matching only "prevail" wrote a bare
+  // `prevail` into the plist and launchd could not start it (exit 78).
+  if (exec && /prevail|glyph/i.test(exec)) return exec;
   // Fall back to `prevail` on PATH (the desktop passes an absolute path in).
   return process.env.PREVAIL_BIN || "prevail";
 }
 
 function buildPlist(label: string, program: string, flag: string, vault: string, logOut: string, env?: Record<string, string>, runAtLoad = true): string {
-  const envXml = env
+  // launchd starts agents with a bare PATH, so the loops found no claude or codex
+  // ("no CLI available to run loops"). Carry the installing shell's PATH.
+  env = { ...(process.env.PATH ? { PATH: process.env.PATH } : {}), ...env };
+  const envXml = Object.keys(env).length
     ? `\n  <key>EnvironmentVariables</key>\n  <dict>\n${Object.entries(env).map(([k, v]) => `    <key>${k}</key><string>${v}</string>`).join("\n")}\n  </dict>`
     : "";
   return `<?xml version="1.0" encoding="UTF-8"?>

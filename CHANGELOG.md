@@ -8,6 +8,11 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## 1.10.18 (2026-11-27)
+
+- Background jobs start again. `daemon install` wrote a bare `prevail` into each launch agent once the binary was renamed glyph-bot, so launchd could not start them (exit 78) and scheduled routines stopped running. It now matches either name.
+- Launch agents carry the installing shell's PATH, so the routine runner finds the agent CLIs instead of logging "no CLI available to run loops".
+
 ## [1.10.17] Memory goes where chat reads it
 
 - One resolver for a domain's memory file (`memoryFile`): `memory/memory.md` when it exists, else an existing
