@@ -162,6 +162,12 @@ describe("what a chat gets of a long memory", () => {
     expect(fitMemory("short", 4000)).toBe("short");
     seed();
     writeFileSync(join(D("home"), "memory", "memory.md"), md);
+    // no v4 marker, but memory/memory.md exists: a remembered fact goes there, where chat reads it
+    const r = await tell(V, "remember that the gutters were cleaned", { surface: "desktop", domain: "home", now: NOW });
+    expect(readFileSync(join(D("home"), "memory", "memory.md"), "utf8")).toContain("The gutters were cleaned");
+    expect(existsSync(join(D("home"), "_memory.md"))).toBe(false);
+    expect(memoryBlock(D("home"), "home", "hi")).toContain("The gutters were cleaned");
+    await undoTold(V, r.id, NOW);
     expect(memoryBlock(D("home"), "home", "hi")).toContain("The boiler is twelve years old");
   });
 });

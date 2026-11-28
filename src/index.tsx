@@ -6193,9 +6193,8 @@ async function memoryCommand(args: string[], vaultOverride: string | null): Prom
   const domain = positionals[0];
   const general = !domain || domain === "general" || domain === "__general__";
   const { domainDir } = await import("./decisions.ts");
-  const dir = domainDir(vault, general ? null : domain);
-  // The v4 file first (memory/memory.md), as chat reads it; _memory.md only on a pre-v4 domain.
-  const file = [join(dir, "memory", "memory.md"), join(dir, "_memory.md")].find((f) => existsSync(f)) ?? join(dir, "_memory.md");
+  // The file chat reads (memory/memory.md first), the same resolver every memory writer uses.
+  const file = (await import("./domain-touch.ts")).memoryFile(domainDir(vault, general ? null : domain));
   let text = "";
   try {
     if (existsSync(file)) text = readFileSync(file, "utf8");

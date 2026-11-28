@@ -8,6 +8,13 @@ The release page on GitHub mirrors the same notes for each tag:
 ---
 
 
+## [1.10.17] Memory goes where chat reads it
+
+- One resolver for a domain's memory file (`memoryFile`): `memory/memory.md` when it exists, else an existing
+  `_memory.md`. Writers chose by the v4 marker alone, so on a vault whose domains have `memory/memory.md` and
+  no marker, every "Noted from conversations" line (yours and the cross-domain ones) went to a `_memory.md`
+  no chat read. `remember`, `memory read`, notes and undo all use it now.
+
 ## [1.10.16] Memory that comes back
 
 - "Remember that..." (typed or said, on any surface) now also writes a dated line under "Noted from

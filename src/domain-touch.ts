@@ -85,7 +85,18 @@ export function spendModelCall(vault: string, now = Date.now(), cap = MODEL_PER_
 // ── Noted in the domain's memory ─────────────────────────────────────────
 
 export function memoryPath(vault: string, slug: string): string {
-  const dir = resolveDomainDir(vault, slug);
+  return memoryFile(resolveDomainDir(vault, slug));
+}
+
+/**
+ * A domain's memory file, the one chat reads (memoryBlock): memory/memory.md when it exists, else an existing
+ * _memory.md, else the layout's own choice. Deciding by the v4 marker alone sent every write to _memory.md on
+ * vaults whose domains have memory/memory.md but no marker, where no chat ever read it.
+ */
+export function memoryFile(dir: string): string {
+  const v4 = join(dir, "memory", "memory.md"), flat = join(dir, "_memory.md");
+  if (existsSync(v4)) return v4;
+  if (existsSync(flat)) return flat;
   return v4ContentPath(dir, "memory/memory.md", "_memory.md");
 }
 const label = (s: string) => s === "general" ? "General" : s.split(/[-_]/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
